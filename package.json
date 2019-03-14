@@ -1,0 +1,41 @@
+{
+  "name": "hostabee-comment-flow",
+  "version": "0.1.0",
+  "description": "Commenting solution out-of-the-box in a Web Component.",
+  "main": "hostabee-comment-flow.html",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "polymer test",
+    "prestart": "polymer analyze hostabee-* > analysis.json",
+    "start": "polymer serve --port 3000 --open",
+    "release": "standard-version",
+    "release:major": "standard-version --release-as major",
+    "release:minor": "standard-version --release-as minor",
+    "release:patch": "standard-version --release-as patch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Hostabee/hostabee-comment-flow.git"
+  },
+  "keywords": [
+    "hostabee",
+    "comment",
+    "post",
+    "polymer",
+    "webcomponents",
+    "web-component"
+  ],
+  "author": "Hostabee SAS",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/Hostabee/hostabee-comment-flow/issues"
+  },
+  "homepage": "https://github.com/Hostabee/hostabee-comment-flow#readme",
+  "devDependencies": {
+    "commitizen": "^3.0.7",
+    "standard-version": "^5.0.1"
+  },
+  "dependencies": {}
+}

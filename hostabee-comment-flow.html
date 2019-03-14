@@ -1,0 +1,136 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="./hostabee-comment.html">
+
+<dom-module id="hostabee-comment-flow">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <template is="dom-repeat" items="[[_comments]]" as="comment" restamp>
+      <hostabee-comment item="[[comment]]" read-only=[[readOnly]]></hostabee-comment>
+    </template>
+  </template>
+  <script>
+    /**
+     * `hostabee-comment-flow`
+     * 
+     * Commenting solution out-of-the-box in a web component.
+     *
+     * @customElement
+     * @polymer
+     * @extends {Polymer.Element}
+     * @demo demo/hostabee-comment-flow.html Basic
+     */
+    class HostabeeCommentFlow extends Polymer.Element {
+
+      static get is() {
+        return 'hostabee-comment-flow';
+      }
+
+      static get properties() {
+        return {
+          /**
+           * Comments to display.
+           * 
+           * Expected model of `item`:
+           * {
+           *    content: 'Cum sociis natoque penatibus et magnis.',
+           *    created: 1548016737000,
+           *    author: {
+           *      fullname: 'John Doe',
+           *      profilePictureURL: ''
+           *    }
+           * }
+           * 
+           * The `item.author`, `item.author.profilePictureURL` properties are
+           * optional. The `author.fullname` property can be substitute by
+           * `author.name`.
+           * 
+           * The `author` property of a comment can also be a number/string
+           * (the user ID) if you have provided the list of user.
+           * 
+           * @type {Array}
+           * @default []
+           */
+          comments: {
+            type: Array,
+            value: [],
+            notify: true,
+          },
+          /**
+           * List of users. It is OPTIONAL and will be used to retrieve comment
+           * author when the comment objects contain only author ID. It can be
+           * required for more some features.
+           * 
+           * Expected model of `user`:
+           * {
+           *    fullname: 'John Doe',
+           *    profilePictureURL: ''
+           * }
+           * 
+           * The `profilePictureURL` property is optional. The `fullname`
+           * property can be substitute by `name`.
+           * 
+           * @type {Array}
+           * @default []
+           */
+          users: {
+            type: Array,
+            value: [],
+          },
+          /**
+           * Turns the read only mode on. Comments are not editable even by their
+           * author.
+           * 
+           * @type {Boolean}
+           * @default false
+           */
+          readOnly: {
+            type: Boolean,
+            value: false,
+          },
+          /**
+           * Computed list of comment. The data transformtion ensures the good
+           * internal functioning.
+           * 
+           * @type {Array}
+           */
+          _comments: {
+            type: Array,
+            readOnly: true,
+          },
+        };
+      }
+
+      static get observers() {
+        return [
+          '_computeComments(comments.*)',
+          '_computeComments(users.*)',
+        ];
+      }
+
+      /**
+       * Fills list of comment with authors when the comment contains only an ID
+       * and a list of users is provided.
+       */
+      _computeComments() {
+        if (!this.users) {
+          this._set_comments(this.comments);
+          return;
+        }
+        this._set_comments(this.comments.map((comment) => {
+          if (typeof comment.author != 'object') {
+            comment.author = this.users.find((u) => u.id == comment.author);
+          }
+          return comment;
+        }));
+      }
+
+    }
+
+    window.customElements.define(HostabeeCommentFlow.is, HostabeeCommentFlow);
+  </script>
+</dom-module>

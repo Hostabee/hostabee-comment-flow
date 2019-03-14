@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+  <title>hostabee-comment-flow test</title>
+
+  <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../hostabee-comment-flow.html">
+</head>
+
+<body>
+
+  <test-fixture id="BasicTestFixture">
+    <template>
+      <hostabee-comment-flow></hostabee-comment-flow>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="ChangedPropertyTestFixture">
+    <template>
+      <hostabee-comment-flow prop1="new-prop1"></hostabee-comment-flow>
+    </template>
+  </test-fixture>
+
+  <script>
+    suite('hostabee-comment-flow', () => {
+
+      test('instantiating the element with default properties works', () => {
+        const element = fixture('BasicTestFixture');
+        expect(element.comments).to.be.empty;
+        expect(element.users).to.be.empty;
+      });
+
+    });
+  </script>
+
+</body>
+
+</html>

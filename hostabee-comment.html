@@ -1,0 +1,442 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../polymer/lib/elements/dom-if.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="./hostabee-icons.html">
+<link rel="import" href="../vaadin-button/vaadin-button.html">
+<link rel="import" href="../paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../web-animations-js/web-animations-next-lite.min.html">
+<link rel="import" href="../vaadin-text-field/vaadin-text-area.html">
+
+<dom-module id="hostabee-comment">
+  <template>
+    <style>
+      :host {
+        display: block;
+        padding: 8px 16px;
+      }
+
+      .flex {
+        @apply --layout-flex;
+      }
+
+      .heading {
+        height: 56px;
+        align-items: center;
+        color: var(--primary-text-color, rgba(0, 0, 0, 0.70));
+        @apply --layout-horizontal;
+      }
+
+      .summary {
+        padding-left: 16px;
+        @apply --layout-vertical;
+      }
+
+      .summary__author-name {
+        font-weight: 400;
+        font-size: 1.2em;
+        margin-bottom: 5px;
+      }
+
+      .summary__date {
+        color: var(--secondary-text-color, rgba(0, 0, 0, 0.3));
+        font-size: 0.95em;
+      }
+
+      .profile-picture {
+        height: 50px;
+        width: 50px;
+        font-size: 1.6em;
+        color: #ffffff;
+        border-radius: 50%;
+        @apply --layout-vertical;
+        @apply --layout-center-center;
+      }
+
+      .profile-picture img {
+        height: 50px;
+        width: 50px;
+      }
+
+      .profile-picture__initials {
+        vertical-align: middle;
+        vertical-align: -webkit-baseline-middle;
+      }
+
+      .content {
+        padding-top: 10px;
+        color: var(--primary-text-color, rgba(0, 0, 0, 0.7));
+        font-size: 1.1em;
+      }
+
+      .dropdown-content {
+        @apply --layout-vertical;
+      }
+
+      .menu-item {
+        border-radius: 0;
+        margin: 0;
+      }
+
+      .menu-item:hover {
+        cursor: pointer;
+      }
+
+      .menu-item iron-icon {
+        padding-right: 10px;
+      }
+
+      vaadin-text-area {
+        width: 100%;
+      }
+
+      .actions {
+        @apply --layout-horizontal;
+        @apply --layout-end-justified;
+      }
+
+      .actions vaadin-button {
+        margin-left: 8px;
+      }
+    </style>
+
+    <div class="heading">
+      <div class="profile-picture">
+        <template is="dom-if" if="[[_authorProfile.picture]]">
+          <img src="[[_authorProfile.picture.url]]" alt="[[_authorProfile.picture.alt]]">
+        </template>
+        <template is="dom-if" if="[[_authorProfile.image]]">
+          <span class="profile-picture__initials">[[_authorProfile.image.content]]</span>
+        </template>
+      </div>
+      <div class="summary">
+        <span class="summary__author-name">[[getAuthorName(item.author)]]</span>
+        <div class="summary__date">
+          <i hidden$="[[!item.updated]]">Modified:</i>
+          <span>[[getDateLastEdit(item)]]</span>
+        </div>
+      </div>
+      <span class="flex"></span>
+      <paper-menu-button horizontal-align="right" close-on-activate>
+        <paper-icon-button slot="dropdown-trigger" icon="hostabee-icons:more-vert" hidden$="[[readOnly]]"></paper-icon-button>
+        <div slot="dropdown-content" class="dropdown-content">
+          <vaadin-button class="menu-item" theme="contrast" on-tap="edit">
+            <iron-icon slot="prefix" icon="hostabee-icons:edit"></iron-icon>
+            Edit
+          </vaadin-button>
+          <vaadin-button class="menu-item" theme="error" on-tap="delete">
+            <iron-icon slot="prefix" icon="hostabee-icons:delete"></iron-icon>
+            Delete
+          </vaadin-button>
+        </div>
+      </paper-menu-button>
+    </div>
+    <div class="content">
+      <template is="dom-if" if="[[!_editing]]">
+        <p>[[item.content]]</p>
+      </template>
+      <template is="dom-if" if="[[_editing]]">
+        <vaadin-text-area label="Edit your comment" minlength="20" error-message="At least 20 chars" value="[[item.content]]" onkeydown="[[_handleKeyDown()]]" autofocus required></vaadin-text-area>
+        <div class="actions">
+          <vaadin-button theme="small" on-tap="cancelEdit">Cancel</vaadin-button>
+          <vaadin-button theme="primary small" on-tap="confirmEdit">Save</vaadin-button>
+        </div>
+      </template>
+    </div>
+  </template>
+
+  <script>
+    /**
+     * `hostabee-comment`
+     * 
+     * A comment section with author profile picture, action buttons and a text
+     * area to reply.
+     * 
+     * @customElement
+     * @polymer
+     * @extends {Polymer.Element}
+     * @demo demo/hostabee-comment/basic.html Basic
+     * @demo demo/hostabee-comment/read-only.html Read only
+     * @demo demo/hostabee-comment/no-author.html Without author
+     */
+    class HostabeeComment extends Polymer.Element {
+
+      static get is() {
+        return 'hostabee-comment';
+      }
+
+      static get properties() {
+        return {
+          /**
+           * Comment to be displayed.
+           * 
+           * Expected model of `item`:
+           * {
+           *    content: 'Cum sociis natoque penatibus et magnis.',
+           *    created: 1548016737000,
+           *    author: {
+           *      fullname: 'John Doe',
+           *      profilePictureURL: ''
+           *    }
+           * }
+           * 
+           * The `item.author`, `item.author.profilePictureURL` properties are
+           * optional. The `author.fullname` property can be substitute by
+           * `author.name`.
+           * 
+           * @type {Object}
+           */
+          item: {
+            type: Object,
+          },
+          /**
+           * Read only mode enabled. When the read only mode is enabled, the
+           * action buttons are not diplayed and some functions _(delete,
+           * confirmEdit, etc...)_ are disabled.
+           * 
+           * @type {Boolean}
+           * @default false
+           */
+          readOnly: {
+            type: Boolean,
+            value: false,
+          },
+          /**
+           * In edition mode.
+           */
+          _editing: {
+            type: Boolean,
+            value: false,
+          },
+          /**
+           * Author profile. Computed using the `author` property of the comment,
+           * is contain a `name`, `picture` (if `profilePictureURL` is provided)
+           * or an `image` (if no `pictureProfileURL` provided).
+           * 
+           * @type {Object}
+           */
+          _authorProfile: {
+            type: Object,
+          },
+        };
+      }
+
+      static get observers() {
+        return [
+          '_authorChanged(item.author)',
+        ];
+      }
+
+      /**
+       * Converts any string into hexadecimal color.
+       * 
+       * @param {String} s The string to be converted into a color
+       * @return {String} An hexadecimal code of 6 digits that represent a color.
+       */
+      stringToColor(s) {
+        return '#' + this.__intToRGB(this.__hashCode(s));
+      }
+
+      /**
+       * Gets the author name. In the order, check the `fullname` property then
+       * the `name`. If `author` is not defined, the returned name is "Anonymous".
+       * 
+       * @param {Object} author The author of the comment.
+       * @return {String} The name of the author.
+       */
+      getAuthorName(author) {
+        return !author ? 'Anonymous' : author.fullname || author.name;
+      }
+
+      /**
+       * Gets the date of last edit of a comment. Returns the `updated` or the
+       * `created` date formatted. You'll get a relative time (e.g. 2 hours ago)
+       * if MomentJs is imported in your app.
+       * 
+       * @param {Object} item The comment to get the last edit date.
+       * @return {String} The formatte ddate of last edit of the comment if a
+       * `updated` property if found. Otherwise, the formatted `created` date.
+       */
+      getDateLastEdit(item) {
+        return this._formatDate(item.updated || item.created);
+      }
+
+      /**
+       * Turns the edit mode on. The read only mode must be disabled.
+       */
+      edit() {
+        if (!this.readOnly) {
+          this.set('_editing', true);
+        } else {
+          console.warn('Read only mode activated.');
+        }
+        this.shadowRoot.querySelector('paper-menu-button').close();
+      }
+
+      /**
+       * Dispatches a `comment-deleted` event containing the item to delete.
+       * The read only mode must be disabled.
+       */
+      delete() {
+        if (!this.readOnly) {
+          this.set('_editing', false);
+          this.dispatchEvent(new CustomEvent('comment-deleted', {
+            detail: this.item,
+            bubbles: true,
+            composed: true
+          }));
+        } else {
+          console.warn('Read only mode activated.');
+        }
+        this.shadowRoot.querySelector('paper-menu-button').close();
+      }
+
+      /**
+       * Exits the edit mode and discards changes.
+       */
+      cancelEdit() {
+        const textArea = this.shadowRoot.querySelector('vaadin-text-area');
+        textArea.value = this.item.content;
+        textArea.invalid = false;
+        this.set('_editing', false);
+      }
+
+      /**
+       * Confirms the changes. If the form validation passes, a `comment-modified`
+       * event containing the new version of the comment is dispatched.
+       */
+      confirmEdit() {
+        const textArea = this.shadowRoot.querySelector('vaadin-text-area');
+        if (!textArea.validate()) {
+          return;
+        }
+        let comment = Object.assign({}, this.item, {
+          content: textArea.value.trim(),
+          updated: Date.now(),
+        });
+        if (comment.content == this.item.content) {
+          return;
+        }
+        this.dispatchEvent(new CustomEvent('comment-modified', {
+          detail: comment,
+          bubbles: true,
+          composed: true
+        }));
+        this.set('_editing', false);
+      }
+
+      /**
+       * Converts a timestamp into a localized date. If MomentJs is imported in
+       * your app, a relative time is returned instead.
+       * 
+       * @param {Number} tiemstamp The time to be converted into a human redable
+       * date.
+       * @return {String} A local human redable date of a relative time if MomentJs
+       * is imported in the app.
+       */
+      _formatDate(timestamp) {
+        return 'moment' in window ?
+          moment(Number(timestamp)).fromNow() :
+          new Date(Number(timestamp)).toLocaleString();
+      }
+
+      /**
+       * Handles `keydown` events.
+       * 
+       * On "Escape" cancels the edit mode.
+       * On "Enter" confirms changes.
+       */
+      _handleKeyDown() {
+        return (event) => {
+          if (event.key == 'Escape') {
+            event.preventDefault();
+            this.cancelEdit();
+          } else if (event.key == 'Enter') {
+            event.preventDefault();
+            this.confirmEdit();
+          }
+        };
+      }
+
+      /**
+       * Recomputes the author profile. Required when this element is used inside
+       * a `dom-repeat` and has to be re-render dynamically.
+       * 
+       * @param {Object} author The author to re-compute the profile.
+       */
+      _authorChanged(author) {
+        let profile = Object.assign({}, author, {
+          name: !author ? '?' : this.getAuthorName(author),
+        });
+        if (profile.profilePictureURL) {
+          profile.picture = {
+            url: author.profilePictureURL,
+            alt: `${profile.name} profile picture`,
+          };
+        } else {
+          profile.image = {
+            backgroundColor: this.stringToColor(profile.name),
+            content: this._computeInitials(profile.name),
+          };
+          this.shadowRoot.querySelector('.profile-picture')
+            .style.setProperty('background', profile.image.backgroundColor);
+        }
+        this.set('_authorProfile', profile);
+      }
+
+      /**
+       * Extracts initials from a name. Basically, the first letter of the first
+       * and the last word of a string, uppercase.
+       * 
+       * Examples:
+       * "John Doe" = "JD"
+       * "John David Mike Doe" = "JD"
+       * "peter parker" = "PP"
+       * 
+       * @param {String} name The name to get the initials from.
+       * @return {String} The first letter of the first and the last word of a
+       * string, uppercase.
+       */
+      _computeInitials(name) {
+        var parts = name.split(' ');
+        if (parts.length > 2) {
+          parts = [parts[0], parts[parts.length - 1]];
+        }
+        return parts.map((part) => part[0]).join('').toUpperCase();
+      }
+
+      __hashCode(str) {
+        var hash = 0;
+        for (var i = 0; i < str.length; i++) {
+          hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        return hash;
+      }
+
+      __intToRGB(i) {
+        var c = (i & 0x00FFFFFF).toString(16).toUpperCase();
+        return "00000".substring(0, 6 - c.length) + c;
+      }
+
+
+      /**
+       * Fired when the `comment` is modified.
+       * _(bubbles: true, composed: true)_
+       * 
+       * @event comment-modified
+       * @param {Object} detail The new version of the comment.
+       */
+
+      /**
+       * Fired when the `comment` deletion is requested.
+       * _(bubbles: true, composed: true)_
+       * 
+       * @event comment-deleted
+       * @param {Object} detail The comment which the deletion was requested.
+       */
+    }
+
+    window.customElements.define(HostabeeComment.is, HostabeeComment);
+  </script>
+</dom-module>

@@ -1,0 +1,25 @@
+{
+  "name": "hostabee-comment-flow",
+  "description": "Commenting solution out-of-the-box in a web component.",
+  "main": "hostabee-comment-flow.html",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^2.0.0",
+    "iron-flex-layout": "PolymerElements/iron-flex-layout#^2.0.0",
+    "paper-icon-button": "PolymerElements/paper-icon-button#^2.0.0",
+    "iron-iconset-svg": "PolymerElements/iron-iconset-svg#^2.0.0",
+    "paper-menu-button": "PolymerElements/paper-menu-button#^2.0.0",
+    "web-animations-js": "^2.3.1",
+    "vaadin-text-field": "vaadin/vaadin-text-field#^2.3.5",
+    "vaadin-button": "vaadin/vaadin-button#^2.1.4"
+  },
+  "devDependencies": {
+    "web-component-tester": "Polymer/web-component-tester#^6.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0",
+    "iron-demo-helpers": "^2.0.0",
+    "iron-component-page": "^3.0.0",
+    "moment": "^2.24.0"
+  },
+  "resolutions": {
+    "polymer": "^2.0.0"
+  }
+}
