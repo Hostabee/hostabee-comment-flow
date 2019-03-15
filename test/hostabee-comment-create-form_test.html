@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+  <title>hostabee-comment-create-form test</title>
+
+  <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../hostabee-comment-create-form.html">
+</head>
+
+<body>
+
+  <test-fixture id="BasicTestFixture">
+    <template>
+      <hostabee-comment-create-form></hostabee-comment-create-form>
+    </template>
+  </test-fixture>
+
+  <script>
+    describe('Basic', function() {
+      let element;
+
+      before(function() {
+        element = fixture('BasicTestFixture');
+      });
+
+      it('should not display buttons by default', function() {
+        expect(element.buttonsShown).to.be.false;
+        expect(element.shadowRoot.querySelector('.actions')).to.be.null;
+      });
+
+      it('should display buttons when attribute "buttons-shown" is true', function() {
+        element.buttonsShown = true;
+        expect(element.shadowRoot.querySelector('.actions')).to.be.null;
+      });
+
+      it('should not dispatch event if form is not valid', function(done) {
+        const asyncAssert = function() {
+          expect.fail('event should not have been dispatched');
+        };
+        element.addEventListener('comment-added', asyncAssert);
+        element.confirm();
+        setTimeout(function() {
+          element.removeEventListener('comment-added', asyncAssert);
+          done();
+        }, 10);
+      });
+
+      it('should dispatch an event if form is valid', function(done) {
+        const asyncAssert = function() {
+          element.removeEventListener('comment-added', asyncAssert);
+          done();
+        };
+        element.addEventListener('comment-added', asyncAssert);
+        element.shadowRoot.querySelector('vaadin-text-area').value = 'Cum sociis natoque penatibus et magnis.';
+        element.confirm();
+      });
+    });
+  </script>
+
+</body>
+
+</html>

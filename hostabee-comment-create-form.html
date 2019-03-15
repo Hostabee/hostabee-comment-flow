@@ -1,0 +1,149 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../vaadin-text-field/vaadin-text-area.html">
+<link rel="import" href="../vaadin-button/vaadin-button.html">
+
+<dom-module id="hostabee-comment-create-form" theme-for="vaadin-text-area">
+  <template>
+    <style>
+      :host {
+        @apply --layout-flex;
+      }
+
+      vaadin-text-area {
+        width: 100%;
+        max-height: 38px;
+      }
+
+      vaadin-text-area[has-value] {
+        min-height: 76px;
+        max-height: 150px;
+      }
+
+      vaadin-text-area[focused][has-value] {
+        min-height: 76px;
+      }
+
+      [part="input-field"] {
+        min-height: 38px;
+      }
+
+      [part="value"] {
+        min-height: 24px;
+      }
+
+      .actions {
+        @apply --layout-horizontal;
+        @apply --layout-end-justified;
+      }
+
+      .actions vaadin-button {
+        margin-left: 8px;
+      }
+    </style>
+
+    <vaadin-text-area placeholder="Write a comment..." minlength="20" error-message="At least 20 chars" onkeydown="[[_handleKeyDown()]]" required></vaadin-text-area>
+
+    <template is="dom-if" if="[[buttonsShown]]">
+      <div class="actions">
+        <vaadin-button theme="small" on-click="cancel">Cancel</vaadin-button>
+        <vaadin-button theme="primary small" on-click="confirm">Save</vaadin-button>
+      </div>
+    </template>
+
+  </template>
+
+  <script>
+    /**
+     * `hostabee-comment-create-form`
+     * 
+     * A form to create a comment.
+     *
+     * @summary A form to create a comment.
+     * @customElement
+     * @polymer
+     * @extends {Polymer.Element}
+     * @demo demo/hostabee-comment-create-form/basic.html Basic
+     */
+    class HostabeeCommentCreateForm extends Polymer.Element {
+
+      static get is() {
+        return 'hostabee-comment-create-form';
+      }
+
+      static get properties() {
+        return {
+          /**
+           * Buttons are shown. Set to `true` to display buttons to the bottom
+           * of the form.
+           * 
+           * @type {Boolean}
+           * @default false
+           */
+          buttonsShown: {
+            type: Boolean,
+            value: false,
+          }
+        };
+      }
+
+      /**
+       * Cancels the form and cleans it.
+       */
+      cancel() {
+        let textArea = this.shadowRoot.querySelector('vaadin-text-area');
+        textArea.value = '';
+        textArea.blur();
+      }
+
+      /**
+       * Confirms the form and cleans it.
+       */
+      confirm() {
+        let textArea = this.shadowRoot.querySelector('vaadin-text-area');
+        if (textArea.validate()) {
+          this.dispatchEvent(new CustomEvent('comment-added', {
+            bubbles: true,
+            composed: true,
+            detail: {
+              content: textArea.value.trim(),
+              created: Date.now(),
+            }
+          }));
+          this.cancel();
+        }
+      }
+
+      /**
+       * Handles `keydown` events.
+       * 
+       * On "Escape" cancels the form.
+       * On "Enter" confirms the form.
+       * 
+       * @private
+       */
+      _handleKeyDown() {
+        return (event) => {
+          if (event.key == 'Escape') {
+            event.preventDefault();
+            this.cancel();
+          } else if (event.key == 'Enter') {
+            event.preventDefault();
+            this.confirm();
+          }
+        };
+      }
+
+      /**
+       * Fired when the form is confirmed.
+       * _(bubbles: true, composed: true)_
+       * 
+       * @event comment-added
+       * @param {Object} detail The comment to add.
+       */
+
+    }
+
+    window.customElements.define(HostabeeCommentCreateForm.is, HostabeeCommentCreateForm);
+  </script>
+</dom-module>
