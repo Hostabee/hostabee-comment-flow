@@ -35,6 +35,7 @@
   "homepage": "https://github.com/Hostabee/hostabee-comment-flow#readme",
   "devDependencies": {
     "commitizen": "^3.0.7",
+    "moment": "^2.24.0",
     "standard-version": "^5.0.1"
   },
   "dependencies": {}

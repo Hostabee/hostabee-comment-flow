@@ -611,11 +611,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 189,
+              "line": 190,
               "column": 10
             },
             "end": {
-              "line": 191,
+              "line": 192,
               "column": 11
             }
           },
@@ -632,11 +632,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 200,
+              "line": 201,
               "column": 10
             },
             "end": {
-              "line": 203,
+              "line": 204,
               "column": 11
             }
           },
@@ -654,11 +654,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 207,
+              "line": 208,
               "column": 10
             },
             "end": {
-              "line": 211,
+              "line": 212,
               "column": 11
             }
           },
@@ -677,11 +677,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 219,
+              "line": 220,
               "column": 10
             },
             "end": {
-              "line": 221,
+              "line": 222,
               "column": 11
             }
           },
@@ -2915,11 +2915,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 237,
+              "line": 238,
               "column": 6
             },
             "end": {
-              "line": 239,
+              "line": 240,
               "column": 7
             }
           },
@@ -2942,11 +2942,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 248,
+              "line": 249,
               "column": 6
             },
             "end": {
-              "line": 250,
+              "line": 251,
               "column": 7
             }
           },
@@ -2969,11 +2969,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 261,
+              "line": 262,
               "column": 6
             },
             "end": {
-              "line": 263,
+              "line": 264,
               "column": 7
             }
           },
@@ -2996,11 +2996,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 268,
+              "line": 269,
               "column": 6
             },
             "end": {
-              "line": 275,
+              "line": 276,
               "column": 7
             }
           },
@@ -3016,11 +3016,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 281,
+              "line": 282,
               "column": 6
             },
             "end": {
-              "line": 293,
+              "line": 294,
               "column": 7
             }
           },
@@ -3036,11 +3036,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 298,
+              "line": 299,
               "column": 6
             },
             "end": {
-              "line": 303,
+              "line": 304,
               "column": 7
             }
           },
@@ -3056,11 +3056,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 309,
+              "line": 310,
               "column": 6
             },
             "end": {
-              "line": 331,
+              "line": 332,
               "column": 7
             }
           },
@@ -3076,11 +3076,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 342,
+              "line": 343,
               "column": 6
             },
             "end": {
-              "line": 346,
+              "line": 347,
               "column": 7
             }
           },
@@ -3101,11 +3101,11 @@
           "privacy": "private",
           "sourceRange": {
             "start": {
-              "line": 356,
+              "line": 357,
               "column": 6
             },
             "end": {
-              "line": 366,
+              "line": 367,
               "column": 7
             }
           },
@@ -3118,11 +3118,11 @@
           "privacy": "private",
           "sourceRange": {
             "start": {
-              "line": 375,
+              "line": 376,
               "column": 6
             },
             "end": {
-              "line": 393,
+              "line": 394,
               "column": 7
             }
           },
@@ -3144,11 +3144,11 @@
           "privacy": "private",
           "sourceRange": {
             "start": {
-              "line": 409,
+              "line": 410,
               "column": 6
             },
             "end": {
-              "line": 415,
+              "line": 416,
               "column": 7
             }
           },
@@ -3171,11 +3171,11 @@
           "privacy": "private",
           "sourceRange": {
             "start": {
-              "line": 420,
+              "line": 421,
               "column": 6
             },
             "end": {
-              "line": 426,
+              "line": 427,
               "column": 7
             }
           },
@@ -3192,11 +3192,11 @@
           "privacy": "private",
           "sourceRange": {
             "start": {
-              "line": 431,
+              "line": 432,
               "column": 6
             },
             "end": {
-              "line": 434,
+              "line": 435,
               "column": 7
             }
           },
@@ -4177,16 +4177,20 @@
         {
           "url": "demo/hostabee-comment/no-author.html",
           "description": "Without author"
+        },
+        {
+          "url": "demo/hostabee-comment/with-momentjs.html",
+          "description": "With MomentJs in your app"
         }
       ],
       "metadata": {},
       "sourceRange": {
         "start": {
-          "line": 162,
+          "line": 163,
           "column": 4
         },
         "end": {
-          "line": 452,
+          "line": 453,
           "column": 5
         }
       },
@@ -4199,11 +4203,11 @@
           "description": "Comment to be displayed.\n\nExpected model of `item`:\n{\n   content: 'Cum sociis natoque penatibus et magnis.',\n   created: 1548016737000,\n   author: {\n     fullname: 'John Doe',\n     profilePictureURL: ''\n   }\n}\n\nThe `item.author`, `item.author.profilePictureURL` properties are\noptional. The `author.fullname` property can be substitute by\n`author.name`.",
           "sourceRange": {
             "start": {
-              "line": 189,
+              "line": 190,
               "column": 10
             },
             "end": {
-              "line": 191,
+              "line": 192,
               "column": 11
             }
           },
@@ -4215,11 +4219,11 @@
           "description": "Read only mode enabled. When the read only mode is enabled, the\naction buttons are not diplayed and some functions _(delete,\nconfirmEdit, etc...)_ are disabled.",
           "sourceRange": {
             "start": {
-              "line": 200,
+              "line": 201,
               "column": 10
             },
             "end": {
-              "line": 203,
+              "line": 204,
               "column": 11
             }
           },
@@ -4231,11 +4235,11 @@
           "description": "In edition mode.",
           "sourceRange": {
             "start": {
-              "line": 207,
+              "line": 208,
               "column": 10
             },
             "end": {
-              "line": 211,
+              "line": 212,
               "column": 11
             }
           },
@@ -7184,7 +7188,7 @@
               "column": 6
             },
             "end": {
-              "line": 129,
+              "line": 132,
               "column": 7
             }
           },
@@ -8165,7 +8169,7 @@
           "column": 4
         },
         "end": {
-          "line": 131,
+          "line": 134,
           "column": 5
         }
       },
