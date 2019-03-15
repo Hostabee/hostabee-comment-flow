@@ -123,7 +123,10 @@
         }
         this._set_comments(this.comments.map((comment) => {
           if (typeof comment.author != 'object') {
-            comment.author = this.users.find((u) => u.id == comment.author);
+            var user = this.users.find((u) => u.id == comment.author);
+            if (user) {
+              comment.author = user;
+            }
           }
           return comment;
         }));

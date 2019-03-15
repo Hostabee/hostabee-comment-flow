@@ -247,7 +247,7 @@
        * @return {String} The name of the author.
        */
       getAuthorName(author) {
-        return !author ? 'Anonymous' : author.fullname || author.name;
+        return !author ? 'Anonymous' : author.fullname || author.name || 'Anonymous';
       }
 
       /**

@@ -21,6 +21,12 @@
     </template>
   </test-fixture>
 
+  <test-fixture id="ReadOnlyTestFixture">
+    <template>
+      <hostabee-comment-flow read-only></hostabee-comment-flow>
+    </template>
+  </test-fixture>
+
   <script>
     describe('Basic', () => {
       let element;
@@ -33,6 +39,64 @@
         expect(element.comments).to.be.empty;
         expect(element.users).to.be.empty;
         expect(element.readOnly).to.be.false;
+      });
+
+      it('should link comments and authors when they are provided separately', function() {
+        element.comments = [{
+          author: 1,
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+          created: Date.now()
+        }, {
+          author: 'two',
+          content: 'Lorem ipsum dolor sit amet.',
+          created: Date.now()
+        }, {
+          author: 3,
+          content: 'Consectetur adipiscing elit.',
+          created: Date.now()
+        }, {
+          content: 'Consectetur adipiscing elit.',
+          created: Date.now()
+        }];
+        element.users = [{
+          id: 'two',
+          name: 'Mary Jane'
+        }, {
+          id: 1,
+          fullname: 'Peter Parker'
+        }];
+        expect(element._comments[0].author).to.be.equal(element.users[1]);
+        expect(element._comments[1].author).to.be.equal(element.users[0]);
+        expect(element._comments[2].author).to.be.equal(3);
+        expect(element._comments[3].author).to.be.undefined;
+      });
+    });
+
+    describe('ReadOnly', () => {
+      let element;
+
+      before(function() {
+        element = fixture('ReadOnlyTestFixture');
+      });
+
+      it('should disable edit on all comments', () => {
+        element.comments = [{
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+          created: Date.now()
+        }, {
+          content: 'Lorem ipsum dolor sit amet.',
+          created: Date.now()
+        }, {
+          content: 'Consectetur adipiscing elit.',
+          created: Date.now()
+        }, {
+          content: 'Consectetur adipiscing elit.',
+          created: Date.now()
+        }];
+        flush(function() {
+          element.shadowRoot.querySelectorAll('hostabee-comment')
+            .forEach(comment => expect(comment.readOnly).to.be.true);
+        });
       });
     });
   </script>
