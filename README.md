@@ -15,7 +15,7 @@ Commenting solution out-of-the-box in a web component.
 </script>
 ```
 
-<img src="https://raw.githubusercontent.com/Hostabee/hostabee-comment-flow/master/screenshot.png" alt="Screenshot of hostabee-comment-flow">
+![Screenshot of hostabee-comment-flow](https://raw.githubusercontent.com/Hostabee/hostabee-comment-flow/master/screenshot.png)
 
 ## Installation
 
@@ -33,20 +33,20 @@ Once installed, import it in your application:
 
 1. Fork the `hostabee-comment-flow` repository and clone it locally.
 
-1. Make sure you have [npm](https://www.npmjs.com/) and [Bower](https://bower.io) installed.
+2. Make sure you have [npm](https://www.npmjs.com/) and [Bower](https://bower.io) installed.
 
-1. When in the `hostabee-comment-flow` directory, run `npm install` and then `bower install` to install dependencies.
+3. When in the `hostabee-comment-flow` directory, run `npm install` and then `bower install` to install dependencies.
 
-1. Run `npm start`, browser will automatically open the component API documentation.
+4. Run `npm start`, browser will automatically open the component API documentation.
 
-1. You can also open demo or in-browser tests by adding **demo** or **test** to the URL, for example:
+5. You can also open demo or in-browser tests by adding **demo** or **test** to the URL, for example:
 
-  - http://127.0.0.1:3000/components/hostabee-comment-flow/demo
-  - http://127.0.0.1:3000/components/hostabee-comment-flow/test
+- http://127.0.0.1:3000/components/hostabee-comment-flow/demo/hostabee-comment-flow.html
+- http://127.0.0.1:3000/components/hostabee-comment-flow/test
 
 ## Running Tests
 
-* When in the `hostabee-comment-flow` directory, run `polymer test`
+- When in the `hostabee-comment-flow` directory, run `polymer test`
 
 ## Contributing
 
