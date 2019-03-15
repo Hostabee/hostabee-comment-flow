@@ -41,11 +41,15 @@
       });
 
       it('should not be able to confirm edit when not in edit mode', function(done) {
-        element.addEventListener('comment-modified', function() {
+        const asyncAssert = function() {
           expect.fail('event should not have been dispatched');
-        });
+        };
+        element.addEventListener('comment-modified', asyncAssert);
         element.confirmEdit();
-        setTimeout(() => done(), 10);
+        setTimeout(function() {
+          element.removeEventListener('comment-modified', asyncAssert);
+          done();
+        }, 10);
       });
 
       it('should set current comment content to text area when switching in edit mode', function(done) {
@@ -100,11 +104,15 @@
       });
 
       it('should disable method delete', function(done) {
-        element.addEventListener('comment-deleted', function() {
+        const asyncAssert = function() {
           expect.fail('event should not have been dispatched');
-        });
+        };
+        element.addEventListener('comment-deleted', asyncAssert);
         element.delete();
-        setTimeout(() => done(), 10);
+        setTimeout(function() {
+          element.removeEventListener('comment-deleted', asyncAssert);
+          done();
+        }, 10);
       });
 
       it('should disable method edit', function() {
