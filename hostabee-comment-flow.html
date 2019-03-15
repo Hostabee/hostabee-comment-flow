@@ -12,17 +12,24 @@
     <template is="dom-repeat" items="[[_comments]]" as="comment" restamp>
       <hostabee-comment item="[[comment]]" read-only=[[readOnly]]></hostabee-comment>
     </template>
+    <template is="dom-if" if="[[!readOnly]]">
+      <hostabee-comment-create-form></hostabee-comment-create-form>
+    </template>
   </template>
   <script>
     /**
      * `hostabee-comment-flow`
      * 
-     * Commenting solution out-of-the-box in a web component.
+     * Commenting solution out-of-the-box in a Web Component. Provides in few
+     * lines of code a comments flow allowing users to create, edit and delete
+     * comments.
      *
+     * @summary Commenting solution out-of-the-box.
      * @customElement
      * @polymer
      * @extends {Polymer.Element}
-     * @demo demo/hostabee-comment-flow.html Basic
+     * @demo demo/hostabee-comment-flow/basic.html Basic
+     * @demo demo/hostabee-comment-flow/read-only.html Read only
      */
     class HostabeeCommentFlow extends Polymer.Element {
 
@@ -58,7 +65,6 @@
           comments: {
             type: Array,
             value: [],
-            notify: true,
           },
           /**
            * List of users. It is OPTIONAL and will be used to retrieve comment
@@ -115,6 +121,8 @@
       /**
        * Fills list of comment with authors when the comment contains only an ID
        * and a list of users is provided.
+       * 
+       * @private
        */
       _computeComments() {
         if (!this.users) {
