@@ -133,10 +133,10 @@
       </paper-menu-button>
     </div>
     <div class="content">
-      <template is="dom-if" if="[[!_editing]]">
+      <template is="dom-if" if="[[!editing]]">
         <p>[[item.content]]</p>
       </template>
-      <template is="dom-if" if="[[_editing]]">
+      <template is="dom-if" if="[[editing]]">
         <vaadin-text-area label="Edit your comment" minlength="20" error-message="At least 20 chars" value="[[item.content]]" onkeydown="[[_handleKeyDown()]]" autofocus required></vaadin-text-area>
         <div class="actions">
           <vaadin-button theme="small" on-tap="cancelEdit">Cancel</vaadin-button>
@@ -205,9 +205,10 @@
           /**
            * In edition mode.
            */
-          _editing: {
+          editing: {
             type: Boolean,
             value: false,
+            readOnly: true,
           },
           /**
            * Author profile. Computed using the `author` property of the comment,
@@ -267,9 +268,9 @@
        */
       edit() {
         if (!this.readOnly) {
-          this.set('_editing', true);
+          this._setEditing(true);
         } else {
-          console.warn('Read only mode activated.');
+          console.warn('The comment cannot be edited when the read-only mode is turned on.');
         }
         this.shadowRoot.querySelector('paper-menu-button').close();
       }
@@ -280,14 +281,14 @@
        */
       delete() {
         if (!this.readOnly) {
-          this.set('_editing', false);
+          this._setEditing(false);
           this.dispatchEvent(new CustomEvent('comment-deleted', {
             detail: this.item,
             bubbles: true,
             composed: true
           }));
         } else {
-          console.warn('Read only mode activated.');
+          console.warn('The comment cannot be deleted when the read-only mode is turned on.');
         }
         this.shadowRoot.querySelector('paper-menu-button').close();
       }
@@ -299,7 +300,7 @@
         const textArea = this.shadowRoot.querySelector('vaadin-text-area');
         textArea.value = this.item.content;
         textArea.invalid = false;
-        this.set('_editing', false);
+        this._setEditing(false);
       }
 
       /**
@@ -307,6 +308,10 @@
        * event containing the new version of the comment is dispatched.
        */
       confirmEdit() {
+        if (!this.editing || this.readOnly) {
+          console.warn('The comment cannot be edited when the read-only mode is turned on.');
+          return;
+        }
         const textArea = this.shadowRoot.querySelector('vaadin-text-area');
         if (!textArea.validate()) {
           return;
@@ -323,7 +328,7 @@
           bubbles: true,
           composed: true
         }));
-        this.set('_editing', false);
+        this._setEditing(false);
       }
 
       /**
@@ -346,6 +351,8 @@
        * 
        * On "Escape" cancels the edit mode.
        * On "Enter" confirms changes.
+       * 
+       * @private
        */
       _handleKeyDown() {
         return (event) => {
@@ -363,6 +370,7 @@
        * Recomputes the author profile. Required when this element is used inside
        * a `dom-repeat` and has to be re-render dynamically.
        * 
+       * @private
        * @param {Object} author The author to re-compute the profile.
        */
       _authorChanged(author) {
@@ -394,6 +402,7 @@
        * "John David Mike Doe" = "JD"
        * "peter parker" = "PP"
        * 
+       * @private
        * @param {String} name The name to get the initials from.
        * @return {String} The first letter of the first and the last word of a
        * string, uppercase.
@@ -406,6 +415,9 @@
         return parts.map((part) => part[0]).join('').toUpperCase();
       }
 
+      /**
+       * @private
+       */
       __hashCode(str) {
         var hash = 0;
         for (var i = 0; i < str.length; i++) {
@@ -414,6 +426,9 @@
         return hash;
       }
 
+      /**
+       * @private
+       */
       __intToRGB(i) {
         var c = (i & 0x00FFFFFF).toString(16).toUpperCase();
         return "00000".substring(0, 6 - c.length) + c;

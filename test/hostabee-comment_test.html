@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+  <title>hostabee-comment test</title>
+
+  <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../hostabee-comment.html">
+</head>
+
+<body>
+
+  <test-fixture id="BasicTestFixture">
+    <template>
+      <hostabee-comment></hostabee-comment>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="ReadOnlyTestFixture">
+    <template>
+      <hostabee-comment read-only></hostabee-comment>
+    </template>
+  </test-fixture>
+
+  <script>
+    describe('Basic', function() {
+      let element;
+
+      before(function() {
+        element = fixture('BasicTestFixture');
+      });
+
+      it('should be instantiable with default properties', function() {
+        expect(element.item).to.be.undefined;
+        expect(element.readOnly).to.be.false;
+      });
+
+      it('should not be able to confirm edit when not in edit mode', function(done) {
+        element.addEventListener('comment-modified', function() {
+          expect.fail('event should not have been dispatched');
+        });
+        element.confirmEdit();
+        setTimeout(() => done(), 10);
+      });
+
+      it('should set current comment content to text area when switching in edit mode', function(done) {
+        const comment = {
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+          created: Date.now(),
+        };
+        element.item = comment;
+        element.edit();
+        flush(function() {
+          var textArea = element.shadowRoot.querySelector('vaadin-text-area');
+          expect(textArea).to.not.be.null;
+          expect(textArea.value).to.be.equal(comment.content);
+          done();
+        });
+      });
+
+      it('should discard changes when edit is canceled', function(done) {
+        const comment = {
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+          created: Date.now(),
+        };
+        element.item = comment;
+        element.edit();
+        flush(function() {
+          var textArea = element.shadowRoot.querySelector('vaadin-text-area');
+          expect(textArea).to.not.be.null;
+          textArea.value = 'Curabitur vehicula dignissim dui.';
+          element.cancelEdit();
+          expect(textArea.value).to.be.equal(comment.content);
+          done();
+        });
+      });
+    });
+
+    describe('ReadOnly', function() {
+      let element;
+
+      before(function() {
+        element = fixture('ReadOnlyTestFixture');
+      });
+
+      it('should be instantiable with default properties', function() {
+        expect(element.item).to.be.undefined;
+        expect(element.readOnly).to.be.true;
+      });
+
+      it('should not display the menu button', function() {
+        var menu = element.shadowRoot.querySelector('paper-menu-button');
+        expect(menu).to.not.be.null;
+        expect(menu.querySelector('paper-icon-button').hidden).to.be.true;
+      });
+
+      it('should disable method delete', function(done) {
+        element.addEventListener('comment-deleted', function() {
+          expect.fail('event should not have been dispatched');
+        });
+        element.delete();
+        setTimeout(() => done(), 10);
+      });
+
+      it('should disable method edit', function() {
+        element.edit();
+        expect(element.editing).to.be.false;
+      });
+    });
+  </script>
+
+</body>
+
+</html>
