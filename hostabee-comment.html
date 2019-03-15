@@ -22,9 +22,10 @@
       }
 
       .heading {
-        height: 56px;
         align-items: center;
         color: var(--primary-text-color, rgba(0, 0, 0, 0.70));
+        padding-top: 5px;
+        padding-bottom: 5px;
         @apply --layout-horizontal;
       }
 
@@ -45,8 +46,8 @@
       }
 
       .profile-picture {
-        height: 50px;
-        width: 50px;
+        min-height: 50px;
+        min-width: 50px;
         font-size: 1.6em;
         color: #ffffff;
         border-radius: 50%;
@@ -65,15 +66,15 @@
       }
 
       .content {
-        padding-top: 10px;
+        padding: 10px 5px 0 5px;
         color: var(--primary-text-color, rgba(0, 0, 0, 0.7));
         font-size: 1.1em;
-        overflow: auto;
-        overflow-wrap: break-word;
       }
 
-      .content p {
+      .content__text {
         max-height: 150px;
+        overflow: auto;
+        overflow-wrap: break-word;
       }
 
       .dropdown-content {
@@ -141,7 +142,7 @@
     </div>
     <div class="content">
       <template is="dom-if" if="[[!editing]]">
-        <p>[[item.content]]</p>
+        <div class="content__text">[[item.content]]</div>
       </template>
       <template is="dom-if" if="[[editing]]">
         <vaadin-text-area label="Edit your comment" minlength="20" error-message="At least 20 chars" value="[[item.content]]" onkeydown="[[_handleKeyDown()]]" autofocus required></vaadin-text-area>
