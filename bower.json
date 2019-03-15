@@ -2,6 +2,9 @@
   "name": "hostabee-comment-flow",
   "description": "Commenting solution out-of-the-box in a web component.",
   "main": "hostabee-comment-flow.html",
+  "authors": [
+    "Hostabee SAS"
+  ],
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
     "iron-flex-layout": "PolymerElements/iron-flex-layout#^2.0.0",
