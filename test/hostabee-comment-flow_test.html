@@ -21,21 +21,19 @@
     </template>
   </test-fixture>
 
-  <test-fixture id="ChangedPropertyTestFixture">
-    <template>
-      <hostabee-comment-flow prop1="new-prop1"></hostabee-comment-flow>
-    </template>
-  </test-fixture>
-
   <script>
-    suite('hostabee-comment-flow', () => {
+    describe('Basic', () => {
+      let element;
 
-      test('instantiating the element with default properties works', () => {
-        const element = fixture('BasicTestFixture');
-        expect(element.comments).to.be.empty;
-        expect(element.users).to.be.empty;
+      before(function() {
+        element = fixture('BasicTestFixture');
       });
 
+      it('should be instantiable with default properties', () => {
+        expect(element.comments).to.be.empty;
+        expect(element.users).to.be.empty;
+        expect(element.readOnly).to.be.false;
+      });
     });
   </script>
 
