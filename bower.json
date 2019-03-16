@@ -13,7 +13,8 @@
     "paper-menu-button": "PolymerElements/paper-menu-button#^2.0.0",
     "web-animations-js": "^2.3.1",
     "vaadin-text-field": "vaadin/vaadin-text-field#^2.3.5",
-    "vaadin-button": "vaadin/vaadin-button#^2.1.4"
+    "vaadin-button": "vaadin/vaadin-button#^2.1.4",
+    "hostabee-profile-picture": "^1.0.0"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^6.0.0",

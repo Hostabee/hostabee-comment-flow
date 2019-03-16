@@ -8,6 +8,7 @@
 <link rel="import" href="../paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../web-animations-js/web-animations-next-lite.min.html">
 <link rel="import" href="../vaadin-text-field/vaadin-text-area.html">
+<link rel="import" href="../hostabee-profile-picture/hostabee-profile-picture.html">
 
 <dom-module id="hostabee-comment">
   <template>
@@ -43,26 +44,6 @@
       .summary__date {
         color: var(--secondary-text-color, rgba(0, 0, 0, 0.3));
         font-size: 0.95em;
-      }
-
-      .profile-picture {
-        min-height: 50px;
-        min-width: 50px;
-        font-size: 1.6em;
-        color: #ffffff;
-        border-radius: 50%;
-        @apply --layout-vertical;
-        @apply --layout-center-center;
-      }
-
-      .profile-picture img {
-        height: 50px;
-        width: 50px;
-      }
-
-      .profile-picture__initials {
-        vertical-align: middle;
-        vertical-align: -webkit-baseline-middle;
       }
 
       .content {
@@ -110,14 +91,7 @@
     </style>
 
     <div class="heading">
-      <div class="profile-picture">
-        <template is="dom-if" if="[[_authorProfile.picture]]">
-          <img src="[[_authorProfile.picture.url]]" alt="[[_authorProfile.picture.alt]]">
-        </template>
-        <template is="dom-if" if="[[_authorProfile.image]]">
-          <span class="profile-picture__initials">[[_authorProfile.image.content]]</span>
-        </template>
-      </div>
+      <hostabee-profile-picture src="[[item.author]]"></hostabee-profile-picture>
       <div class="summary">
         <span class="summary__author-name">[[getAuthorName(item.author)]]</span>
         <div class="summary__date">
@@ -220,33 +194,7 @@
             value: false,
             readOnly: true,
           },
-          /**
-           * Author profile. Computed using the `author` property of the comment,
-           * is contain a `name`, `picture` (if `profilePictureURL` is provided)
-           * or an `image` (if no `pictureProfileURL` provided).
-           * 
-           * @type {Object}
-           */
-          _authorProfile: {
-            type: Object,
-          },
         };
-      }
-
-      static get observers() {
-        return [
-          '_authorChanged(item.author)',
-        ];
-      }
-
-      /**
-       * Converts any string into hexadecimal color.
-       * 
-       * @param {String} s The string to be converted into a color
-       * @return {String} An hexadecimal code of 6 digits that represent a color.
-       */
-      stringToColor(s) {
-        return '#' + this.__intToRGB(this.__hashCode(s));
       }
 
       /**
@@ -375,75 +323,6 @@
           }
         };
       }
-
-      /**
-       * Recomputes the author profile. Required when this element is used inside
-       * a `dom-repeat` and has to be re-render dynamically.
-       * 
-       * @private
-       * @param {Object} author The author to re-compute the profile.
-       */
-      _authorChanged(author) {
-        let profile = Object.assign({}, author, {
-          name: !author ? '?' : this.getAuthorName(author),
-        });
-        if (profile.profilePictureURL) {
-          profile.picture = {
-            url: author.profilePictureURL,
-            alt: `${profile.name} profile picture`,
-          };
-        } else {
-          profile.image = {
-            backgroundColor: this.stringToColor(profile.name),
-            content: this._computeInitials(profile.name),
-          };
-          this.shadowRoot.querySelector('.profile-picture')
-            .style.setProperty('background', profile.image.backgroundColor);
-        }
-        this.set('_authorProfile', profile);
-      }
-
-      /**
-       * Extracts initials from a name. Basically, the first letter of the first
-       * and the last word of a string, uppercase.
-       * 
-       * Examples:
-       * "John Doe" = "JD"
-       * "John David Mike Doe" = "JD"
-       * "peter parker" = "PP"
-       * 
-       * @private
-       * @param {String} name The name to get the initials from.
-       * @return {String} The first letter of the first and the last word of a
-       * string, uppercase.
-       */
-      _computeInitials(name) {
-        var parts = name.split(' ');
-        if (parts.length > 2) {
-          parts = [parts[0], parts[parts.length - 1]];
-        }
-        return parts.map((part) => part[0]).join('').toUpperCase();
-      }
-
-      /**
-       * @private
-       */
-      __hashCode(str) {
-        var hash = 0;
-        for (var i = 0; i < str.length; i++) {
-          hash = str.charCodeAt(i) + ((hash << 5) - hash);
-        }
-        return hash;
-      }
-
-      /**
-       * @private
-       */
-      __intToRGB(i) {
-        var c = (i & 0x00FFFFFF).toString(16).toUpperCase();
-        return "00000".substring(0, 6 - c.length) + c;
-      }
-
 
       /**
        * Fired when the `comment` is modified.
