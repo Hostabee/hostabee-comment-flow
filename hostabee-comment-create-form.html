@@ -55,10 +55,10 @@
       <template is="dom-if" if="[[author]]">
         <hostabee-profile-picture src="[[author]]" size="38"></hostabee-profile-picture>
       </template>
-      <vaadin-text-area placeholder="Write a comment..." minlength="20" error-message="At least 20 chars" onkeydown="[[_handleKeyDown()]]" required></vaadin-text-area>
+      <vaadin-text-area placeholder="Write a comment..." minlength="20" error-message="At least 20 chars" onkeydown="[[_handleKeyDown()]]" value="{{value}}" required></vaadin-text-area>
     </div>
 
-    <template is="dom-if" if="[[buttonsShown]]">
+    <template is="dom-if" if="[[actionButtonsVisible]]">
       <div class="actions">
         <vaadin-button theme="small" on-click="cancel">Cancel</vaadin-button>
         <vaadin-button theme="primary small" on-click="confirm">Save</vaadin-button>
@@ -99,6 +99,18 @@
             value: false,
           },
           /**
+           * Buttons are shown when form input is not empty. Set to `true` to
+           * display buttons to the bottom of the form if and only if the input
+           * is not empty.
+           * 
+           * @type {Boolean}
+           * @default false
+           */
+          buttonsShownIfValue: {
+            type: Boolean,
+            value: false,
+          },
+          /**
            * Author of the comments sent by the form.
            * 
            * @type {Object}
@@ -106,7 +118,40 @@
           author: {
             type: Object,
           },
+          /**
+           * Buttons are visible. In contrary of the both options "buttonsShown"
+           * and "buttonsShownIfValue" which are user wishes, this property tells
+           * the actual state about the buttons visibility. It's the result of
+           * the consideration of the options and the current form input value.
+           * 
+           * @type {Boolean}
+           * @default false
+           */
+          actionButtonsVisible: {
+            type: Boolean,
+            value: false,
+            readOnly: true,
+          },
+          /**
+           * Value in the form input.
+           * 
+           * @type {String}
+           */
+          value: {
+            type: String,
+          },
         };
+      }
+
+      /**
+       * Array of strings describing multi-property observer methods and their
+       * dependant properties
+       */
+      static get observers() {
+        return [
+          '_actionButtonsVisibilityChanged(value)',
+          '_actionButtonsVisibilityChanged(buttonsShown)',
+        ];
       }
 
       /**
@@ -157,6 +202,17 @@
             this.confirm();
           }
         };
+      }
+
+      /**
+       * Defines if action buttons must be visible or not. It depends of the
+       * choice of the user and the form state.
+       * 
+       * @private
+       */
+      _actionButtonsVisibilityChanged() {
+        this._setActionButtonsVisible(this.buttonsShown ||
+          this.buttonsShownIfValue && this.value.length > 0);
       }
 
       /**
