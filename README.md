@@ -22,7 +22,9 @@ Commenting solution out-of-the-box in a web component.
 
 Install `<hostabee-comment-flow>`:
 
-`bower install hostabee/hostabee-comment-flow --save`
+```shell
+bower install Hostabee/hostabee-comment-flow --save
+```
 
 Once installed, import it in your application:
 
@@ -42,7 +44,7 @@ Once installed, import it in your application:
 
 5. You can also open demo or in-browser tests by adding **demo** or **test** to the URL, for example:
 
-- http://127.0.0.1:3000/components/hostabee-comment-flow/demo/hostabee-comment-flow.html
+- http://127.0.0.1:3000/components/hostabee-comment-flow/demo/hostabee-comment-flow/basic.html
 - http://127.0.0.1:3000/components/hostabee-comment-flow/test
 
 ## Running Tests
