@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+  <title>hostabee-comment-create-form demo</title>
+
+  <script src="../../../webcomponentsjs/webcomponents-loader.js"></script>
+
+  <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
+  <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
+  <link rel="import" href="../../hostabee-comment-create-form.html">
+
+  <custom-style>
+    <style is="custom-style" include="demo-pages-shared-styles">
+    </style>
+  </custom-style>
+</head>
+
+<body>
+  <div class="vertical-section-container centered">
+    <h3>With user object hostabee-comment-create-form demo</h3>
+    <demo-snippet>
+      <template>
+        <h4>Without profile picture</h4>
+        <hostabee-comment-create-form id="form-1"></hostabee-comment-create-form>
+
+        <h4>With profile picture</h4>
+        <hostabee-comment-create-form id="form-2" buttons-shown></hostabee-comment-create-form>
+
+        <script>
+          // User without profile picture.
+          const form1 = document.querySelector('#form-1');
+          form1.author = {
+            fullname: 'John Doe',
+          };
+          form1.addEventListener('comment-added', function(event) {
+            console.info('Comment to add:', event.detail);
+          })
+
+          // User with profile picture URL.
+          const form2 = document.querySelector('#form-2');
+          form2.author = {
+            profilePictureURL: 'https://image.flaticon.com/icons/svg/219/219988.svg',
+          };
+          form2.addEventListener('comment-added', function(event) {
+            console.info('Comment to add:', event.detail);
+          })
+        </script>
+      </template>
+    </demo-snippet>
+  </div>
+</body>
+
+</html>

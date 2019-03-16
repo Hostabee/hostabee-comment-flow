@@ -60,6 +60,18 @@
         element.shadowRoot.querySelector('vaadin-text-area').value = 'Cum sociis natoque penatibus et magnis.';
         element.confirm();
       });
+
+      it('should display profile picture if author is provided', function(done) {
+        element.author = {
+          fullname: 'John Doe',
+        };
+        flush(function() {
+          const hpp = element.shadowRoot.querySelector('hostabee-profile-picture');
+          expect(hpp).to.not.be.null;
+          expect(hpp.profile.picture.content).to.be.equal('JD');
+          done();
+        });
+      });
     });
   </script>
 

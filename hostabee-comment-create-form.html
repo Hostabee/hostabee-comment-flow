@@ -2,6 +2,7 @@
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../vaadin-text-field/vaadin-text-area.html">
 <link rel="import" href="../vaadin-button/vaadin-button.html">
+<link rel="import" href="../hostabee-profile-picture/hostabee-profile-picture.html">
 
 <dom-module id="hostabee-comment-create-form" theme-for="vaadin-text-area">
   <template>
@@ -40,9 +41,22 @@
       .actions vaadin-button {
         margin-left: 8px;
       }
+
+      .horizontal {
+        @apply --layout-horizontal;
+      }
+
+      hostabee-profile-picture {
+        margin: 4px;
+      }
     </style>
 
-    <vaadin-text-area placeholder="Write a comment..." minlength="20" error-message="At least 20 chars" onkeydown="[[_handleKeyDown()]]" required></vaadin-text-area>
+    <div class="horizontal">
+      <template is="dom-if" if="[[author]]">
+        <hostabee-profile-picture src="[[author]]" size="38"></hostabee-profile-picture>
+      </template>
+      <vaadin-text-area placeholder="Write a comment..." minlength="20" error-message="At least 20 chars" onkeydown="[[_handleKeyDown()]]" required></vaadin-text-area>
+    </div>
 
     <template is="dom-if" if="[[buttonsShown]]">
       <div class="actions">
@@ -83,7 +97,15 @@
           buttonsShown: {
             type: Boolean,
             value: false,
-          }
+          },
+          /**
+           * Author of the comments sent by the form.
+           * 
+           * @type {Object}
+           */
+          author: {
+            type: Object,
+          },
         };
       }
 
@@ -92,8 +114,9 @@
        */
       cancel() {
         let textArea = this.shadowRoot.querySelector('vaadin-text-area');
-        textArea.value = '';
         textArea.blur();
+        textArea.value = '';
+        textArea.invalid = false;
       }
 
       /**
@@ -105,10 +128,12 @@
           this.dispatchEvent(new CustomEvent('comment-added', {
             bubbles: true,
             composed: true,
-            detail: {
+            detail: Object.assign({}, {
               content: textArea.value.trim(),
               created: Date.now(),
-            }
+            }, this.author ? {
+              author: this.author,
+            } : null)
           }));
           this.cancel();
         }
