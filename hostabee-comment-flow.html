@@ -1,6 +1,8 @@
 <link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="../polymer/lib/elements/dom-repeat.html">
 <link rel="import" href="./hostabee-comment.html">
+<link rel="import" href="../polymer/lib/elements/dom-if.html">
+<link rel="import" href="./hostabee-comment-create-form.html">
 
 <dom-module id="hostabee-comment-flow">
   <template>
@@ -13,7 +15,7 @@
       <hostabee-comment item="[[comment]]" read-only=[[readOnly]]></hostabee-comment>
     </template>
     <template is="dom-if" if="[[!readOnly]]">
-      <hostabee-comment-create-form></hostabee-comment-create-form>
+      <hostabee-comment-create-form author="[[author]]" buttons-shown="[[buttonsShown]]"></hostabee-comment-create-form>
     </template>
   </template>
   <script>
@@ -95,6 +97,29 @@
            * @default false
            */
           readOnly: {
+            type: Boolean,
+            value: false,
+          },
+          /**
+           * A user. The comment flow will adjust the view according to the
+           * provided user representation. For exemple, if the flow is not in
+           * read only mode, the user will be able to edit/delete only comments
+           * that they have wrote. And all comments sent through the form will
+           * contain information about the author.
+           * 
+           * @type {Object}
+           */
+          author: {
+            type: Object,
+          },
+          /**
+           * Buttons are shown. Set to `true` to display buttons to the bottom
+           * of the form.
+           * 
+           * @type {Boolean}
+           * @default false
+           */
+          buttonsShown: {
             type: Boolean,
             value: false,
           },

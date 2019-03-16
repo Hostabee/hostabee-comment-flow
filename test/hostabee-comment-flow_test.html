@@ -28,14 +28,14 @@
   </test-fixture>
 
   <script>
-    describe('Basic', () => {
+    describe('Basic', function() {
       let element;
 
       before(function() {
         element = fixture('BasicTestFixture');
       });
 
-      it('should be instantiable with default properties', () => {
+      it('should be instantiable with default properties', function() {
         expect(element.comments).to.be.empty;
         expect(element.users).to.be.empty;
         expect(element.readOnly).to.be.false;
@@ -70,16 +70,40 @@
         expect(element._comments[2].author).to.be.equal(3);
         expect(element._comments[3].author).to.be.undefined;
       });
+
+      it('should display form to add comments', function(done) {
+        flush(function() {
+          const form = element.shadowRoot.querySelector('hostabee-comment-create-form');
+          expect(form).to.not.be.null;
+          done();
+        });
+      });
+
+      it('should insert author information in dispatched event when they have been provided', function(done) {
+        element.author = {
+          id: 42,
+          fullname: 'John Doe',
+        };
+        const asyncAssert = function(event) {
+          expect(event.detail.author).to.be.equal(element.author);
+          element.removeEventListener('comment-added', asyncAssert);
+          done();
+        };
+        element.addEventListener('comment-added', asyncAssert);
+        const form = element.shadowRoot.querySelector('hostabee-comment-create-form');
+        form.shadowRoot.querySelector('vaadin-text-area').value = 'Lorem ipsum dolor sit amet.';
+        form.confirm();
+      });
     });
 
-    describe('ReadOnly', () => {
+    describe('ReadOnly', function() {
       let element;
 
       before(function() {
         element = fixture('ReadOnlyTestFixture');
       });
 
-      it('should disable edit on all comments', () => {
+      it('should disable edit on all comments', function() {
         element.comments = [{
           content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
           created: Date.now()
@@ -97,6 +121,11 @@
           element.shadowRoot.querySelectorAll('hostabee-comment')
             .forEach(comment => expect(comment.readOnly).to.be.true);
         });
+      });
+
+      it('should not display form to add comments', function() {
+        const form = element.shadowRoot.querySelector('hostabee-comment-create-form');
+        expect(form).to.be.null;
       });
     });
   </script>
