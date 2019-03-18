@@ -2,17 +2,46 @@
 
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![Build Status](https://travis-ci.org/Hostabee/hostabee-comment-flow.svg?branch=master)](https://travis-ci.org/Hostabee/hostabee-comment-flow)
+[![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/hostabee/hostabee-comment-flow)
 
 Commenting solution out-of-the-box in a web component.
+
+<!--
+```
+<custom-element-demo height="400">
+  <template>
+    <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="hostabee-comment-flow.html">
+    <next-code-block></next-code-block>
+  </template>
+</custom-element-demo>
+```
+-->
 
 ```html
 <hostabee-comment-flow></hostabee-comment-flow>
 <script>
   const flow = document.querySelector('hostabee-comment-flow');
-  // Populate the comment flow
-  fetch('https://YOUR_API/comments')
-    .then(res => res.json())
-    .then(json => flow.comments = json.result);
+  const user = {
+    id: 1,
+    fullname: 'John Doe',
+    profilePictureURL: 'https://image.flaticon.com/icons/svg/219/219988.svg',
+  };
+  flow.comments = [{
+    id: user,
+    author: 1,
+    content: "Cum sociis natoque penatibus et magnis",
+    created: 1548016737000,
+  }, {
+    id: 2,
+    author: {
+      id: 2,
+      fullname: 'Jane Doe',
+    },
+    content: "ut odio vel est tempor bibendum. Donec",
+    created: 1550102502000,
+  }];
+  flow.author = user;
 </script>
 ```
 
