@@ -148,9 +148,17 @@
        */
       form() {
         var form = this.shadowRoot ? this.shadowRoot.querySelector('#form') : null;
-        return form ? form.assignedElements({
+        if (!form) {
+          return null;
+        }
+        if (form.assignedElements) {
+          return form.assignedElements({
+            flatten: true
+          })[0];
+        }
+        return form.assignedNodes({
           flatten: true
-        })[0] : null;
+        }).filter((n) => n instanceof HTMLElement)[0];
       }
 
       /**
