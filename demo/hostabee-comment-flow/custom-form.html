@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+  <title>hostabee-comment-flow demo</title>
+
+  <script src="../../../webcomponentsjs/webcomponents-loader.js"></script>
+
+  <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
+  <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
+  <link rel="import" href="../../hostabee-comment-flow.html">
+
+  <custom-style>
+    <style is="custom-style" include="demo-pages-shared-styles">
+    </style>
+  </custom-style>
+
+  <script src="./../users.js"></script>
+  <script src="./../comments.js"></script>
+</head>
+
+<body>
+  <div class="vertical-section-container centered">
+    <h3>Custom form hostabee-comment-flow demo</h3>
+    <demo-snippet>
+      <template>
+        <style>
+          .custom-form {
+            background-color: rgb(222, 243, 253);
+            border-radius: 5px;
+            border: 1px dashed #9b00ff;
+            height: 80px;
+            padding: 10px;
+          }
+        </style>
+        <hostabee-comment-flow id="demo-1">
+          <div class="custom-form" slot="form">MY FORM</div>
+        </hostabee-comment-flow>
+        <script>
+          const demo1 = document.querySelector('#demo-1');
+          demo1.comments = Hostabee.demo.comments.slice(0, 2);
+        </script>
+      </template>
+    </demo-snippet>
+
+    <demo-snippet>
+      <template>
+        <hostabee-comment-flow id="demo-2"></hostabee-comment-flow>
+        <script>
+          const demo2 = document.querySelector('#demo-2');
+          demo2.comments = Hostabee.demo.comments.slice(0, 2);
+          // Update form after 10ms to be sure it's rendered.
+          setTimeout(() => {
+            demo2.form().buttonsShown = true;
+          }, 10);
+        </script>
+      </template>
+    </demo-snippet>
+  </div>
+</body>
+
+</html>

@@ -27,6 +27,14 @@
     </template>
   </test-fixture>
 
+  <test-fixture id="CustomFormTestFixture">
+    <template>
+      <hostabee-comment-flow>
+        <div class="custom-form" slot="form">MY FORM</div>
+      </hostabee-comment-flow>
+    </template>
+  </test-fixture>
+
   <script>
     describe('Basic', function() {
       let element;
@@ -94,6 +102,10 @@
         form.shadowRoot.querySelector('vaadin-text-area').value = 'Lorem ipsum dolor sit amet.';
         form.confirm();
       });
+
+      it('should contains a hostabee-comment-create-form by default', function() {
+        expect(element.form()).to.be.an.instanceof(HostabeeCommentCreateForm);
+      });
     });
 
     describe('ReadOnly', function() {
@@ -123,9 +135,36 @@
         });
       });
 
-      it('should not display form to add comments', function() {
-        const form = element.shadowRoot.querySelector('hostabee-comment-create-form');
-        expect(form).to.be.null;
+      it('should not display form to add comments', function(done) {
+        flush(function() {
+          expect(element.form()).to.be.null;
+          done();
+        });
+      });
+    });
+
+    describe('CustomForm', function() {
+      let element;
+
+      before(function() {
+        element = fixture('CustomFormTestFixture');
+      });
+
+      it('should display the custom form', function(done) {
+        flush(function() {
+          var form = element.form();
+          expect(form.tagName).to.be.equal('DIV');
+          expect(form.innerText).to.be.equal('MY FORM');
+          done();
+        });
+      });
+
+      it('should not display the custom form when read only mode is turned on', function(done) {
+        element.readOnly = true;
+        flush(function() {
+          expect(element.form()).to.be.null;
+          done();
+        });
       });
     });
   </script>

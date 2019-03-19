@@ -15,7 +15,9 @@
       <hostabee-comment item="[[comment]]" read-only=[[readOnly]]></hostabee-comment>
     </template>
     <template is="dom-if" if="[[!readOnly]]">
-      <hostabee-comment-create-form author="[[author]]" buttons-shown="[[buttonsShown]]"></hostabee-comment-create-form>
+      <slot id="form" name="form">
+        <hostabee-comment-create-form author="[[author]]"></hostabee-comment-create-form>
+      </slot>
     </template>
   </template>
   <script>
@@ -113,17 +115,6 @@
             type: Object,
           },
           /**
-           * Buttons are shown. Set to `true` to display buttons to the bottom
-           * of the form.
-           * 
-           * @type {Boolean}
-           * @default false
-           */
-          buttonsShown: {
-            type: Boolean,
-            value: false,
-          },
-          /**
            * Computed list of comment. The data transformtion ensures the good
            * internal functioning.
            * 
@@ -141,6 +132,25 @@
           '_computeComments(comments.*)',
           '_computeComments(users.*)',
         ];
+      }
+
+      /**
+       * Gets the content of the slot "form". It can returns `null` if the element
+       * is not yet ready and the shadowRoot is not initialized. In this case try
+       * to call the function after a delay of 10ms and after it's been attached
+       * to the DOM.
+       * 
+       * If no element is provided for the slot "form", a `hostabee-comment-create-form"
+       * element is automatically inserted. In the other wise, you have the
+       * responsibility of you form validation and submission.
+       * 
+       * @return {Object} The content of the slot "form".
+       */
+      form() {
+        var form = this.shadowRoot ? this.shadowRoot.querySelector('#form') : null;
+        return form ? form.assignedElements({
+          flatten: true
+        })[0] : null;
       }
 
       /**
