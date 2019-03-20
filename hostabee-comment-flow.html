@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../polymer/lib/elements/dom-repeat.html">
 <link rel="import" href="./hostabee-comment.html">
 <link rel="import" href="../polymer/lib/elements/dom-if.html">
@@ -8,12 +9,20 @@
   <template>
     <style>
       :host {
-        display: block;
+        height: 100%;
+        @apply --layout-vertical;
+      }
+
+      .comments-container {
+        overflow-y: scroll;
+        padding-bottom: 10px;
       }
     </style>
-    <template is="dom-repeat" items="[[_comments]]" as="comment" restamp>
-      <hostabee-comment item="[[comment]]" read-only=[[readOnly]]></hostabee-comment>
-    </template>
+    <div class="comments-container">
+      <template is="dom-repeat" items="[[_comments]]" as="comment" restamp>
+        <hostabee-comment item="[[comment]]" read-only=[[readOnly]]></hostabee-comment>
+      </template>
+    </div>
     <template is="dom-if" if="[[!readOnly]]">
       <slot id="form" name="form">
         <hostabee-comment-create-form author="[[author]]"></hostabee-comment-create-form>
