@@ -304,9 +304,11 @@
         if (time) {
           var timestamp = typeof time == 'object' ?
             (time.toMillis ? time.toMillis() : time.getTime()) : time;
-          return 'moment' in window ?
-            moment(Number(timestamp)).fromNow() :
-            new Date(Number(timestamp)).toLocaleString();
+          if ('moment' in window) {
+            return moment(Number(timestamp)).fromNow();
+          }
+          var d = new Date(Number(timestamp));
+          return `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
         }
       }
 
