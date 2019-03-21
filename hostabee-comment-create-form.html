@@ -175,7 +175,7 @@
             composed: true,
             detail: Object.assign({}, {
               content: textArea.value.trim(),
-              created: Date.now(),
+              created: new Date(),
             }, this.author ? {
               author: this.author,
             } : null)
