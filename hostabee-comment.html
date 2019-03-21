@@ -276,7 +276,7 @@
         }
         let comment = Object.assign({}, this.item, {
           content: textArea.value.trim(),
-          updated: Date.now(),
+          updated: new Date(),
         });
         if (comment.content == this.item.content) {
           return;
@@ -290,18 +290,24 @@
       }
 
       /**
-       * Converts a timestamp into a localized date. If MomentJs is imported in
-       * your app, a relative time is returned instead.
+       * Converts a date/timestamp into a localized date. If MomentJs is imported
+       * in your app, a relative time is returned instead.
        * 
-       * @param {Number} tiemstamp The time to be converted into a human redable
-       * date.
+       * @param {Number|Date} time The time to be converted into a human redable
+       * date. The parameter can be a timestamp as number, as string or even a
+       * [Firestore.Timestamp](https://firebase.google.com/docs/reference/js/firebase.firestore.Timestamp)
+       * or Date instance.
        * @return {String} A local human redable date of a relative time if MomentJs
        * is imported in the app.
        */
-      _formatDate(timestamp) {
-        return 'moment' in window ?
-          moment(Number(timestamp)).fromNow() :
-          new Date(Number(timestamp)).toLocaleString();
+      _formatDate(time) {
+        if (time) {
+          var timestamp = typeof time == 'object' ?
+            (time.toMillis ? time.toMillis() : time.getTime()) : time;
+          return 'moment' in window ?
+            moment(Number(timestamp)).fromNow() :
+            new Date(Number(timestamp)).toLocaleString();
+        }
       }
 
       /**
