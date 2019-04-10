@@ -23,7 +23,7 @@
         <hostabee-comment item="[[comment]]" read-only=[[readOnly]]></hostabee-comment>
       </template>
     </div>
-    <template is="dom-if" if="[[!readOnly]]">
+    <template is="dom-if" if="[[!readOnly]]" restamp>
       <slot id="form" name="form">
         <hostabee-comment-create-form author="[[author]]"></hostabee-comment-create-form>
       </slot>
@@ -80,6 +80,20 @@
             value: [],
           },
           /**
+           * The content of the slot "form". It can returns `null` if the element
+           * is not yet ready and the shadowRoot is not initialized. If no element
+           * is provided for the slot "form", a `hostabee-comment-create-form"
+           * element is automatically inserted. In the other wise, you have the
+           * responsibility of you form validation and submission.
+           * 
+           * @type {Object}
+           */
+          form: {
+            type: Object,
+            readOnly: true,
+            notify: true,
+          },
+          /**
            * List of users. It is OPTIONAL and will be used to retrieve comment
            * author when the comment objects contain only author ID. It can be
            * required for more some features.
@@ -133,6 +147,12 @@
             type: Array,
             readOnly: true,
           },
+          /**
+           * Observes nodes changes.
+           * 
+           * @type {Object}
+           */
+          __nodesObserver: Object,
         };
       }
 
@@ -144,30 +164,50 @@
       }
 
       /**
-       * Gets the content of the slot "form". It can returns `null` if the element
-       * is not yet ready and the shadowRoot is not initialized. In this case try
-       * to call the function after a delay of 10ms and after it's been attached
-       * to the DOM.
-       * 
-       * If no element is provided for the slot "form", a `hostabee-comment-create-form"
-       * element is automatically inserted. In the other wise, you have the
-       * responsibility of you form validation and submission.
-       * 
-       * @return {Object} The content of the slot "form".
+       * Called every time the element is inserted into the DOM. Useful for 
+       * running setup code, such as fetching resources or rendering.
+       * Generally, you should try to delay work until this time.
        */
-      form() {
-        var form = this.shadowRoot ? this.shadowRoot.querySelector('#form') : null;
-        if (!form) {
+      connectedCallback() {
+        super.connectedCallback();
+        Polymer.RenderStatus.afterNextRender(this, function() {
+          this._setForm(this._firstAssignedElement('#form'));
+        });
+        this.__nodesObserver = new Polymer.FlattenedNodesObserver(this, (info) => {
+          this._setForm(this._firstAssignedElement('#form'));
+        });
+      }
+
+      /**
+       * Called every time the element is removed from the DOM. Useful for 
+       * running clean up code (removing event listeners, etc.).
+       */
+      disconnectedCallback() {
+        super.disconnectedCallback();
+        this.__nodesObserver.disconnect();
+      }
+
+      /**
+       * Gets the first slotted element of the element target by CSS selector.
+       * It can returns `null` if the element is not found or if its shadowRoot
+       * is not opened.
+       * 
+       * @private
+       * @param {String} selector The CSS selector to be used to find the element
+       * to get the first slotted element.
+       * @return {Object} The first slotted element of the target one.
+       */
+      _firstAssignedElement(selector) {
+        var elem = this.shadowRoot ? this.shadowRoot.querySelector(selector) : null;
+        if (!elem) {
           return null;
         }
-        if (form.assignedElements) {
-          return form.assignedElements({
-            flatten: true
-          })[0];
-        }
-        return form.assignedNodes({
+        let assignedElems = elem.assignedElements ? elem.assignedElements({
           flatten: true
-        }).filter((n) => n instanceof HTMLElement)[0];
+        }) : elem.assignedNodes({
+          flatten: true
+        }).filter((n) => n instanceof HTMLElement);
+        return assignedElems.length > 0 ? assignedElems[0] : null;
       }
 
       /**

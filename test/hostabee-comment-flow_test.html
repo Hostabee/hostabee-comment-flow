@@ -39,7 +39,7 @@
     describe('Basic', function() {
       let element;
 
-      before(function() {
+      beforeEach(function() {
         element = fixture('BasicTestFixture');
       });
 
@@ -98,24 +98,31 @@
           done();
         };
         element.addEventListener('comment-added', asyncAssert);
-        const form = element.shadowRoot.querySelector('hostabee-comment-create-form');
-        form.shadowRoot.querySelector('vaadin-text-area').value = 'Lorem ipsum dolor sit amet.';
-        form.confirm();
+        flush(function() {
+          const form = element.shadowRoot.querySelector('hostabee-comment-create-form');
+          form.shadowRoot.querySelector('vaadin-text-area').value = 'Lorem ipsum dolor sit amet.';
+          form.confirm();
+        });
       });
 
-      it('should contains a hostabee-comment-create-form by default', function() {
-        expect(element.form()).to.be.an.instanceof(HostabeeCommentCreateForm);
+      it('should contains a hostabee-comment-create-form by default', function(done) {
+        const asyncAssert = function() {
+          expect(element.form).to.be.an.instanceof(HostabeeCommentCreateForm);
+          element.removeEventListener('form-changed', asyncAssert);
+          done();
+        };
+        element.addEventListener('form-changed', asyncAssert);
       });
     });
 
     describe('ReadOnly', function() {
       let element;
 
-      before(function() {
+      beforeEach(function() {
         element = fixture('ReadOnlyTestFixture');
       });
 
-      it('should disable edit on all comments', function() {
+      it('should disable edit on all comments', function(done) {
         element.comments = [{
           content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
           created: Date.now()
@@ -132,29 +139,32 @@
         flush(function() {
           element.shadowRoot.querySelectorAll('hostabee-comment')
             .forEach(comment => expect(comment.readOnly).to.be.true);
+          done();
         });
       });
 
       it('should not display form to add comments', function(done) {
-        flush(function() {
-          expect(element.form()).to.be.null;
+        const asyncAssert = function() {
+          expect(element.form).to.be.null;
+          expect(element.shadowRoot.querySelector('#form')).to.be.null;
+          element.removeEventListener('form-changed', asyncAssert);
           done();
-        });
+        };
+        element.addEventListener('form-changed', asyncAssert);
       });
     });
 
     describe('CustomForm', function() {
       let element;
 
-      before(function() {
+      beforeEach(function() {
         element = fixture('CustomFormTestFixture');
       });
 
       it('should display the custom form', function(done) {
         flush(function() {
-          var form = element.form();
-          expect(form.tagName).to.be.equal('DIV');
-          expect(form.innerText).to.be.equal('MY FORM');
+          expect(element.form.tagName).to.be.equal('DIV');
+          expect(element.form.innerText).to.be.equal('MY FORM');
           done();
         });
       });
@@ -162,7 +172,8 @@
       it('should not display the custom form when read only mode is turned on', function(done) {
         element.readOnly = true;
         flush(function() {
-          expect(element.form()).to.be.null;
+          expect(element.form).to.be.null;
+          expect(element.shadowRoot.querySelector('#form')).to.be.null;
           done();
         });
       });
