@@ -20,14 +20,15 @@
     </style>
     <div class="comments-container">
       <template is="dom-repeat" items="[[_comments]]" as="comment" restamp>
-        <hostabee-comment item="[[comment]]" read-only=[[readOnly]]></hostabee-comment>
+        <hostabee-comment item="[[comment]]" read-only=[[readOnly]] on-comment-deleted="_retargetEvent" on-comment-modified="_retargetEvent"></hostabee-comment>
       </template>
     </div>
     <template is="dom-if" if="[[!readOnly]]" restamp>
       <slot id="form" name="form">
-        <hostabee-comment-create-form author="[[author]]"></hostabee-comment-create-form>
+        <hostabee-comment-create-form author="[[author]]" on-comment-added="_retargetEvent"></hostabee-comment-create-form>
       </slot>
     </template>
+    <slot id="mapper" name="mapper"></slot>
   </template>
   <script>
     /**
@@ -94,6 +95,18 @@
             notify: true,
           },
           /**
+           * The mapper to use to transform comments and users. It allows to make
+           * any data model to the model used internally. By using a mapper you
+           * are free to provide your own model to this element.
+           * 
+           * @type {Object}
+           */
+          mapper: {
+            type: Object,
+            readOnly: true,
+            notify: true,
+          },
+          /**
            * List of users. It is OPTIONAL and will be used to retrieve comment
            * author when the comment objects contain only author ID. It can be
            * required for more some features.
@@ -145,7 +158,17 @@
            */
           _comments: {
             type: Array,
-            readOnly: true,
+            computed: '_computeComments(comments.*, _users, mapper.*)',
+          },
+          /**
+           * Computed list of user. The data transformtion ensures the good
+           * internal functioning.
+           * 
+           * @type {Array}
+           */
+          _users: {
+            type: Array,
+            computed: '_computeUsers(users.*, mapper.*)',
           },
           /**
            * Observes nodes changes.
@@ -154,13 +177,6 @@
            */
           __nodesObserver: Object,
         };
-      }
-
-      static get observers() {
-        return [
-          '_computeComments(comments.*)',
-          '_computeComments(users.*)',
-        ];
       }
 
       /**
@@ -175,6 +191,7 @@
         });
         this.__nodesObserver = new Polymer.FlattenedNodesObserver(this, (info) => {
           this._setForm(this._firstAssignedElement('#form'));
+          this._setMapper(this._firstAssignedElement('#mapper'));
         });
       }
 
@@ -185,6 +202,21 @@
       disconnectedCallback() {
         super.disconnectedCallback();
         this.__nodesObserver.disconnect();
+      }
+
+      /**
+       * Gets comment author from the user list.
+       *
+       * @param {Object} comment The comment to get the author.
+       * @return {Object|String|Number} The author representation if found in the
+       * user list. Otherwise, returns the origianl value (`comment.author`).
+       */
+      getAuthor(comment) {
+        var user = comment.author;
+        if (typeof user == 'string' || typeof user == 'number') {
+          return this._users.find((u) => u.id == user) || user;
+        }
+        return user;
       }
 
       /**
@@ -212,24 +244,50 @@
 
       /**
        * Fills list of comment with authors when the comment contains only an ID
-       * and a list of users is provided.
+       * and a list of user is provided.
        * 
        * @private
+       * @return {Array} the list of comment (transformed by the provided mapper).
        */
       _computeComments() {
-        if (!this.users) {
-          this._set_comments(this.comments);
-          return;
-        }
-        this._set_comments(this.comments.map((comment) => {
-          if (typeof comment.author != 'object') {
-            var user = this.users.find((u) => u.id == comment.author);
-            if (user) {
-              comment.author = user;
-            }
+        let comments = !this.mapper ? this.comments :
+          this.comments.map((c) => this.mapper.fromComment(c))
+        return !this._users ? comments : comments.map((comment) => {
+          var user = this.getAuthor(comment);
+          if (user) {
+            comment.author = user;
           }
           return comment;
-        }));
+        });
+      }
+
+      /**
+       * Transforms the user list according to a mapper if one is provided.
+       * 
+       * @private
+       * @return {Array} the list of user (transformed by the provided mapper).
+       */
+      _computeUsers() {
+        return !this.mapper ? this.users :
+          this.users.map((u) => this.mapper.fromUser(u));
+      }
+
+      /**
+       * Transform the event detail according to the mapper if one was provided.
+       * 
+       * @private
+       * @param {Object} event The event to be retargeted.
+       */
+      _retargetEvent(event) {
+        if (this.mapper) {
+          event.preventDefault();
+          event.stopPropagation();
+          this.dispatchEvent(new CustomEvent(event.type, {
+            bubbles: true,
+            composed: true,
+            detail: this.mapper.toComment(event.detail),
+          }));
+        }
       }
 
     }

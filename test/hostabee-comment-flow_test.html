@@ -11,6 +11,7 @@
   <script src="../../web-component-tester/browser.js"></script>
 
   <link rel="import" href="../hostabee-comment-flow.html">
+  <link rel="import" href="../hostabee-comment-mapper.html">
 </head>
 
 <body>
@@ -31,6 +32,14 @@
     <template>
       <hostabee-comment-flow>
         <div class="custom-form" slot="form">MY FORM</div>
+      </hostabee-comment-flow>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="WithMapperTestFixture">
+    <template>
+      <hostabee-comment-flow>
+        <hostabee-comment-mapper slot="mapper"></hostabee-comment-mapper>
       </hostabee-comment-flow>
     </template>
   </test-fixture>
@@ -176,6 +185,156 @@
           expect(element.shadowRoot.querySelector('#form')).to.be.null;
           done();
         });
+      });
+    });
+
+    describe('WithMapper', function() {
+      let element;
+
+      beforeEach(function() {
+        element = fixture('WithMapperTestFixture');
+      });
+
+      it('should transform users when mapper is provided', function(done) {
+        const expected = {
+          id: 1,
+          fullname: 'Peter Parker',
+          profilePictureURL: 'https://pbs.twimg.com/profile_images/580803806595780608/Kw9IhwXP_400x400.jpg',
+        };
+        const asyncAssert = function() {
+          element.removeEventListener('mapper-changed', asyncAssert);
+          // Init mapper.
+          element.set('mapper.userMapping', {
+            fullname: 'name',
+            profilePictureURL: 'picture',
+          });
+          expect(element.users).to.be.empty;
+          // Add users.
+          element.users = [{
+            id: 1,
+            name: 'Peter Parker',
+            picture: 'https://pbs.twimg.com/profile_images/580803806595780608/Kw9IhwXP_400x400.jpg',
+          }];
+          // Check transformation.
+          expect(element._users[0]).to.be.deep.equal(expected);
+          expect(element._users[0]).to.not.be.equal(element.users[0]);
+          done();
+        };
+        element.addEventListener('mapper-changed', asyncAssert);
+      });
+
+      it('should transform comments when mapper is provided', function(done) {
+        const expected = {
+          id: 1,
+          content: 'Cum sociis natoque penatibus et magnis.',
+          created: 1548016737000,
+        };
+        const asyncAssert = function() {
+          element.removeEventListener('mapper-changed', asyncAssert);
+          // Init mapper.
+          element.set('mapper.commentMapping', {
+            content: 'text',
+            created: 'creationTime',
+          });
+          expect(element.comments).to.be.empty;
+          // Add coments.
+          element.comments = [{
+            id: 1,
+            text: 'Cum sociis natoque penatibus et magnis.',
+            creationTime: 1548016737000,
+          }];
+          // Check transformation.
+          expect(element._comments[0]).to.be.deep.equal(expected);
+          expect(element._comments[0]).to.not.be.equal(element.comments[0]);
+          done();
+        };
+        element.addEventListener('mapper-changed', asyncAssert);
+      });
+
+      it('should not touch dispatched events if no mapping provided', function(done) {
+        const text = 'Cum sociis natoque penatibus et magnis.';
+        const asyncAssert = function(event) {
+          element.removeEventListener('comment-added', asyncAssert);
+          expect(event.detail.text).to.be.undefined;
+          expect(event.detail.content).to.be.equal(text);
+          done();
+        };
+        element.addEventListener('comment-added', asyncAssert);
+        element.addEventListener('form-changed', function() {
+          element.form.shadowRoot.querySelector('vaadin-text-area').value = 'Cum sociis natoque penatibus et magnis.';
+          element.form.confirm();
+        });
+      });
+
+      it('should reversively apply mapping in form events', function(done) {
+        const text = 'Cum sociis natoque penatibus et magnis.';
+        const asyncAssert = function(event) {
+          element.removeEventListener('comment-added', asyncAssert);
+          expect(event.detail.content).to.be.undefined;
+          expect(event.detail.text).to.be.equal(text);
+          done();
+        };
+        element.addEventListener('comment-added', asyncAssert);
+        element.addEventListener('mapper-changed', function() {
+          element.mapper.commentMapping = {
+            content: 'text',
+            created: 'timestamp',
+          };
+          element.form.shadowRoot.querySelector('vaadin-text-area').value = 'Cum sociis natoque penatibus et magnis.';
+          element.form.confirm();
+        });
+      });
+
+      it('should apply mapping on users added after first init', function(done) {
+        element.users = [{
+          id: 1,
+          name: 'John Doe',
+        }];
+        const asyncAssert = function() {
+          element.removeEventListener('mapper-changed', asyncAssert);
+          // Init the mapper.
+          element.set('mapper.userMapping', {
+            fullname: 'name',
+          });
+          // Check elements already present are transformed.
+          expect(element._users[0]).to.be.defined;
+          expect(element._users[0]).to.not.be.empty;
+          expect(element._users[0].fullname).to.be.equal(element.users[0].name);
+          element.push('users', {
+            id: 2,
+            name: 'Jane Doe',
+          });
+          // Check new elements are transformed.
+          expect(element._users[1].fullname).to.be.equal(element.users[1].name);
+          done();
+        };
+        element.addEventListener('mapper-changed', asyncAssert);
+      });
+
+      it('should apply mapping on comments added after first init', function(done) {
+        element.comments = [{
+          id: 1,
+          text: 'Cum sociis natoque penatibus et magnis.',
+        }];
+        const asyncAssert = function() {
+          element.removeEventListener('mapper-changed', asyncAssert);
+          // Init the mapper.
+          element.set('mapper.commentMapping', {
+            content: 'text',
+          });
+          // Check elements already present are transformed.
+          expect(element._comments[0]).to.be.defined;
+          expect(element._comments[0]).to.not.be.empty;
+          expect(element._comments[0].content).to.be.equal(element.comments[0].text);
+          element.push('comments', {
+            id: 2,
+            text: 'Ut odio vel est tempor bibendum. Donec.',
+          });
+          // Check new elements are transformed.
+          expect(element._comments[1].content).to.be.equal(element.comments[1].text);
+          done();
+        };
+        element.addEventListener('mapper-changed', asyncAssert);
       });
     });
   </script>
