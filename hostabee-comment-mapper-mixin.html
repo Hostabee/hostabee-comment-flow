@@ -23,6 +23,30 @@ This program is available under Apache License Version 2.0.
         /**
          * Mapping to use to format a user.
          * 
+         * List of expected properties:
+         * - fullname
+         * - profilePictureURL
+         * 
+         * For example, with the following mapping the `name`property of the
+         * provided users will be replaced by `fullname`. Apply reversively the
+         * mapping will produce the opposite result.
+         * 
+         * ```javascript
+         * const mapping = {
+         *    fullname: 'name',
+         * };
+         * const before = {
+         *    id: 42,
+         *    name: 'Joh Doe',
+         *    age: 42
+         * }
+         * const after = {
+         *    id: 42,
+         *    fullname: 'Joh Doe',
+         *    age: 42
+         * }
+         * ```
+         * 
          * @type {Object}
          */
         userMapping: {
@@ -30,6 +54,36 @@ This program is available under Apache License Version 2.0.
         },
         /**
          * Mapping to use to format a comment.
+         * 
+         * List of expected properties:
+         * - author
+         * - content
+         * - created
+         * - updated
+         * 
+         * For example, with the following mapping the `text` and `creationTime`
+         * properties of the provided comments will be replaced respectively by
+         * `content` and `created`. Apply reversively the mapping will produce
+         * the opposite result.
+         * 
+         * ```javascript
+         * const mapping = {
+         *    content: 'text',
+         *    created: 'creationTime',
+         * };
+         * const before = {
+         *    author: 'Me',
+         *    text: 'Hello World!',
+         *    creationTime: 1548016737000,
+         *    tags: ['greetings', 'demo']
+         * }
+         * const after = {
+         *    author: 'Me',
+         *    content: 'Hello World!',
+         *    created: 1548016737000,
+         *    tags: ['greetings', 'demo']
+         * }
+         * ```
          * 
          * @type {Object}
          */

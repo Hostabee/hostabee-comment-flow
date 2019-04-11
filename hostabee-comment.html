@@ -1,3 +1,9 @@
+<!--
+@license
+Copyright (c) 2019 Hostabee SAS.
+This program is available under Apache License Version 2.0.
+-->
+
 <link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../polymer/lib/elements/dom-if.html">
@@ -139,6 +145,7 @@
      * @customElement
      * @polymer
      * @extends {Polymer.Element}
+     * @memberof Hostabee
      * @demo demo/hostabee-comment/basic.html Basic
      * @demo demo/hostabee-comment/read-only.html Read only
      * @demo demo/hostabee-comment/no-author.html Without author
@@ -156,18 +163,29 @@
            * Comment to be displayed.
            * 
            * Expected model of `item`:
+           * ```javascript
            * {
-           *    content: 'Cum sociis natoque penatibus et magnis.',
-           *    created: 1548016737000,
            *    author: {
            *      fullname: 'John Doe',
-           *      profilePictureURL: ''
-           *    }
+           *      profilePictureURL: 'https://doe-john.org/pp.png'
+           *    },
+           *    content: 'Cum sociis natoque penatibus et magnis.',
+           *    created: 1548016737000,
+           *    updated: 1548016748000
            * }
+           * ```
            * 
-           * The `item.author`, `item.author.profilePictureURL` properties are
-           * optional. The `author.fullname` property can be substitute by
-           * `author.name`.
+           * - the `item.author` property is optional. When provided, the element
+           * is expecting to find `author.fullname` or `author.name` to display
+           * it beside the author profile picture.
+           * 
+           * - the `author.profilePictureURL` property is optional. When not
+           * provided the username initials are displayed instead.
+           * 
+           * - the `updated` property is optional.
+           * 
+           * __Provided extra properties are leave as is and contained in the
+           * dispatched events.__
            * 
            * @type {Object}
            */
@@ -234,8 +252,8 @@
       }
 
       /**
-       * Dispatches a `comment-deleted` event containing the item to delete.
-       * The read only mode must be disabled.
+       * Dispatches a [comment-deleted](#/elements/hostabee-comment#event-comment-deleted)
+       * event containing the item to delete. The read only mode must be disabled.
        */
       delete() {
         if (!this.readOnly) {
@@ -262,7 +280,8 @@
       }
 
       /**
-       * Confirms the changes. If the form validation passes, a `comment-modified`
+       * Confirms the changes. If the form validation passes, a
+       * [comment-modified](#/elements/hostabee-comment#event-comment-modified)
        * event containing the new version of the comment is dispatched.
        */
       confirmEdit() {
@@ -336,6 +355,29 @@
        * Fired when the `comment` is modified.
        * _(bubbles: true, composed: true)_
        * 
+       * The detail of this event is the comment to update. Its structure looks
+       * like this:
+       * ```javascript
+       * {
+       *    author: {
+       *      fullname: 'John Doe',
+       *      profilePictureURL: 'https://doe-john.org/pp.png'
+       *    },
+       *    content: 'Cum sociis natoque penatibus et magnis.',
+       *    created: 1548016737000,
+       *    upated: 1548016748000
+       * }
+       * ```
+       * 
+       * - the `author` property is not manage by this element and is leave as is.
+       * So its value is the same as the one originally provided.
+       * 
+       * - the property `updated` is a generated timestamp in milliseconds when
+       * the edit was confirmed.
+       * 
+       * __Provided extra properties are leave as is and contained in the
+       * dispatched events.__
+       * 
        * @event comment-modified
        * @param {Object} detail The new version of the comment.
        */
@@ -343,6 +385,25 @@
       /**
        * Fired when the `comment` deletion is requested.
        * _(bubbles: true, composed: true)_
+       * 
+       * The detail of this event is the comment to update. Its structure looks
+       * like this:
+       * ```javascript
+       * {
+       *    author: {
+       *      fullname: 'John Doe',
+       *      profilePictureURL: 'https://doe-john.org/pp.png'
+       *    },
+       *    content: 'Cum sociis natoque penatibus et magnis.',
+       *    created: 1548016737000
+       * }
+       * ```
+       * 
+       * - the `author` property is not manage by this element and is leave as is.
+       * So its value is the same as the one originally provided.
+       * 
+       * __Provided extra properties are leave as is and contained in the
+       * dispatched events.__
        * 
        * @event comment-deleted
        * @param {Object} detail The comment which the deletion was requested.
