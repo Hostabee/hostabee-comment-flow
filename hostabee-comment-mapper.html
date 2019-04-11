@@ -1,0 +1,32 @@
+<!--
+@license
+Copyright (c) 2019 Hostabee SAS.
+This program is available under Apache License Version 2.0.
+-->
+
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="./hostabee-comment-mapper-mixin.html">
+
+<dom-module id="hostabee-comment-mapper">
+  <script>
+    /**
+     * `hostabee-comment-mapper`
+     * 
+     * Element which allows you to declaratively define mapping between your
+     * data and the format expected by `hostabee-comment-flow`.
+     *
+     * @summary Data format mapper.
+     * @customElement
+     * @polymer
+     * @extends {Polymer.Element}
+     * @memberof Hostabee
+     */
+    class HostabeeCommentMapper extends Hostabee.CommentMapperMixin(Polymer.Element) {
+      static get is() {
+        return 'hostabee-comment-mapper';
+      }
+    }
+
+    window.customElements.define(HostabeeCommentMapper.is, HostabeeCommentMapper);
+  </script>
+</dom-module>

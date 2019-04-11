@@ -1,0 +1,63 @@
+<!--
+@license
+Copyright (c) 2019 Hostabee SAS.
+This program is available under Apache License Version 2.0.
+-->
+
+<script>
+  /**
+   * @namespace Hostabee
+   */
+  window.Hostabee = window.Hostabee || {};
+
+  /**
+   * @mixinFunction
+   * @polymer
+   * @memberof Hostabee
+   */
+  Hostabee.MapperMixin = (superClass) => class MapperMixin extends superClass {
+    /**
+     * Transforms the given entity using the provided mapping. Returns a copy
+     * of the comment with properties listed in the mapping values renamed
+     * like the keys.
+     * 
+     * For example, if the mapping is `{prop: 'myProp'}`, the property
+     * "myProp" of the given comment will be renamed "prop".
+     * 
+     * @param {Object} entity The entity to be transformed/converted.
+     * @param {Object} mapping The mapping to use for the transformation/conversion.
+     * @return a copy of the entity with all properties present in the mapper
+     * values renamed like the keys.
+     */
+    applyMapping(entity, mapping = {}) {
+      var obj = Object.assign({}, entity);
+      Object.keys(mapping).forEach(key => {
+        obj[key] = obj[mapping[key]];
+        delete obj[mapping[key]];
+      });
+      return obj;
+    }
+
+    /**
+     * Transforms the given entity using the provided mapping. Returns a copy
+     * of the comment with properties listed in the mapping values renamed
+     * like the keys.
+     * 
+     * For example, if the mapping is `{prop: 'myProp'}`, the property
+     * "prop" of the given comment will be renamed "myProp".
+     * 
+     * @param {Object} entity The entity to be transformed/converted.
+     * @param {Object} mapping The mapping to use for the transformation/conversion.
+     * @return a copy of the entity with all properties present in the
+     * mapper keys renamed like the values.
+     */
+    reverseApplyMapping(entity, mapping = {}) {
+      var obj = Object.assign({}, entity);
+      Object.keys(mapping).forEach(key => {
+        obj[mapping[key]] = obj[key];
+        delete obj[key];
+      });
+      return obj;
+    }
+  };
+</script>

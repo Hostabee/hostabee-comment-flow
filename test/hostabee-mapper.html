@@ -1,0 +1,15 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../hostabee-mapper-mixin.html">
+<dom-module id="hostabee-mapper">
+  <script>
+    /**
+     * `hostabee-mapper` FOR TESTING PURPOSE.
+     */
+    class HostabeeMapper extends Hostabee.MapperMixin(Polymer.Element) {
+      static get is() {
+        return 'hostabee-mapper';
+      }
+    }
+    window.customElements.define(HostabeeMapper.is, HostabeeMapper);
+  </script>
+</dom-module>

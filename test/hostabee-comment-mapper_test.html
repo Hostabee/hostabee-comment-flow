@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+  <title>hostabee-comment-mapper test</title>
+
+  <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../hostabee-comment-mapper.html">
+</head>
+
+<body>
+
+  <test-fixture id="BasicTestFixture">
+    <template>
+      <hostabee-comment-mapper></hostabee-comment-mapper>
+    </template>
+  </test-fixture>
+
+  <script>
+    describe('Basic', function() {
+      let element;
+
+      before(function() {
+        element = fixture('BasicTestFixture');
+      });
+
+      it('should be instantiable with default properties', function() {
+        expect(element.userMapping).to.be.undefined;
+        expect(element.commentMapping).to.be.undefined;
+      });
+
+      context('With internal mapping', function() {
+        it('should not touch the user if no mapping provided', function() {
+          const user = {
+            id: 42,
+            name: 'John Doe',
+            picture: 'https://foo.org/pp.png',
+          };
+          expect(element.fromUser(user)).to.be.deep.equal(user);
+        });
+
+        it('should not touch the comment if no mapping provided', function() {
+          const comment = {
+            id: 1,
+            text: 'Cum sociis natoque penatibus et magnis.',
+            creationTime: 1548016737000,
+          };
+          expect(element.fromComment(comment)).to.be.deep.equal(comment);
+        });
+
+        it('should transform user when mapping is provided', function() {
+          const user = {
+            id: 42,
+            name: 'John Doe',
+            picture: 'https://foo.org/pp.png',
+          };
+          element.userMapping = {
+            fullname: 'name',
+            profilePictureURL: 'picture',
+          };
+          const expected = {
+            id: 42,
+            fullname: 'John Doe',
+            profilePictureURL: 'https://foo.org/pp.png',
+          };
+          let transformed = element.fromUser(user);
+          expect(transformed).to.be.deep.equal(expected);
+          expect(transformed).to.not.be.equal(user);
+        });
+
+        it('should transform comment when mapping is provided', function() {
+          const comment = {
+            id: 1,
+            text: 'Cum sociis natoque penatibus et magnis.',
+            creationTime: 1548016737000,
+          };
+          element.commentMapping = {
+            content: 'text',
+            created: 'creationTime',
+          };
+          const expected = {
+            id: 1,
+            content: 'Cum sociis natoque penatibus et magnis.',
+            created: 1548016737000,
+          };
+          let transformed = element.fromComment(comment);
+          expect(transformed).to.be.deep.equal(expected);
+          expect(transformed).to.not.be.equal(comment);
+        });
+
+        it('should transform user when mapping is provided', function() {
+          const map = {
+            id: 42,
+            fullname: 'John Doe',
+            profilePictureURL: 'https://foo.org/pp.png',
+          };
+          element.userMapping = {
+            fullname: 'name',
+            profilePictureURL: 'picture',
+          };
+          const expected = {
+            id: 42,
+            name: 'John Doe',
+            picture: 'https://foo.org/pp.png',
+          };
+          let transformed = element.toUser(map);
+          expect(transformed).to.be.deep.equal(expected);
+          expect(transformed).to.not.be.equal(map);
+        });
+
+        it('should transform comment when mapping is provided', function() {
+          const map = {
+            id: 1,
+            content: 'Cum sociis natoque penatibus et magnis.',
+            created: 1548016737000,
+          };
+          element.commentMapping = {
+            content: 'text',
+            created: 'creationTime',
+          };
+          const expected = {
+            id: 1,
+            text: 'Cum sociis natoque penatibus et magnis.',
+            creationTime: 1548016737000,
+          };
+          let transformed = element.toComment(map);
+          expect(transformed).to.be.deep.equal(expected);
+          expect(transformed).to.not.be.equal(map);
+        });
+      });
+    });
+  </script>
+
+</body>
+
+</html>

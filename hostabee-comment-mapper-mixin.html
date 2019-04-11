@@ -1,0 +1,110 @@
+<!--
+@license
+Copyright (c) 2019 Hostabee SAS.
+This program is available under Apache License Version 2.0.
+-->
+
+<link rel="import" href="./hostabee-mapper-mixin.html">
+<script>
+  /**
+   * @namespace Hostabee
+   */
+  window.Hostabee = window.Hostabee || {};
+
+  /**
+   * @mixinFunction
+   * @polymer
+   * @memberof Hostabee
+   * @mixies Hostabee.MapperMixin
+   */
+  Hostabee.CommentMapperMixin = (superClass) => class CommentMapperMixin extends Hostabee.MapperMixin(superClass) {
+    static get properties() {
+      return {
+        /**
+         * Mapping to use to format a user.
+         * 
+         * @type {Object}
+         */
+        userMapping: {
+          type: Object,
+        },
+        /**
+         * Mapping to use to format a comment.
+         * 
+         * @type {Object}
+         */
+        commentMapping: {
+          type: Object,
+        },
+      };
+    }
+
+    /**
+     * Applies the user mapping on the given user. Returns a copy of the user
+     * with properties listed in the mapping values renamed like the keys.
+     * 
+     * For example, if the user mapping is `{fullname: 'name'}`, the property
+     * "name" of the given user will be renamed "fullname".
+     * 
+     * @param {Object} user The user to be transformed/converted.
+     * @return {Object} a copy of the user with all properties present in the
+     * user mapper values renamed like the keys.
+     */
+    fromUser(user) {
+      return !this.userMapping ? user :
+        this.applyMapping(user, this.userMapping);
+    }
+
+    /**
+     * Applies the comment mapping on the given comment. Returns a copy of
+     * the comment with properties listed in the mapping values renamed like
+     * the keys.
+     * 
+     * For example, if the comment mapping is `{content: 'text'}`, the
+     * property "text" of the given comment will be renamed "content".
+     * 
+     * @param {Object} comment The comment to be transformed/converted.
+     * @return {Object} a copy of the comment with all properties present in
+     * the comment mapper values renamed like the keys.
+     */
+    fromComment(comment) {
+      return !this.commentMapping ? comment :
+        this.applyMapping(comment, this.commentMapping);
+    }
+
+    /**
+     * Applies reversally the user mapping on the given entity. Returns a copy
+     * of the entity with properties listed in the mapping keys renamed like
+     * the values.
+     * 
+     * For example, if the user mapping is `{fullname: 'name'}`, the property
+     * "fullname" of the given user will be renamed "name".
+     * 
+     * @param {Object} entity The entity to be transformed/converted into a user.
+     * @return {Object} a copy of the entity with all properties present in the
+     * user mapper keys renamed like the values.
+     */
+    toUser(entity) {
+      return !this.userMapping ? entity :
+        this.reverseApplyMapping(entity, this.userMapping);
+    }
+
+    /**
+     * Applies reversally the comment mapping on the given entity. Returns a
+     * copy of the entity with properties listed in the mapping keys renamed
+     * like the values.
+     * 
+     * For example, if the comment mapping is `{content: 'text'}`, the property
+     * "content" of the given comment will be renamed "text".
+     * 
+     * @param {Object} entity The entity to be transformed/converted into a
+     * comment.
+     * @return {Object} a copy of the entity with all properties present in
+     * the comment mapper keys renamed like the values.
+     */
+    toComment(entity) {
+      return !this.commentMapping ? entity :
+        this.reverseApplyMapping(entity, this.commentMapping);
+    }
+  };
+</script>

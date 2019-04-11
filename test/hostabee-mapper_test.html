@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, entity-scalable=yes">
+
+  <title>hostabee-mapper test</title>
+
+  <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+
+  <link rel="import" href="./hostabee-mapper.html">
+</head>
+
+<body>
+
+  <test-fixture id="BasicTestFixture">
+    <template>
+      <hostabee-mapper></hostabee-mapper>
+    </template>
+  </test-fixture>
+
+  <script>
+    describe('Basic', function() {
+      let element;
+
+      before(function() {
+        element = fixture('BasicTestFixture');
+      });
+
+      context('Apply mapping', function() {
+        it('should not touch the entity if no mapping provided', function() {
+          const entity = {
+            prop1: 42,
+            prop2: 'Foo',
+            prop3: 'BAR',
+          };
+          expect(element.applyMapping(entity)).to.be.deep.equal(entity);
+        });
+
+        it('should transform entity when mapping is provided', function() {
+          const entity = {
+            prop1: 42,
+            prop2: 'Foo',
+            prop3: 'BAR',
+          };
+          const mapping = {
+            property1: 'prop1',
+            property2: 'prop2',
+          };
+          const expected = {
+            property1: 42,
+            property2: 'Foo',
+            prop3: 'BAR',
+          };
+          let transformed = element.applyMapping(entity, mapping);
+          expect(transformed).to.be.deep.equal(expected);
+          expect(transformed).to.not.be.equal(entity);
+        });
+      });
+
+      context('Reverse apply mapping', function() {
+        it('should not touch the entity if no mapping provided', function() {
+          const entity = {
+            prop1: 42,
+            prop2: 'Foo',
+            prop3: 'BAR',
+          };
+          expect(element.reverseApplyMapping(entity)).to.be.deep.equal(entity);
+        });
+
+        it('should transform entity when mapping is provided', function() {
+          const entity = {
+            property1: 42,
+            property2: 'Foo',
+            property3: 'BAR',
+          };
+          const mapping = {
+            property1: 'prop1',
+            property2: 'prop2',
+          };
+          const expected = {
+            prop1: 42,
+            prop2: 'Foo',
+            property3: 'BAR',
+          };
+          let transformed = element.reverseApplyMapping(entity, mapping);
+          expect(transformed).to.be.deep.equal(expected);
+          expect(transformed).to.not.be.equal(entity);
+        });
+      });
+    });
+  </script>
+
+</body>
+
+</html>
