@@ -5,7 +5,7 @@ before_script:
   - polymer install
 node_js: node
 addons:
-  firefox: latest
+  firefox: '66.0'
   chrome: stable
 script:
   - xvfb-run polymer test
