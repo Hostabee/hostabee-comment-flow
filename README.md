@@ -1,7 +1,7 @@
 # \<hostabee-comment-flow\>
 
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
-[![Build Status](https://travis-ci.org/Hostabee/hostabee-comment-flow.svg?branch=master)](https://travis-ci.org/Hostabee/hostabee-comment-flow)
+[![Build Status](https://travis-ci.org/Hostabee/hostabee-comment-flow.svg?branch=master)](https://travis-ci.org/Hostabee/hostabee-comment-flow) [![Greenkeeper badge](https://badges.greenkeeper.io/Hostabee/hostabee-comment-flow.svg)](https://greenkeeper.io/)
 
 Commenting solution out-of-the-box in a web component.
 
