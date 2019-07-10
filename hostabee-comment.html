@@ -15,6 +15,7 @@ This program is available under Apache License Version 2.0.
 <link rel="import" href="../web-animations-js/web-animations-next-lite.min.html">
 <link rel="import" href="../vaadin-text-field/vaadin-text-area.html">
 <link rel="import" href="../hostabee-profile-picture/hostabee-profile-picture.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
 
 <dom-module id="hostabee-comment">
   <template>
@@ -56,12 +57,6 @@ This program is available under Apache License Version 2.0.
         padding: 10px 5px 0 5px;
         color: var(--primary-text-color, rgba(0, 0, 0, 0.7));
         font-size: 1.1em;
-      }
-
-      .content__text {
-        max-height: 150px;
-        overflow: auto;
-        overflow-wrap: break-word;
       }
 
       .dropdown-content {
@@ -122,7 +117,13 @@ This program is available under Apache License Version 2.0.
     </div>
     <div class="content">
       <template is="dom-if" if="[[!editing]]">
-        <div class="content__text">[[item.content]]</div>
+        <span hidden$=[[opened]]>[[shorten(item.content)]]</span>
+        <iron-collapse class="content__collapse" opened=[[opened]]>
+          <div>[[item.content]]</div>
+        </iron-collapse>
+        <vaadin-button theme="tertiary-inline" on-click="toggle" hidden$=[[isShort]]>
+          [[_toggleButtonText]]
+        </vaadin-button>
       </template>
       <template is="dom-if" if="[[editing]]">
         <vaadin-text-area label="Edit your comment" minlength="20" error-message="At least 20 chars" value="[[item.content]]" onkeydown="[[_handleKeyDown()]]" autofocus required></vaadin-text-area>
@@ -211,6 +212,45 @@ This program is available under Apache License Version 2.0.
             type: Boolean,
             value: false,
             readOnly: true,
+          },
+          /**
+           * Max length before collapse the comment. The extra content is cut an
+           * replaced by "..." and a "read more" button.
+           * 
+           * @type {Number}
+           * @default 150
+           */
+          maxLengthBeforeCollapse: {
+            type: Number,
+            value: 150,
+          },
+          /**
+           * Is the comment opened? When the comment is under the max length
+           * before collapse value this attribute is useless. Else, it defines
+           * if the content is fully displayed or not. To display the all content
+           * set this attribute to "true" and to "false" to collapse it.
+           * 
+           * @type {Boolean}
+           * @default false
+           */
+          opened: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true,
+          },
+          /**
+           * Is a short comment? The comment is considered short when it length
+           * does not overcome the max length before collapse set on the element.
+           * 
+           * @type {Boolean}
+           */
+          isShort: {
+            type: Boolean,
+            computed: '__computeIsShort(item.content)',
+          },
+          _toggleButtonText: {
+            type: String,
+            computed: '__computeToggleButtonText(opened)',
           },
         };
       }
@@ -309,6 +349,24 @@ This program is available under Apache License Version 2.0.
       }
 
       /**
+       * Opens and closes the comment.
+       */
+      toggle() {
+        this.opened = !this.opened;
+      }
+
+      /**
+       * Cuts a text and adds 3 suspension dots. The number of returned chars is
+       * defined by the `maxLengthBeforeCollapse` property.
+       * 
+       * @param {String} text The text to be shorten
+       * @return {String} the text shorten.
+       */
+      shorten(text) {
+        return this.isShort ? text.trim() : text.slice(0, this.maxLengthBeforeCollapse).trim() + '...';
+      }
+
+      /**
        * Converts a date/timestamp into a localized date. If MomentJs is imported
        * in your app, a relative time is returned instead.
        * 
@@ -349,6 +407,14 @@ This program is available under Apache License Version 2.0.
             this.confirmEdit();
           }
         };
+      }
+
+      __computeIsShort(text) {
+        return !text || text.trim().length <= this.maxLengthBeforeCollapse;
+      }
+
+      __computeToggleButtonText() {
+        return !this.opened ? 'read more' : 'show less';
       }
 
       /**
