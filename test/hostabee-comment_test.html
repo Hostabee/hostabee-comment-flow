@@ -83,6 +83,70 @@
           done();
         });
       });
+
+      it('should cut displayed text if too long and display "read more" button', function(done) {
+        const comment = {
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' +
+            'Donec vel mauris tristique, aliquet ligula ac, pulvinar ex. Ut a urna' +
+            'sit amet velit pretium consectetur. Lorem ipsum dolor sit amet,' +
+            'consectetur adipiscing elit.',
+          created: Date.now(),
+        };
+        element.item = comment;
+        expect(comment.content.length).to.be.greaterThan(element.maxLengthBeforeCollapse);
+        expect(element.opened).to.be.false;
+        flush(function() {
+          let content = element.shadowRoot.querySelector('.content');
+          expect(content.querySelector('span').innerText).to.be.equal('Lorem ipsum ' +
+            'dolor sit amet, consectetur adipiscing elit.Donec vel mauris tristique, ' +
+            'aliquet ligula ac, pulvinar ex. Ut a urnasit amet velit pretium co...');
+          expect(content.querySelector('iron-collapse').opened).to.be.false;
+          expect(content.querySelector('vaadin-button').innerText.trim()).to.be.equal('read more');
+          done();
+        });
+      });
+
+      it('should display "show less" button when long comment is opened', function(done) {
+        const comment = {
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' +
+            'Donec vel mauris tristique, aliquet ligula ac, pulvinar ex. Ut a urna' +
+            'sit amet velit pretium consectetur. Lorem ipsum dolor sit amet,' +
+            'consectetur adipiscing elit.',
+          created: Date.now(),
+        };
+        element.item = comment;
+        expect(comment.content.length).to.be.greaterThan(element.maxLengthBeforeCollapse);
+        element.toggle();
+        expect(element.opened).to.be.true;
+        flush(function() {
+          let content = element.shadowRoot.querySelector('.content');
+          expect(content.querySelector('span').hidden).to.be.true;
+          let collapse = content.querySelector('iron-collapse');
+          expect(collapse.opened).to.be.true;
+          expect(collapse.firstElementChild.innerText).to.be.equal(comment.content);
+          expect(content.querySelector('vaadin-button').innerText.trim()).to.be.equal('show less');
+          done();
+        });
+      });
+
+      it('should not display "read more" button when comment is short', function(done) {
+        const comment = {
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+          created: Date.now(),
+        };
+        element.item = comment;
+        expect(comment.content.length).to.be.lessThan(element.maxLengthBeforeCollapse);
+        expect(element.isShort).to.be.true;
+        flush(function() {
+          let content = element.shadowRoot.querySelector('.content');
+          let span = content.querySelector('span');
+          expect(span.hidden).to.be.false;
+          expect(span.innerText).to.be.equal(comment.content);
+          expect(content.querySelector('iron-collapse').opened).to.be.false;
+          expect(content.querySelector('vaadin-button').hidden).to.be.true;
+          done();
+        });
+      });
     });
 
     describe('ReadOnly', function() {
