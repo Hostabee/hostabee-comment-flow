@@ -73,6 +73,79 @@
         });
       });
     });
+
+    describe('i18n', function() {
+      let element;
+
+      beforeEach(function() {
+        element = fixture('BasicTestFixture');
+        element.buttonsShown = true;
+      });
+
+      it('should support English', function(done) {
+        element.language = 'en';
+        flush(function() {
+          // Add a delay for Firefox because it seems to need more time to
+          // re-localize texts.
+          setTimeout(() => {
+            let textArea = element.shadowRoot.querySelector('vaadin-text-area');
+            expect(textArea.placeholder).to.be.equal('Write a comment...');
+            expect(textArea.errorMessage).to.be.equal('At least 20 chars');
+            let actions = element.shadowRoot.querySelector('.actions');
+            expect(actions.children[0].innerText.trim()).to.be.equal('Cancel');
+            expect(actions.children[1].innerText.trim()).to.be.equal('Save');
+            done();
+          }, 100);
+        });
+      });
+
+      it('should support French', function(done) {
+        flush(function() {
+          element.language = 'fr';
+          // Add a delay for Firefox because it seems to need more time to
+          // re-localize texts.
+          setTimeout(() => {
+            let textArea = element.shadowRoot.querySelector('vaadin-text-area');
+            expect(textArea.placeholder).to.be.equal('Écrire un commentaire...');
+            expect(textArea.errorMessage).to.be.equal('Minimum de 20 caractères');
+            let actions = element.shadowRoot.querySelector('.actions');
+            expect(actions.children[0].innerText.trim()).to.be.equal('Annuler');
+            expect(actions.children[1].innerText.trim()).to.be.equal('Enregistrer');
+            done();
+          }, 100);
+        });
+      });
+
+      it('should fallback to English if locales not found for the given language', function(done) {
+        element.language = 'de';
+        flush(function() {
+          // Add a delay for Firefox because it seems to need more time to
+          // re-localize texts.
+          setTimeout(() => {
+            expect(element.language).to.be.equal('en');
+            done();
+          }, 100);
+        });
+      });
+
+      it('should allow to specify a custom locales file', function(done) {
+        element.language = 'en';
+        element.localesFile = 'test/my-locales.json';
+        flush(function() {
+          // Add a delay for Firefox because it seems to need more time to
+          // re-localize texts.
+          setTimeout(() => {
+            let textArea = element.shadowRoot.querySelector('vaadin-text-area');
+            expect(textArea.errorMessage).to.be.equal('20 chars min.');
+            let actions = element.shadowRoot.querySelector('.actions');
+            expect(actions.children[0].innerText.trim()).to.be.equal('Cancel');
+            expect(actions.children[1].innerText.trim()).to.be.equal('Confirm');
+            done();
+          }, 100);
+        });
+      });
+
+    });
   </script>
 
 </body>

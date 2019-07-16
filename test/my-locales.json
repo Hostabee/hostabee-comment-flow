@@ -1,0 +1,14 @@
+{
+  "en": {
+    "ERROR_at_least_20_chars": "20 chars min.",
+    "LABEL_edit_your_comment": "Edit the comment",
+    "anonymous": "",
+    "cancel": "cancel",
+    "delete": "destroy",
+    "edit": "modify",
+    "modified": "modified",
+    "read_more": "show more",
+    "save": "confirm",
+    "show_less": "show less"
+  }
+}

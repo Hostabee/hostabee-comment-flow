@@ -1,0 +1,13 @@
+{
+  "ERROR_at_least_20_chars": "Minimum de 20 caractères",
+  "LABEL_edit_your_comment": "Modifier votre commentaire",
+  "PLACEHOLDER_write_a_comment": "Écrire un commentaire...",
+  "anonymous": "{capitalize, select, yes {A} other {a}}nonyme",
+  "cancel": "annuler",
+  "delete": "supprimer",
+  "edit": "modifier",
+  "modified": "modifié",
+  "read_more": "lire plus",
+  "save": "enregistrer",
+  "show_less": "montrer moins"
+}

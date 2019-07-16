@@ -4,7 +4,7 @@ Copyright (c) 2019 Hostabee SAS.
 This program is available under Apache License Version 2.0.
 -->
 
-<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="./hostabee-element.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../polymer/lib/elements/dom-repeat.html">
 <link rel="import" href="./hostabee-comment.html">
@@ -53,7 +53,7 @@ This program is available under Apache License Version 2.0.
      * @demo demo/hostabee-comment-flow/read-only.html Read only
      * @demo demo/hostabee-comment-flow/with-mapper.html With mapper
      */
-    class HostabeeCommentFlow extends Polymer.Element {
+    class HostabeeCommentFlow extends Hostabee.Element {
 
       static get is() {
         return 'hostabee-comment-flow';

@@ -4,7 +4,7 @@ Copyright (c) 2019 Hostabee SAS.
 This program is available under Apache License Version 2.0.
 -->
 
-<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="./hostabee-element.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../polymer/lib/elements/dom-if.html">
 <link rel="import" href="../iron-icon/iron-icon.html">
@@ -53,6 +53,10 @@ This program is available under Apache License Version 2.0.
         font-size: 0.95em;
       }
 
+      .summary__date>i {
+        text-transform: capitalize;
+      }
+
       .content {
         padding: 10px 5px 0 5px;
         color: var(--primary-text-color, rgba(0, 0, 0, 0.7));
@@ -66,6 +70,7 @@ This program is available under Apache License Version 2.0.
       .menu-item {
         border-radius: 0;
         margin: 0;
+        text-transform: capitalize;
       }
 
       .menu-item:hover {
@@ -88,15 +93,16 @@ This program is available under Apache License Version 2.0.
 
       .actions vaadin-button {
         margin-left: 8px;
+        text-transform: capitalize;
       }
     </style>
 
     <div class="heading">
       <hostabee-profile-picture src="[[item.author]]"></hostabee-profile-picture>
       <div class="summary">
-        <span class="summary__author-name">[[getAuthorName(item.author)]]</span>
+        <span class="summary__author-name">[[authorName]]</span>
         <div class="summary__date">
-          <i hidden$="[[!item.updated]]">Modified:</i>
+          <i hidden$="[[!item.updated]]">[[localize('modified')]]:</i>
           <span>[[getDateLastEdit(item)]]</span>
         </div>
       </div>
@@ -106,11 +112,11 @@ This program is available under Apache License Version 2.0.
         <div slot="dropdown-content" class="dropdown-content">
           <vaadin-button class="menu-item" theme="contrast" on-tap="edit">
             <iron-icon slot="prefix" icon="hostabee-icons:edit"></iron-icon>
-            Edit
+            [[localize('edit')]]
           </vaadin-button>
           <vaadin-button class="menu-item" theme="error" on-tap="delete">
             <iron-icon slot="prefix" icon="hostabee-icons:delete"></iron-icon>
-            Delete
+            [[localize('delete')]]
           </vaadin-button>
         </div>
       </paper-menu-button>
@@ -126,10 +132,10 @@ This program is available under Apache License Version 2.0.
         </vaadin-button>
       </template>
       <template is="dom-if" if="[[editing]]">
-        <vaadin-text-area label="Edit your comment" minlength="20" error-message="At least 20 chars" value="[[item.content]]" onkeydown="[[_handleKeyDown()]]" autofocus required></vaadin-text-area>
+        <vaadin-text-area label="[[localize('LABEL_edit_your_comment')]]" minlength="20" error-message="[[localize('ERROR_at_least_20_chars')]]" value="[[item.content]]" onkeydown="[[_handleKeyDown()]]" autofocus required></vaadin-text-area>
         <div class="actions">
-          <vaadin-button theme="small" on-tap="cancelEdit">Cancel</vaadin-button>
-          <vaadin-button theme="primary small" on-tap="confirmEdit">Save</vaadin-button>
+          <vaadin-button theme="small" on-tap="cancelEdit">[[localize('cancel')]]</vaadin-button>
+          <vaadin-button theme="primary small" on-tap="confirmEdit">[[localize('save')]]</vaadin-button>
         </div>
       </template>
     </div>
@@ -152,7 +158,7 @@ This program is available under Apache License Version 2.0.
      * @demo demo/hostabee-comment/no-author.html Without author
      * @demo demo/hostabee-comment/with-momentjs.html With MomentJs in your app
      */
-    class HostabeeComment extends Polymer.Element {
+    class HostabeeComment extends Hostabee.Element {
 
       static get is() {
         return 'hostabee-comment';
@@ -248,22 +254,21 @@ This program is available under Apache License Version 2.0.
             type: Boolean,
             computed: '__computeIsShort(item.content)',
           },
+          /**
+           * Author name. In the order, check the `fullname` property then the
+           * `name`. If `author` is not defined the name is "Anonymous".
+           *
+           * @type {String}
+           */
+          authorName: {
+            type: String,
+            computed: '__computeAuthorName(item.author, resources)',
+          },
           _toggleButtonText: {
             type: String,
-            computed: '__computeToggleButtonText(opened)',
+            computed: '__computeToggleButtonText(opened, language)',
           },
         };
-      }
-
-      /**
-       * Gets the author name. In the order, check the `fullname` property then
-       * the `name`. If `author` is not defined, the returned name is "Anonymous".
-       * 
-       * @param {Object} author The author of the comment.
-       * @return {String} The name of the author.
-       */
-      getAuthorName(author) {
-        return !author ? 'Anonymous' : author.fullname || author.name || 'Anonymous';
       }
 
       /**
@@ -417,8 +422,17 @@ This program is available under Apache License Version 2.0.
         return isShort;
       }
 
+      __computeAuthorName(author) {
+        let name = author && (author.fullname || author.name);
+        return name || this.localize('anonymous', 'capitalize', 'yes') || 'Anonymous';
+      }
+
       __computeToggleButtonText() {
-        return !this.opened ? 'read more' : 'show less';
+        if (!this.resources) {
+          return !this.opened ? 'read more' : 'show less';
+        } else {
+          return this.localize(!this.opened ? 'read_more' : 'show_less');
+        }
       }
 
       /**

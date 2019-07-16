@@ -1,0 +1,35 @@
+<!--
+@license
+Copyright (c) 2019 Hostabee SAS.
+This program is available under Apache License Version 2.0.
+-->
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="./hostabee-element-mixin.html">
+
+<script>
+  (function() {
+    'use strict';
+
+    /**
+     * @namespace Hostabee
+     */
+    window.Hostabee = window.Hostabee || {};
+
+    /**
+     * @customElement
+     * @polymer
+     * @memberof Hostabee
+     * @constructor
+     * @implements {Hostabee.ElementMixin}
+     */
+    const Element = Hostabee.ElementMixin(Polymer.Element);
+    window.customElements.define(Element.is, Element);
+
+    /**
+     * @memberof Hostabee
+     * @implements {Hostabee.ElementMixin}
+     * @extends {HTMLElement}
+     */
+    Hostabee.Element = Element;
+  })();
+</script>
