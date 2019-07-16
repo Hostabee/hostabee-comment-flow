@@ -4,7 +4,7 @@ Copyright (c) 2019 Hostabee SAS.
 This program is available under Apache License Version 2.0.
 -->
 
-<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="./hostabee-element.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../vaadin-text-field/vaadin-text-area.html">
 <link rel="import" href="../vaadin-button/vaadin-button.html">
@@ -46,6 +46,7 @@ This program is available under Apache License Version 2.0.
 
       .actions vaadin-button {
         margin-left: 8px;
+        text-transform: capitalize;
       }
 
       .horizontal {
@@ -61,13 +62,13 @@ This program is available under Apache License Version 2.0.
       <template is="dom-if" if="[[author]]">
         <hostabee-profile-picture src="[[author]]" size="38"></hostabee-profile-picture>
       </template>
-      <vaadin-text-area placeholder="Write a comment..." minlength="20" error-message="At least 20 chars" onkeydown="[[_handleKeyDown()]]" value="{{value}}" required></vaadin-text-area>
+      <vaadin-text-area placeholder="[[localize('PLACEHOLDER_write_a_comment')]]" minlength="20" error-message="[[localize('ERROR_at_least_20_chars')]]" onkeydown="[[_handleKeyDown()]]" value="{{value}}" required></vaadin-text-area>
     </div>
 
     <template is="dom-if" if="[[actionButtonsVisible]]">
       <div class="actions">
-        <vaadin-button theme="small" on-click="cancel">Cancel</vaadin-button>
-        <vaadin-button theme="primary small" on-click="confirm">Save</vaadin-button>
+        <vaadin-button theme="small" on-click="cancel">[[localize('cancel')]]</vaadin-button>
+        <vaadin-button theme="primary small" on-click="confirm">[[localize('save')]]</vaadin-button>
       </div>
     </template>
 
@@ -86,7 +87,7 @@ This program is available under Apache License Version 2.0.
      * @memberof Hostabee
      * @demo demo/hostabee-comment-create-form/basic.html Basic
      */
-    class HostabeeCommentCreateForm extends Polymer.Element {
+    class HostabeeCommentCreateForm extends Hostabee.Element {
 
       static get is() {
         return 'hostabee-comment-create-form';

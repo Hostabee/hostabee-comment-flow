@@ -33,6 +33,7 @@
 
       before(function() {
         element = fixture('BasicTestFixture');
+        element.language = 'en';
       });
 
       it('should be instantiable with default properties', function() {
@@ -183,6 +184,94 @@
         element.edit();
         expect(element.editing).to.be.false;
       });
+    });
+
+    describe('i18n', function() {
+      let element;
+
+      beforeEach(function() {
+        element = fixture('BasicTestFixture');
+      });
+
+      it('should support English', function(done) {
+        element.language = 'en';
+        element.edit(); // Set to edit mode to check form texts.
+        flush(function() {
+          // Add a delay for Firefox because it seems to need more time to
+          // re-localize texts.
+          setTimeout(() => {
+            expect(element.shadowRoot.querySelector('.summary__date > i').innerText).to.be.equal('Modified:');
+            let menuOptions = element.shadowRoot.querySelectorAll('.menu-item');
+            expect(menuOptions[0].innerText.trim()).to.be.equal('edit');
+            expect(menuOptions[1].innerText.trim()).to.be.equal('delete');
+            let textArea = element.shadowRoot.querySelector('vaadin-text-area');
+            expect(textArea.label).to.be.equal('Edit your comment');
+            expect(textArea.errorMessage).to.be.equal('At least 20 chars');
+            let actions = element.shadowRoot.querySelector('.actions');
+            expect(actions.children[0].innerText.trim()).to.be.equal('Cancel');
+            expect(actions.children[1].innerText.trim()).to.be.equal('Save');
+            done();
+          }, 100);
+        });
+      });
+
+      it('should support French', function(done) {
+        element.edit(); // Set to edit mode to check form texts.
+        flush(function() {
+          element.language = 'fr';
+          // Add a delay for Firefox because it seems to need more time to
+          // re-localize texts.
+          setTimeout(() => {
+            expect(element.shadowRoot.querySelector('.summary__date > i').innerText).to.be.equal('Modifié:');
+            let menuOptions = element.shadowRoot.querySelectorAll('.menu-item');
+            expect(menuOptions[0].innerText.trim()).to.be.equal('modifier');
+            expect(menuOptions[1].innerText.trim()).to.be.equal('supprimer');
+            let textArea = element.shadowRoot.querySelector('vaadin-text-area');
+            expect(textArea.label).to.be.equal('Modifier votre commentaire');
+            expect(textArea.errorMessage).to.be.equal('Minimum de 20 caractères');
+            let actions = element.shadowRoot.querySelector('.actions');
+            expect(actions.children[0].innerText.trim()).to.be.equal('Annuler');
+            expect(actions.children[1].innerText.trim()).to.be.equal('Enregistrer');
+            done();
+          }, 100);
+        });
+      });
+
+      it('should fallback to English if locales not found for the given language', function(done) {
+        element.language = 'de';
+        flush(function() {
+          // Add a delay for Firefox because it seems to need more time to
+          // re-localize texts.
+          setTimeout(() => {
+            expect(element.language).to.be.equal('en');
+            done();
+          }, 100);
+        });
+      });
+
+      it('should be able to use a custom locales file', function(done) {
+        element.edit(); // Set to edit mode to check form texts.
+        element.language = 'en';
+        element.localesFile = 'test/my-locales.json';
+        flush(function() {
+          // Add a delay for Firefox because it seems to need more time to
+          // re-localize texts.
+          setTimeout(() => {
+            expect(element.shadowRoot.querySelector('.summary__date > i').innerText).to.be.equal('Modified:');
+            let menuOptions = element.shadowRoot.querySelectorAll('.menu-item');
+            expect(menuOptions[0].innerText.trim()).to.be.equal('modify');
+            expect(menuOptions[1].innerText.trim()).to.be.equal('destroy');
+            let textArea = element.shadowRoot.querySelector('vaadin-text-area');
+            expect(textArea.label).to.be.equal('Edit the comment');
+            expect(textArea.errorMessage).to.be.equal('20 chars min.');
+            let actions = element.shadowRoot.querySelector('.actions');
+            expect(actions.children[0].innerText.trim()).to.be.equal('Cancel');
+            expect(actions.children[1].innerText.trim()).to.be.equal('Confirm');
+            done();
+          }, 100);
+        });
+      });
+
     });
   </script>
 

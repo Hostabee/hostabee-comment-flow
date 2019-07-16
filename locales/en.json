@@ -1,0 +1,13 @@
+{
+  "ERROR_at_least_20_chars": "At least 20 chars",
+  "LABEL_edit_your_comment": "Edit your comment",
+  "PLACEHOLDER_write_a_comment": "Write a comment...",
+  "anonymous": "{capitalize, select, yes {A} other {a}}nonymous",
+  "cancel": "cancel",
+  "delete": "delete",
+  "edit": "edit",
+  "modified": "modified",
+  "read_more": "read more",
+  "save": "save",
+  "show_less": "show less"
+}

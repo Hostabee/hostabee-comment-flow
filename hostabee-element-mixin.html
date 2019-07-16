@@ -1,0 +1,115 @@
+<!--
+@license
+Copyright (c) 2019 Hostabee SAS.
+This program is available under Apache License Version 2.0.
+-->
+<link rel="import" href="../polymer/lib/legacy/class.html">
+<link rel="import" href="../polymer/lib/utils/mixin.html">
+<link rel="import" href="../app-localize-behavior/app-localize-behavior.html">
+
+<script>
+  (function() {
+    'user strict';
+
+    /**
+     * @namespace Hostabee
+     */
+    window.Hostabee = window.Hostabee || {};
+
+    /**
+     * @mixinFunction
+     * @polymer
+     * @memberof Hostabee
+     */
+    const ElementMixin = (superClass) => class extends Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], superClass) {
+
+      static get is() {
+        return 'hostabee-element';
+      }
+
+      static get properties() {
+        return {
+          language: {
+            type: String,
+            value: window.navigator.language,
+          },
+          /**
+           * Path to an external file containing locales. If the value is set, the
+           * target file will be used instead of the default one. The target file
+           * must be in JSON format.
+           *
+           * For more detail about the file format, please read the
+           * [AppLocalizeBehavior](https://github.com/PolymerElements/app-localize-behavior)
+           * documentation.
+           *
+           * @type {String}
+           */
+          localesFile: {
+            type: String,
+            observer: '_localesFileChanged',
+          },
+        };
+      }
+
+      static get observers() {
+        return [
+          '_onLanguageChanged(language)',
+        ];
+      }
+
+      /**
+       * Called every time the element is inserted into the DOM. Useful for 
+       * running setup code, such as fetching resources or rendering.
+       * Generally, you should try to delay work until this time.
+       */
+      connectedCallback() {
+        super.connectedCallback();
+        this.addEventListener('app-localize-resources-error',
+          this._unregionalize.bind(this));
+      }
+
+      /**
+       * Called every time the element is removed from the DOM. Useful for 
+       * running clean up code (removing event listeners, etc.).
+       */
+      disconnectedCallback() {
+        super.disconnectedCallback();
+        this.removeEventListener('app-localize-resources-error',
+          this._unregionalize.bind(this));
+      }
+
+      _onLanguageChanged(language) {
+        if (language) {
+          let url = this.resolveUrl(`locales/${language}.json`, `${window.location.origin}`);
+          this.loadResources(url, language, true);
+        }
+      }
+
+      /**
+       * Loads locales file for internationalization.
+       */
+      _localesFileChanged() {
+        if (this.localesFile && this.localesFile.trim().length != 0) {
+          this.loadResources(this.resolveUrl(this.localesFile));
+        }
+      }
+
+      /**
+       * Resets the language without the region information. In the case the
+       * resources load failed because of a file not found this brings one more
+       * chance to find translations more suitable to the user.
+       */
+      _unregionalize() {
+        if (this.language.includes('-')) {
+          this.language = this.language.split('-')[0];
+        } else {
+          this.language = 'en';
+        }
+      }
+
+    };
+
+    Hostabee.ElementMixin = Polymer.dedupingMixin(ElementMixin);
+  })();
+</script>
