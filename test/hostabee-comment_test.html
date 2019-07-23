@@ -201,41 +201,43 @@
       });
 
       it('should support English', function(done) {
+        element.addEventListener('app-localize-resources-loaded', function() {
+          setTimeout(function() {
+            expect(element.shadowRoot.querySelector('.summary__date > i').innerText).to.be.equal('Modified:');
+            let menuOptions = element.shadowRoot.querySelectorAll('.menu-item');
+            expect(menuOptions[0].innerText.trim()).to.be.equal('edit');
+            expect(menuOptions[1].innerText.trim()).to.be.equal('delete');
+            let textArea = element.shadowRoot.querySelector('vaadin-text-area');
+            expect(textArea.label).to.be.equal('Edit your comment');
+            expect(textArea.errorMessage).to.be.equal('At least 20 chars');
+            let actions = element.shadowRoot.querySelector('.actions');
+            expect(actions.children[0].innerText.trim()).to.be.equal('Cancel');
+            expect(actions.children[1].innerText.trim()).to.be.equal('Save');
+            done();
+          }, 100);
+        }, {
+          once: true,
+        });
         flush(function() {
-          element.addEventListener('app-localize-resources-loaded', function() {
-            setTimeout(function() {
-              expect(element.shadowRoot.querySelector('.summary__date > i').innerText).to.be.equal('Modified:');
-              let menuOptions = element.shadowRoot.querySelectorAll('.menu-item');
-              expect(menuOptions[0].innerText.trim()).to.be.equal('edit');
-              expect(menuOptions[1].innerText.trim()).to.be.equal('delete');
-              let textArea = element.shadowRoot.querySelector('vaadin-text-area');
-              expect(textArea.label).to.be.equal('Edit your comment');
-              expect(textArea.errorMessage).to.be.equal('At least 20 chars');
-              let actions = element.shadowRoot.querySelector('.actions');
-              expect(actions.children[0].innerText.trim()).to.be.equal('Cancel');
-              expect(actions.children[1].innerText.trim()).to.be.equal('Save');
-              done();
-            }, 100);
-          }, {
-            once: true,
-          });
           element.language = 'en';
         });
       });
 
       it('should support French', function(done) {
         element.addEventListener('app-localize-resources-loaded', function() {
-          expect(element.shadowRoot.querySelector('.summary__date > i').innerText).to.be.equal('Modifié:');
-          let menuOptions = element.shadowRoot.querySelectorAll('.menu-item');
-          expect(menuOptions[0].innerText.trim()).to.be.equal('modifier');
-          expect(menuOptions[1].innerText.trim()).to.be.equal('supprimer');
-          let textArea = element.shadowRoot.querySelector('vaadin-text-area');
-          expect(textArea.label).to.be.equal('Modifier votre commentaire');
-          expect(textArea.errorMessage).to.be.equal('Minimum de 20 caractères');
-          let actions = element.shadowRoot.querySelector('.actions');
-          expect(actions.children[0].innerText.trim()).to.be.equal('Annuler');
-          expect(actions.children[1].innerText.trim()).to.be.equal('Enregistrer');
-          done();
+          setTimeout(() => {
+            expect(element.shadowRoot.querySelector('.summary__date > i').innerText).to.be.equal('Modifié:');
+            let menuOptions = element.shadowRoot.querySelectorAll('.menu-item');
+            expect(menuOptions[0].innerText.trim()).to.be.equal('modifier');
+            expect(menuOptions[1].innerText.trim()).to.be.equal('supprimer');
+            let textArea = element.shadowRoot.querySelector('vaadin-text-area');
+            expect(textArea.label).to.be.equal('Modifier votre commentaire');
+            expect(textArea.errorMessage).to.be.equal('Minimum de 20 caractères');
+            let actions = element.shadowRoot.querySelector('.actions');
+            expect(actions.children[0].innerText.trim()).to.be.equal('Annuler');
+            expect(actions.children[1].innerText.trim()).to.be.equal('Enregistrer');
+            done();
+          }, 100);
         }, {
           once: true,
         });
