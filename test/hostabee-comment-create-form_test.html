@@ -21,6 +21,12 @@
     </template>
   </test-fixture>
 
+  <test-fixture id="I18nTestFixture">
+    <template>
+      <hostabee-comment-create-form locales-folder="locales"></hostabee-comment-create-form>
+    </template>
+  </test-fixture>
+
   <script>
     describe('Basic', function() {
       let element;
@@ -78,7 +84,7 @@
       let element;
 
       beforeEach(function() {
-        element = fixture('BasicTestFixture');
+        element = fixture('I18nTestFixture');
         element.buttonsShown = true;
       });
 
