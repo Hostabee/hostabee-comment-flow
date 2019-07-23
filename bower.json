@@ -16,7 +16,8 @@
     "vaadin-button": "vaadin/vaadin-button#^2.1.4",
     "hostabee-profile-picture": "^1.0.0",
     "iron-collapse": "PolymerElements/iron-collapse#^2.2.1",
-    "app-localize-behavior": "PolymerElements/app-localize-behavior#^2.0.0"
+    "app-localize-behavior": "PolymerElements/app-localize-behavior#^2.0.0",
+    "hostabee-element": "^1.0.0"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^6.0.0",
