@@ -14,7 +14,7 @@
     "web-animations-js": "^2.3.1",
     "vaadin-text-field": "vaadin/vaadin-text-field#^2.3.5",
     "vaadin-button": "vaadin/vaadin-button#^2.1.4",
-    "hostabee-profile-picture": "^1.0.0",
+    "hostabee-profile-picture": "^1.0.1",
     "iron-collapse": "PolymerElements/iron-collapse#^2.2.1",
     "app-localize-behavior": "PolymerElements/app-localize-behavior#^2.0.0",
     "hostabee-element": "^1.0.0"
