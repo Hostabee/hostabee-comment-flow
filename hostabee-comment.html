@@ -372,7 +372,9 @@ This program is available under Apache License Version 2.0.
        * @return {String} the text shorten.
        */
       shorten(text) {
-        return this.isShort ? text.trim() : text.slice(0, this.maxLengthBeforeCollapse).trim() + '...';
+        if (text) {
+          return this.isShort ? text.trim() : text.slice(0, this.maxLengthBeforeCollapse).trim() + '...';
+        }
       }
 
       /**
