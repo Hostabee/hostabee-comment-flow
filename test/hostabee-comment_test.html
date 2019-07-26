@@ -225,9 +225,6 @@
 
       it('should support French', function(done) {
         element.addEventListener('app-localize-resources-loaded', function() {
-          console.log('element.language :', element.language);
-          console.log('element.resources :', element.resources);
-          console.log(element.localize('read_more'));
           setTimeout(() => {
             expect(element.shadowRoot.querySelector('.summary__date > i').innerText).to.be.equal('Modifié:');
             let menuOptions = element.shadowRoot.querySelectorAll('.menu-item');
