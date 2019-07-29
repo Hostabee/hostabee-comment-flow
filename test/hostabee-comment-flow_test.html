@@ -122,6 +122,58 @@
         };
         element.addEventListener('form-changed', asyncAssert);
       });
+
+      it('should allow to edit comments only owned by the author if set', function(done) {
+        element.comments = [{
+          author: {
+            id: 1,
+            name: 'John Doe',
+          },
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+          created: Date.now()
+        }, {
+          author: {
+            id: 2,
+            name: 'Jane Doe',
+          },
+          content: 'Consectetur adipiscing elit.',
+          created: Date.now()
+        }, {
+          content: 'Consectetur adipiscing elit.',
+          created: Date.now()
+        }];
+        element.author = {
+          id: 1,
+          name: 'John Doe',
+        };
+        flush(function() {
+          let comments = element.shadowRoot.querySelectorAll('hostabee-comment');
+          expect(comments[0].readOnly).to.be.false;
+          expect(comments[1].readOnly).to.be.true;
+          expect(comments[2].readOnly).to.be.true;
+          done();
+        });
+      });
+
+      it('should not allow to edit comments when author is not set', function(done) {
+        element.comments = [{
+          author: {
+            id: 1,
+            name: 'John Doe',
+          },
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+          created: Date.now()
+        }, {
+          content: 'Consectetur adipiscing elit.',
+          created: Date.now()
+        }];
+        flush(function() {
+          let comments = element.shadowRoot.querySelectorAll('hostabee-comment');
+          expect(comments[0].readOnly).to.be.true;
+          expect(comments[1].readOnly).to.be.true;
+          done();
+        });
+      });
     });
 
     describe('ReadOnly', function() {
