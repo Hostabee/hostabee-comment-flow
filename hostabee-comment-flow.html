@@ -26,7 +26,7 @@ This program is available under Apache License Version 2.0.
     </style>
     <div class="comments-container">
       <template is="dom-repeat" items="[[_comments]]" as="comment" restamp>
-        <hostabee-comment item="[[comment]]" read-only=[[readOnly]] language="{{language}}" on-comment-deleted="_retargetEvent" on-comment-modified="_retargetEvent"></hostabee-comment>
+        <hostabee-comment item="[[comment]]" read-only=[[!_isCommentEditable(comment)]] language="{{language}}" on-comment-deleted="_retargetEvent" on-comment-modified="_retargetEvent"></hostabee-comment>
       </template>
     </div>
     <template is="dom-if" if="[[!readOnly]]" restamp>
@@ -229,6 +229,23 @@ This program is available under Apache License Version 2.0.
           return this._users.find((u) => u.id == user) || user;
         }
         return user;
+      }
+
+      /**
+       * Tells if a comment should be editable or not. It depends if the comment
+       * flow is in read only mode or not and if an author was defined. When the
+       * comment flow has the read only mode turned off and an author is defined,
+       * the user can only edit/delete the comments they wrote.
+       *
+       * @param {Object} comment The comment to check is editable or not.
+       * @return {Boolean} true if the comment flow has read only mode turned off
+       * and the author is defined and is the writer of the comment.
+       */
+      _isCommentEditable(comment) {
+        if (this.readOnly || !comment.author) {
+          return false;
+        }
+        return this.author && this.author.id == comment.author.id;
       }
 
       /**
