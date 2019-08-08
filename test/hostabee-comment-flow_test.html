@@ -44,6 +44,12 @@
     </template>
   </test-fixture>
 
+  <test-fixture id="I18nTestFixture">
+    <template>
+      <hostabee-comment-flow></hostabee-comment-flow>
+    </template>
+  </test-fixture>
+
   <script>
     describe('Basic', function() {
       let element;
@@ -387,6 +393,98 @@
           done();
         };
         element.addEventListener('mapper-changed', asyncAssert);
+      });
+    });
+
+    describe('i18n', function() {
+      let element;
+
+      beforeEach(function() {
+        element = fixture('I18nTestFixture');
+      });
+
+      it('should support English', function(done) {
+        element.comments = [{
+          id: 1,
+          text: 'Cum sociis natoque penatibus et magnis.',
+        }, {
+          id: 2,
+          text: 'Cum sociis natoque penatibus magnis?',
+        }];
+        element.addEventListener('app-localize-resources-loaded', function() {
+          setTimeout(function() {
+            let comments = element.shadowRoot.querySelectorAll('hostabee-comment');
+            comments.forEach(comment => expect(comment.language).to.be.equal('en'));
+            expect(element.shadowRoot.querySelector('hostabee-comment-create-form').language).to.be.equal('en');
+            done();
+          }, 100);
+        }, {
+          once: true,
+        });
+        flush(function() {
+          element.language = 'en';
+        });
+      });
+
+      it('should support French', function(done) {
+        element.comments = [{
+          id: 1,
+          text: 'Cum sociis natoque penatibus et magnis.',
+        }, {
+          id: 2,
+          text: 'Cum sociis natoque penatibus magnis?',
+        }];
+        element.addEventListener('app-localize-resources-loaded', function() {
+          setTimeout(function() {
+            let comments = element.shadowRoot.querySelectorAll('hostabee-comment');
+            comments.forEach(comment => expect(comment.language).to.be.equal('fr'));
+            expect(element.shadowRoot.querySelector('hostabee-comment-create-form').language).to.be.equal('fr');
+            done();
+          }, 100);
+        }, {
+          once: true,
+        });
+        flush(function() {
+          element.language = 'fr';
+        });
+      });
+
+      it('should propagate locales file path to children', function(done) {
+        element.comments = [{
+          id: 1,
+          text: 'Cum sociis natoque penatibus et magnis.',
+        }, {
+          id: 2,
+          text: 'Cum sociis natoque penatibus magnis?',
+        }];
+        element.localesFile = 'test/my-locales.json';
+        flush(function() {
+          expect(element.localesFile).to.be.equal('test/my-locales.json');
+          let comments = element.shadowRoot.querySelectorAll('hostabee-comment');
+          comments.forEach(comment => expect(comment.localesFile).to.be.equal('test/my-locales.json'));
+          let form = element.shadowRoot.querySelector('hostabee-comment-create-form');
+          expect(form.localesFile).to.be.equal('test/my-locales.json');
+          done();
+        });
+      });
+
+      it('should propagate locales folder path to children', function(done) {
+        element.comments = [{
+          id: 1,
+          text: 'Cum sociis natoque penatibus et magnis.',
+        }, {
+          id: 2,
+          text: 'Cum sociis natoque penatibus magnis?',
+        }];
+        flush(function() {
+          element.localesFolder = '../my_locales';
+          expect(element.localesFolder).to.be.equal('../my_locales');
+          let comments = element.shadowRoot.querySelectorAll('hostabee-comment');
+          comments.forEach(comment => expect(comment.localesFolder).to.be.equal('../my_locales'));
+          let form = element.shadowRoot.querySelector('hostabee-comment-create-form');
+          expect(form.localesFolder).to.be.equal('../my_locales');
+          done();
+        });
       });
     });
   </script>
