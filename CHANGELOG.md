@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.1](https://github.com/Hostabee/hostabee-comment-flow/compare/v0.4.0...v0.4.1) (2019-08-08)
+
+
+### Bug Fixes
+
+* **i18n:** propagate locales settings to children ([bf99dff](https://github.com/Hostabee/hostabee-comment-flow/commit/bf99dff))
+
+
+
 ## [0.4.0](https://github.com/Hostabee/hostabee-comment-flow/compare/v0.3.2...v0.4.0) (2019-08-08)
 
 
