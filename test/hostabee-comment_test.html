@@ -154,6 +154,32 @@
           done();
         });
       });
+
+      it('should allow switching between creation date and update date when there is one', function(done) {
+        element.item = {
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+          created: Date.now(),
+        };
+        element.addEventListener('comment-modified', function(event) {
+          element.item = event.detail; // Update element with new version of the comment
+          let span = element.shadowRoot.querySelector('.summary__date>span');
+          expect(span.innerText.toLowerCase()).to.includes('modified:');
+          span.click();
+          expect(span.innerText.toLowerCase()).to.includes('created:');
+          span.click();
+          expect(span.innerText.toLowerCase()).to.includes('modified:');
+          span.click();
+          expect(span.innerText.toLowerCase()).to.includes('created:');
+          done();
+        }, {
+          once: true,
+        });
+        element.edit();
+        flush(function() {
+          element.item.content = 'Lorem ipsum dolor sit amet.';
+          element.confirmEdit();
+        });
+      });
     });
 
     describe('ReadOnly', function() {
@@ -203,7 +229,6 @@
       it('should support English', function(done) {
         element.addEventListener('app-localize-resources-loaded', function() {
           setTimeout(function() {
-            expect(element.shadowRoot.querySelector('.summary__date > i').innerText).to.be.equal('Modified:');
             let menuOptions = element.shadowRoot.querySelectorAll('.menu-item');
             expect(menuOptions[0].innerText.trim()).to.be.equal('edit');
             expect(menuOptions[1].innerText.trim()).to.be.equal('delete');
@@ -226,7 +251,6 @@
       it('should support French', function(done) {
         element.addEventListener('app-localize-resources-loaded', function() {
           setTimeout(() => {
-            expect(element.shadowRoot.querySelector('.summary__date > i').innerText).to.be.equal('Modifié:');
             let menuOptions = element.shadowRoot.querySelectorAll('.menu-item');
             expect(menuOptions[0].innerText.trim()).to.be.equal('modifier');
             expect(menuOptions[1].innerText.trim()).to.be.equal('supprimer');
@@ -262,7 +286,6 @@
         element.language = 'en';
         flush(function() {
           element.addEventListener('app-localize-resources-loaded', function() {
-            expect(element.shadowRoot.querySelector('.summary__date > i').innerText).to.be.equal('Modified:');
             let menuOptions = element.shadowRoot.querySelectorAll('.menu-item');
             expect(menuOptions[0].innerText.trim()).to.be.equal('modify');
             expect(menuOptions[1].innerText.trim()).to.be.equal('destroy');
