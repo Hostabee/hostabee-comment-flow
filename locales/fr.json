@@ -4,9 +4,10 @@
   "PLACEHOLDER_write_a_comment": "Écrire un commentaire...",
   "anonymous": "{capitalize, select, yes {A} other {a}}nonyme",
   "cancel": "annuler",
+  "created": "créé: ",
   "delete": "supprimer",
   "edit": "modifier",
-  "modified": "modifié",
+  "modified": "modifié: ",
   "read_more": "lire plus",
   "save": "enregistrer",
   "show_less": "montrer moins"
