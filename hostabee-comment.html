@@ -271,6 +271,21 @@ This program is available under Apache License Version 2.0.
             type: String,
             computed: '__computeAuthorName(item.author, resources)',
           },
+          /**
+           * Disables relative time. If MomentJs is imported in the app where
+           * this element is used, it uses relative times for creation and
+           * update dates. When this attribute is set to `true`, the element
+           * does not use relative time even if MomentJs is presents in the
+           * environment.
+           * 
+           * @type {Boolean}
+           * @default false
+           */
+          noRelativeTime: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true,
+          },
           localesFolder: {
             type: String,
             value: 'locales',
@@ -288,7 +303,8 @@ This program is available under Apache License Version 2.0.
        */
       static get observers() {
         return [
-          'toggleDates(item, resources)',
+          'toggleDates(item)',
+          'refreshDate(resources, noRelativeTime)',
         ];
       }
 
@@ -372,7 +388,6 @@ This program is available under Apache License Version 2.0.
           composed: true
         }));
         this._setEditing(false);
-        this.toggleDates();
       }
 
       /**
@@ -406,12 +421,49 @@ This program is available under Apache License Version 2.0.
         }
         let span = this.shadowRoot.querySelector('.summary__date>span');
         if (!span.hasAttribute('updated') && this.item.updated) {
-          span.innerText = this.localize('modified') + this._formatDate(this.item.updated);
-          span.toggleAttribute('updated', true);
+          this._displayLastUpdateDate(span);
         } else {
-          span.innerText = this.localize('created') + this._formatDate(this.item.created);
-          span.toggleAttribute('updated', false);
+          this._displayCreationDate(span);
         }
+      }
+
+      /**
+       * Refreshes the date displayed under the author name. This method is
+       * auto matically called when language changes or relative time is
+       * enabled/disabled.
+       */
+      refreshDate() {
+        if (!this.item) {
+          return;
+        }
+        let span = this.shadowRoot.querySelector('.summary__date>span');
+        if (span.hasAttribute('updated') && this.item.updated) {
+          this._displayLastUpdateDate(span);
+        } else {
+          this._displayCreationDate(span);
+        }
+      }
+
+      /**
+       * Displays date of last update below comment author name.
+       * 
+       * @param {HTMLElement} span The span under the author name to be filled
+       * with the last udpate date.
+       */
+      _displayLastUpdateDate(span) {
+        span.innerText = this.localize('modified') + this._formatDate(this.item.updated);
+        span.toggleAttribute('updated', true);
+      }
+
+      /**
+       * Displays date of creation below comment author name.
+       * 
+       * @param {HTMLElement} span The span under the author name to be filled
+       * with the creation date.
+       */
+      _displayCreationDate(span) {
+        span.innerText = this.localize('created') + this._formatDate(this.item.created);
+        span.toggleAttribute('updated', false);
       }
 
       /**
@@ -429,7 +481,7 @@ This program is available under Apache License Version 2.0.
         if (time) {
           var timestamp = typeof time == 'object' ?
             (time.toMillis ? time.toMillis() : time.getTime()) : time;
-          if ('moment' in window) {
+          if (!this.noRelativeTime && 'moment' in window) {
             return moment(Number(timestamp)).fromNow();
           }
           var d = new Date(Number(timestamp));

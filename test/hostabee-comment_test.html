@@ -33,6 +33,14 @@
     </template>
   </test-fixture>
 
+  <test-fixture id="WithMomentJs">
+    <template>
+      <div>
+        <hostabee-comment></hostabee-comment>
+      </div>
+    </template>
+  </test-fixture>
+
   <script>
     describe('Basic', function() {
       let element;
@@ -290,7 +298,49 @@
           element.localesFile = 'test/my-locales.json';
         });
       });
+    });
 
+    describe('With MomentJs loaded', function() {
+      let element;
+
+      before(function(done) {
+        element = fixture('WithMomentJs').querySelector('hostabee-comment');
+        // Load MomentJs
+        let script = document.createElement('script');
+        script.src = '../../../../bower_components/moment/min/moment.min.js';
+        script.onload = function() {
+          done();
+        };
+        document.head.appendChild(script);
+      });
+
+      it('should display relative time by default', function(done) {
+        element.item = {
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+          created: Date.now(),
+        };
+        flush(function() {
+          expect('moment' in window).to.be.true;
+          let span = element.shadowRoot.querySelector('.summary__date>span');
+          expect(span.innerText.toLowerCase()).to.includes('few seconds ago');
+          done();
+        });
+      });
+
+      it('should not use relative time if disabled', function(done) {
+        element.item = {
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+          created: new Date(),
+        };
+        element.noRelativeTime = true;
+        flush(function() {
+          expect('moment' in window).to.be.true;
+          let span = element.shadowRoot.querySelector('.summary__date>span');
+          expect(span.innerText.toLowerCase()).to.not.includes('few seconds ago');
+          expect(span.innerText.toLowerCase()).to.includes(element.item.created.toLocaleTimeString());
+          done();
+        });
+      });
     });
   </script>
 
