@@ -270,18 +270,6 @@
         });
       });
 
-      it('should fallback to English if locales not found for the given language', function(done) {
-        flush(function() {
-          element.addEventListener('app-localize-resources-loaded', function() {
-            expect(element.language).to.be.equal('en');
-            done();
-          }, {
-            once: true,
-          });
-          element.language = 'de';
-        });
-      });
-
       it('should be able to use a custom locales file', function(done) {
         element.language = 'en';
         flush(function() {

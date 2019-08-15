@@ -122,18 +122,6 @@
         });
       });
 
-      it('should fallback to English if locales not found for the given language', function(done) {
-        element.language = 'de';
-        flush(function() {
-          // Add a delay for Firefox because it seems to need more time to
-          // re-localize texts.
-          setTimeout(() => {
-            expect(element.language).to.be.equal('en');
-            done();
-          }, 100);
-        });
-      });
-
       it('should allow to specify a custom locales file', function(done) {
         element.language = 'en';
         element.localesFile = 'test/my-locales.json';
