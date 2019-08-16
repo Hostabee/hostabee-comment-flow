@@ -337,7 +337,7 @@
           expect('moment' in window).to.be.true;
           let span = element.shadowRoot.querySelector('.summary__date>span');
           expect(span.innerText.toLowerCase()).to.not.includes('few seconds ago');
-          expect(span.innerText.toLowerCase()).to.includes(element.item.created.toLocaleTimeString());
+          expect(span.innerText.toLowerCase()).to.includes(element.item.created.toLocaleTimeString().toLowerCase());
           done();
         });
       });

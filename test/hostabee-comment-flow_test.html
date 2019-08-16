@@ -538,7 +538,7 @@
           let commentElement = element.shadowRoot.querySelector('hostabee-comment');
           let span = commentElement.shadowRoot.querySelector('.summary__date>span');
           expect(span.innerText.toLowerCase()).to.not.includes('few seconds ago');
-          expect(span.innerText.toLowerCase()).to.includes(element.comments[0].created.toLocaleTimeString());
+          expect(span.innerText.toLowerCase()).to.includes(element.comments[0].created.toLocaleTimeString().toLowerCase());
           done();
         });
       });
