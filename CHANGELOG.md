@@ -1,77 +1,15 @@
-# Changelog
+# Change Log
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [0.4.1](https://github.com/Hostabee/hostabee-comment-flow/compare/v0.4.0...v0.4.1) (2019-08-08)
-
-
-### Bug Fixes
-
-* **i18n:** propagate locales settings to children ([bf99dff](https://github.com/Hostabee/hostabee-comment-flow/commit/bf99dff))
-
-
-
-## [0.4.0](https://github.com/Hostabee/hostabee-comment-flow/compare/v0.3.2...v0.4.0) (2019-08-08)
+<a name="0.5.0"></a>
+# [0.5.0](https://github.com/Hostabee/hostabee-comment-flow/compare/v0.4.1...v0.5.0) (2019-08-17)
 
 
 ### Features
 
-* **comment-flow:** allow only author to edit comment ([0cab2a2](https://github.com/Hostabee/hostabee-comment-flow/commit/0cab2a2)), closes [#16](https://github.com/Hostabee/hostabee-comment-flow/issues/16)
-
-
-
-### [0.3.2](https://github.com/Hostabee/hostabee-comment-flow/compare/v0.3.1...v0.3.2) (2019-07-26)
-
-
-### Bug Fixes
-
-* **comment:** shorten function ([0f243aa](https://github.com/Hostabee/hostabee-comment-flow/commit/0f243aa)), closes [#12](https://github.com/Hostabee/hostabee-comment-flow/issues/12)
-* **i18n:** translate "read more" button first render ([b2664a8](https://github.com/Hostabee/hostabee-comment-flow/commit/b2664a8)), closes [#14](https://github.com/Hostabee/hostabee-comment-flow/issues/14)
-
-
-
-### [0.3.1](https://github.com/Hostabee/hostabee-comment-flow/compare/v0.3.0...v0.3.1) (2019-07-23)
-
-
-### Bug Fixes
-
-* **dep:** upgrade lodash version ([9a011e6](https://github.com/Hostabee/hostabee-comment-flow/commit/9a011e6))
-
-
-
-## [0.3.0](https://github.com/Hostabee/hostabee-comment-flow/compare/v0.2.0...v0.3.0) (2019-07-16)
-
-
-### Bug Fixes
-
-* **comment-flow:** slot content searching ([dced25b](https://github.com/Hostabee/hostabee-comment-flow/commit/dced25b))
-
-
-### Features
-
-* **comment:** add read more/show less buttons ([7aedfaf](https://github.com/Hostabee/hostabee-comment-flow/commit/7aedfaf))
-* **comment flow:** add support for mapper ([853bcc9](https://github.com/Hostabee/hostabee-comment-flow/commit/853bcc9))
-* **comment-flow:** add scroll on comment list ([6f1cc50](https://github.com/Hostabee/hostabee-comment-flow/commit/6f1cc50))
-* **comment-flow:** allow to use custom form ([e08ea59](https://github.com/Hostabee/hostabee-comment-flow/commit/e08ea59))
-* **i18n:** add behavior to localize elements ([74db518](https://github.com/Hostabee/hostabee-comment-flow/commit/74db518))
-* **mapper:** add new hostabee-comment-mapper element ([5ef0cfb](https://github.com/Hostabee/hostabee-comment-flow/commit/5ef0cfb))
-
-
-
-# [0.2.0](https://github.com/Hostabee/hostabee-comment-flow/compare/v0.1.0...v0.2.0) (2019-03-16)
-
-
-### Bug Fixes
-
-* **comment-flow:** author to comment linking ([6b7829f](https://github.com/Hostabee/hostabee-comment-flow/commit/6b7829f))
-
-
-### Features
-
-* **comment-create-form:** add author profile picture ([4f64321](https://github.com/Hostabee/hostabee-comment-flow/commit/4f64321))
-* **comment-create-form:** add new element ([95be841](https://github.com/Hostabee/hostabee-comment-flow/commit/95be841))
-* **comment-create-form:** show buttons if form not empty ([11bf05b](https://github.com/Hostabee/hostabee-comment-flow/commit/11bf05b))
-* **comment-flow:** add form to create comment ([8e1c8e6](https://github.com/Hostabee/hostabee-comment-flow/commit/8e1c8e6))
+* **comment:** allow to disable relative time ([1824eb1](https://github.com/Hostabee/hostabee-comment-flow/commit/1824eb1))
+* **comment:** allow to toggle creation and update dates ([09d1ca1](https://github.com/Hostabee/hostabee-comment-flow/commit/09d1ca1))
 
 
 
