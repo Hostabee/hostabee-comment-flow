@@ -53,10 +53,6 @@ This program is available under Apache License Version 2.0.
         font-size: 0.95em;
       }
 
-      .summary__date>span {
-        text-transform: capitalize;
-      }
-
       .summary__date>span:hover {
         cursor: pointer;
       }
@@ -445,13 +441,26 @@ This program is available under Apache License Version 2.0.
       }
 
       /**
+       * Capitalizes the given string. Only the first letter of the string/text
+       * is uppercase.
+       * 
+       * @param {String} s The string to be capitalized
+       * @return {String} the capitalized string. Basically the received value
+       * with the first letter uppercase and the rest lowercase.
+       */
+      capitalize(s) {
+        return !s ? s : s.slice(0, 1).toUpperCase() + s.slice(1).toLowerCase();
+      }
+
+      /**
        * Displays date of last update below comment author name.
        * 
        * @param {HTMLElement} span The span under the author name to be filled
        * with the last udpate date.
        */
       _displayLastUpdateDate(span) {
-        span.innerText = this.localize('modified') + this._formatDate(this.item.updated);
+        span.innerText = this.capitalize(this.localize('modified')) +
+          this._formatDate(this.item.updated);
         span.toggleAttribute('updated', true);
       }
 
@@ -462,7 +471,8 @@ This program is available under Apache License Version 2.0.
        * with the creation date.
        */
       _displayCreationDate(span) {
-        span.innerText = this.localize('created') + this._formatDate(this.item.created);
+        span.innerText = this.capitalize(this.localize('created')) +
+          this._formatDate(this.item.created);
         span.toggleAttribute('updated', false);
       }
 
