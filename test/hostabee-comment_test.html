@@ -50,10 +50,9 @@
         element.language = 'en';
       });
 
-      it('should be instantiable with default properties', function() {
-        expect(element.item).to.be.undefined;
-        expect(element.readOnly).to.be.false;
-      });
+      beforeEach(function() {
+        element.item = null;
+      })
 
       it('should not be able to confirm edit when not in edit mode', function(done) {
         const asyncAssert = function() {
@@ -184,6 +183,51 @@
         });
         element.edit();
         flush(function() {
+          element.item.content = 'Lorem ipsum dolor sit amet.';
+          element.confirmEdit();
+        });
+      });
+
+      it('should automatically switch from update date to creation date', function(done) {
+        element.item = {
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+          created: Date.now(),
+        };
+        element.addEventListener('comment-modified', function(event) {
+          element.item = event.detail; // Update element with new version of the comment
+          let span = element.shadowRoot.querySelector('.summary__date>span');
+          expect(span.innerText.toLowerCase()).to.includes('modified:');
+          done();
+        }, {
+          once: true,
+        });
+        element.edit();
+        flush(function() {
+          let span = element.shadowRoot.querySelector('.summary__date>span');
+          expect(span.innerText.toLowerCase()).to.includes('created:');
+          element.item.content = 'Lorem ipsum dolor sit amet.';
+          element.confirmEdit();
+        });
+      });
+
+      it('should not automatically switch from update date to creation date', function(done) {
+        element.item = {
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+          created: Date.now(),
+          updated: Date.now(),
+        };
+        element.addEventListener('comment-modified', function(event) {
+          element.item = event.detail; // Update element with new version of the comment
+          let span = element.shadowRoot.querySelector('.summary__date>span');
+          expect(span.innerText.toLowerCase()).to.includes('modified:');
+          done();
+        }, {
+          once: true,
+        });
+        element.edit();
+        flush(function() {
+          let span = element.shadowRoot.querySelector('.summary__date>span');
+          expect(span.innerText.toLowerCase()).to.includes('modified:');
           element.item.content = 'Lorem ipsum dolor sit amet.';
           element.confirmEdit();
         });

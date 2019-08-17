@@ -201,6 +201,7 @@ This program is available under Apache License Version 2.0.
            */
           item: {
             type: Object,
+            observer: '_itemChanged',
           },
           /**
            * Read only mode enabled. When the read only mode is enabled, the
@@ -299,7 +300,6 @@ This program is available under Apache License Version 2.0.
        */
       static get observers() {
         return [
-          'toggleDates(item)',
           'refreshDate(resources, noRelativeTime)',
         ];
       }
@@ -453,14 +453,37 @@ This program is available under Apache License Version 2.0.
       }
 
       /**
+       * Displays the creation date of the comment below the author name.
+       */
+      displayCreationDate() {
+        this._displayCreationDate(this.shadowRoot.querySelector('.summary__date>span'));
+      }
+
+      _itemChanged(newItem, oldItem) {
+        // Switch from creation date to udpate date if the previous version of
+        // the item did not have update date but the new one yes, or if there was
+        // no previous version of the item and the initial one has an update date.
+        if ((oldItem && !oldItem.updated) ||
+          (!oldItem && newItem && newItem.updated)) {
+          this.toggleDates();
+        } else if (!newItem) {
+          this.displayCreationDate();
+        } else {
+          this.refreshDate();
+        }
+      }
+
+      /**
        * Displays date of last update below comment author name.
        * 
        * @param {HTMLElement} span The span under the author name to be filled
        * with the last udpate date.
        */
       _displayLastUpdateDate(span) {
-        span.innerText = this.capitalize(this.localize('modified')) +
-          this._formatDate(this.item.updated);
+        if (this.item) {
+          span.innerText = this.capitalize(this.localize('modified')) +
+            this._formatDate(this.item.updated);
+        }
         span.toggleAttribute('updated', true);
       }
 
@@ -471,8 +494,10 @@ This program is available under Apache License Version 2.0.
        * with the creation date.
        */
       _displayCreationDate(span) {
-        span.innerText = this.capitalize(this.localize('created')) +
-          this._formatDate(this.item.created);
+        if (this.item) {
+          span.innerText = this.capitalize(this.localize('created')) +
+            this._formatDate(this.item.created);
+        }
         span.toggleAttribute('updated', false);
       }
 
