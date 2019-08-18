@@ -61,6 +61,10 @@ This program is available under Apache License Version 2.0.
         font-style: italic;
       }
 
+      paper-icon-button {
+        color: var(--secondary-text-color, rgba(0, 0, 0, 0.3));
+      }
+
       .content {
         padding: 10px 5px 0 5px;
         color: var(--primary-text-color, rgba(0, 0, 0, 0.7));
@@ -111,7 +115,7 @@ This program is available under Apache License Version 2.0.
       </div>
       <span class="flex"></span>
       <paper-menu-button horizontal-align="right" close-on-activate>
-        <paper-icon-button slot="dropdown-trigger" icon="hostabee-icons:more-vert" hidden$="[[readOnly]]"></paper-icon-button>
+        <paper-icon-button slot="dropdown-trigger" icon="hostabee-icons:more-horiz" hidden$="[[readOnly]]"></paper-icon-button>
         <div slot="dropdown-content" class="dropdown-content">
           <vaadin-button class="menu-item" theme="contrast" on-tap="edit">
             <iron-icon slot="prefix" icon="hostabee-icons:edit"></iron-icon>
