@@ -17,7 +17,7 @@ Commenting solution out-of-the-box in a web component.
 </script>
 ```
 
-![Screenshot of hostabee-comment-flow](https://raw.githubusercontent.com/Hostabee/hostabee-comment-flow/master/screenshot.png)
+![Screenshot of hostabee-comment-flow](./images/screenshot.png)
 
 ## Installation
 
