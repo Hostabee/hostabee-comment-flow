@@ -78,6 +78,19 @@
           done();
         });
       });
+
+      it('should propagate minimum length required to inner text area', function(done) {
+        // Unfortunately, considering the issue https://github.com/vaadin/vaadin-text-field/issues/182
+        // we can't programmatically test validation based on minlength requirement.
+        expect(element.minlength).to.be.equal(20);
+        flush(function() {
+          const textArea = element.shadowRoot.querySelector('vaadin-text-area');
+          expect(textArea.minlength).to.be.equal(20);
+          element.minlength = 10;
+          expect(textArea.minlength).to.be.equal(10);
+          done();
+        });
+      });
     });
 
     describe('i18n', function() {
@@ -135,7 +148,7 @@
             expect(actions.children[0].innerText.trim()).to.be.equal('Cancel');
             expect(actions.children[1].innerText.trim()).to.be.equal('Confirm');
             done();
-          }, 100);
+          }, 150);
         });
       });
 

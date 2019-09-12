@@ -62,7 +62,7 @@ This program is available under Apache License Version 2.0.
       <template is="dom-if" if="[[author]]">
         <hostabee-profile-picture src="[[author]]" size="38"></hostabee-profile-picture>
       </template>
-      <vaadin-text-area placeholder="[[localize('PLACEHOLDER_write_a_comment')]]" minlength="20" error-message="[[localize('ERROR_at_least_20_chars')]]" onkeydown="[[_handleKeyDown()]]" value="{{value}}" required></vaadin-text-area>
+      <vaadin-text-area placeholder="[[localize('PLACEHOLDER_write_a_comment')]]" minlength="[[minlength]]" error-message="[[localize('ERROR_minlength', 'count', minlength)]]" onkeydown="[[_handleKeyDown()]]" value="{{value}}" required></vaadin-text-area>
     </div>
 
     <template is="dom-if" if="[[actionButtonsVisible]]">
@@ -139,6 +139,17 @@ This program is available under Apache License Version 2.0.
             type: Boolean,
             value: false,
             readOnly: true,
+          },
+          /**
+           * Minimum number of characters (in Unicode code points) that the user
+           * can enter.
+           * 
+           * @type {Number}
+           * @default 20
+           */
+          minlength: {
+            type: Number,
+            value: 20,
           },
           /**
            * Value in the form input.

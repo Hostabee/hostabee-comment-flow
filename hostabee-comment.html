@@ -139,7 +139,7 @@ This program is available under Apache License Version 2.0.
         </vaadin-button>
       </template>
       <template is="dom-if" if="[[editing]]">
-        <vaadin-text-area label="[[localize('LABEL_edit_your_comment')]]" minlength="20" error-message="[[localize('ERROR_at_least_20_chars')]]" value="[[item.content]]" onkeydown="[[_handleKeyDown()]]" autofocus required></vaadin-text-area>
+        <vaadin-text-area label="[[localize('LABEL_edit_your_comment')]]" minlength="[[minlength]]" error-message="[[localize('ERROR_minlength', 'count', minlength)]]" value="[[item.content]]" onkeydown="[[_handleKeyDown()]]" autofocus required></vaadin-text-area>
         <div class="actions">
           <vaadin-button theme="small" on-tap="cancelEdit">[[localize('cancel')]]</vaadin-button>
           <vaadin-button theme="primary small" on-tap="confirmEdit">[[localize('save')]]</vaadin-button>
@@ -237,6 +237,17 @@ This program is available under Apache License Version 2.0.
           maxLengthBeforeCollapse: {
             type: Number,
             value: 150,
+          },
+          /**
+           * Minimum number of characters (in Unicode code points) that the user
+           * can enter.
+           *
+           * @type {Number}
+           * @default 20
+           */
+          minlength: {
+            type: Number,
+            value: 20,
           },
           /**
            * Is the comment opened? When the comment is under the max length
