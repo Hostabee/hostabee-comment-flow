@@ -188,6 +188,22 @@
           done();
         });
       });
+
+      it('should propagate minimum length required to inner comments and form', function(done) {
+        // Unfortunately, considering the issue https://github.com/vaadin/vaadin-text-field/issues/182
+        // we can't programmatically test validation based on minlength requirement.
+        expect(element.minlength).to.be.equal(20);
+        flush(function() {
+          let comments = element.shadowRoot.querySelectorAll('hostabee-comment');
+          comments.forEach((comment) => expect(comment.minlength).to.be.equal(20));
+          let form = element.shadowRoot.querySelector('hostabee-comment-create-form');
+          expect(form.minlength).to.be.equal(20);
+          element.minlength = 10;
+          comments.forEach((comment) => expect(comment.minlength).to.be.equal(10));
+          expect(form.minlength).to.be.equal(10);
+          done();
+        });
+      });
     });
 
     describe('ReadOnly', function() {

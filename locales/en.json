@@ -1,5 +1,5 @@
 {
-  "ERROR_at_least_20_chars": "At least 20 chars",
+  "ERROR_minlength": "At least {count} chars",
   "LABEL_edit_your_comment": "Edit your comment",
   "PLACEHOLDER_write_a_comment": "Write a comment...",
   "anonymous": "{capitalize, select, yes {A} other {a}}nonymous",

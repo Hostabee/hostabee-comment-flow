@@ -1,6 +1,6 @@
 {
   "en": {
-    "ERROR_at_least_20_chars": "20 chars min.",
+    "ERROR_minlength": "{count} chars min.",
     "LABEL_edit_your_comment": "Edit the comment",
     "anonymous": "",
     "cancel": "cancel",
