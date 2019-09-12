@@ -441,7 +441,7 @@
             comments.forEach(comment => expect(comment.language).to.be.equal('en'));
             expect(element.shadowRoot.querySelector('hostabee-comment-create-form').language).to.be.equal('en');
             done();
-          }, 100);
+          }, 150);
         }, {
           once: true,
         });
@@ -464,7 +464,7 @@
             comments.forEach(comment => expect(comment.language).to.be.equal('fr'));
             expect(element.shadowRoot.querySelector('hostabee-comment-create-form').language).to.be.equal('fr');
             done();
-          }, 100);
+          }, 150);
         }, {
           once: true,
         });
