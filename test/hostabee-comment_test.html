@@ -294,7 +294,7 @@
 
       it('should support English', function(done) {
         element.addEventListener('app-localize-resources-loaded', function() {
-          setTimeout(function() {
+          flush(function() {
             let menuOptions = element.shadowRoot.querySelectorAll('.menu-item');
             expect(menuOptions[0].innerText.trim()).to.be.equal('edit');
             expect(menuOptions[1].innerText.trim()).to.be.equal('delete');
@@ -305,7 +305,7 @@
             expect(actions.children[0].innerText.trim()).to.be.equal('Cancel');
             expect(actions.children[1].innerText.trim()).to.be.equal('Save');
             done();
-          }, 150);
+          });
         }, {
           once: true,
         });
@@ -316,7 +316,7 @@
 
       it('should support French', function(done) {
         element.addEventListener('app-localize-resources-loaded', function() {
-          setTimeout(() => {
+          flush(function() {
             let menuOptions = element.shadowRoot.querySelectorAll('.menu-item');
             expect(menuOptions[0].innerText.trim()).to.be.equal('modifier');
             expect(menuOptions[1].innerText.trim()).to.be.equal('supprimer');
@@ -327,7 +327,7 @@
             expect(actions.children[0].innerText.trim()).to.be.equal('Annuler');
             expect(actions.children[1].innerText.trim()).to.be.equal('Enregistrer');
             done();
-          }, 150);
+          });
         }, {
           once: true,
         });
