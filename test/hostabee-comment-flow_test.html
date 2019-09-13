@@ -436,12 +436,12 @@
           text: 'Cum sociis natoque penatibus magnis?',
         }];
         element.addEventListener('app-localize-resources-loaded', function() {
-          setTimeout(function() {
+          flush(function() {
             let comments = element.shadowRoot.querySelectorAll('hostabee-comment');
             comments.forEach(comment => expect(comment.language).to.be.equal('en'));
             expect(element.shadowRoot.querySelector('hostabee-comment-create-form').language).to.be.equal('en');
             done();
-          }, 150);
+          });
         }, {
           once: true,
         });
@@ -459,12 +459,12 @@
           text: 'Cum sociis natoque penatibus magnis?',
         }];
         element.addEventListener('app-localize-resources-loaded', function() {
-          setTimeout(function() {
+          flush(function() {
             let comments = element.shadowRoot.querySelectorAll('hostabee-comment');
             comments.forEach(comment => expect(comment.language).to.be.equal('fr'));
             expect(element.shadowRoot.querySelector('hostabee-comment-create-form').language).to.be.equal('fr');
             done();
-          }, 150);
+          });
         }, {
           once: true,
         });
