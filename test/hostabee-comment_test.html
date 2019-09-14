@@ -309,9 +309,7 @@
         }, {
           once: true,
         });
-        flush(function() {
-          element.language = 'en';
-        });
+        element.language = 'en';
       });
 
       it('should support French', function(done) {
@@ -331,9 +329,7 @@
         }, {
           once: true,
         });
-        flush(function() {
-          element.language = 'fr';
-        });
+        element.language = 'fr';
       });
 
       it('should be able to use a custom locales file', function(done) {
