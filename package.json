@@ -1,6 +1,6 @@
 {
   "name": "hostabee-comment-flow",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Commenting solution out-of-the-box in a Web Component.",
   "main": "hostabee-comment-flow.html",
   "directories": {
