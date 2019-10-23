@@ -26,7 +26,7 @@ This program is available under Apache License Version 2.0.
     </style>
     <div class="comments-container">
       <template is="dom-repeat" items="[[_comments]]" as="comment" restamp>
-        <hostabee-comment item="[[comment]]" read-only=[[!_isCommentEditable(comment)]] language="[[language]]" locales-folder="[[localesFolder]]" locales-file="[[localesFile]]" minlength="[[minlength]]" on-comment-deleted="_retargetEvent" on-comment-modified="_retargetEvent" no-relative-time="[[noRelativeTime]]"></hostabee-comment>
+        <hostabee-comment item="[[comment]]" read-only="[[!_isCommentEditable(comment, author)]]" language="[[language]]" locales-folder="[[localesFolder]]" locales-file="[[localesFile]]" minlength="[[minlength]]" on-comment-deleted="_retargetEvent" on-comment-modified="_retargetEvent" no-relative-time="[[noRelativeTime]]"></hostabee-comment>
       </template>
     </div>
     <template is="dom-if" if="[[!readOnly]]" restamp>
