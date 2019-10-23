@@ -40,6 +40,8 @@ Once installed, import it in your application:
 
 3. When in the `hostabee-comment-flow` directory, run `npm install` and then `bower install` to install dependencies.
 
+    * [OPTIONAL] If you want to run tests or demo of the element involving the `hostabee-comment-flow-firebase-connector` you have to provide the configuration of your application in the _"test/firebase-config.js"_ and _"demo/firebase-config.js"_ files.
+
 4. Run `npm start`, browser will automatically open the component API documentation.
 
 5. You can also open demo or in-browser tests by adding **demo** or **test** to the URL, for example:

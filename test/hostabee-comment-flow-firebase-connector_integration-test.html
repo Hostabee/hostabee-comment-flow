@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+  <title>hostabee-comment-flow-firebase-connector integration test</title>
+
+  <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="./firebase-config.js"></script>
+
+  <link rel="import" href="../hostabee-comment-flow-firebase-connector.html">
+  <link rel="import" href="../hostabee-comment-flow.html">
+  <script src="https://www.gstatic.com/firebasejs/5.9.0/firebase.js"></script>
+</head>
+
+<body>
+
+  <test-fixture id="WithInputTestFixture">
+    <template>
+      <hostabee-comment-flow-firebase-connector app="firebase-flow">
+        <hostabee-comment-flow slot="input"></hostabee-comment-flow>
+      </hostabee-comment-flow-firebase-connector>
+    </template>
+  </test-fixture>
+
+  <script>
+    describe('With input', function() {
+      let element;
+      let firebaseApp;
+
+      const author = {
+        name: 'John Doe'
+      };
+
+      before(function(done) {
+        firebaseApp = firebase.initializeApp(HCF.firebaseConfig, 'firebase-flow');
+        element = fixture('WithInputTestFixture');
+        element.app = firebaseApp;
+        flush(function() {
+          element.flow.author = author;
+          done();
+        });
+      });
+
+      it('should be instantiable with default properties', function() {
+        expect(element.comments).to.be.empty;
+        expect(element.users).to.be.empty;
+        expect(element.commentsCollection).to.be.equal('comments');
+        expect(element.usersCollection).to.be.undefined;
+        expect(element.limit).to.be.equal(0);
+        expect(element.orderBy).to.be.undefined;
+      });
+
+      it('should add comment into the Firestore', function(done) {
+        let spy = sinon.spy(element, 'addComment');
+        element.addEventListener('comment-added', function(event) {
+          expect(spy.calledOnce).to.be.true;
+          element.addComment.restore();
+          expect(event.detail.content).to.be
+            .equal('Lorem ipsum dolor sit amet, consectetur adipiscing elit.');
+          expect(event.detail['doc_id']).to.be.not.undefined;
+          expect(event.detail['doc_id']).to.be.not.null;
+          done();
+        }, {
+          once: true,
+        });
+        // Submit a comment
+        flush(function() {
+          const form = element.flow.form;
+          form.value = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
+          form.confirm();
+        });
+      });
+
+      it('should update comment in the Firestore', function(done) {
+        const commentId = Math.round(Math.random() * 100000);
+        // Assertions inside listeners
+        let spy = sinon.spy(element, 'updateComment');
+        element.addEventListener('comment-modified', function(event) {
+          expect(spy.calledOnce).to.be.true;
+          element.updateComment.restore();
+          expect(event.detail.content).to.include(commentId + ' edited');
+          expect(event.detail.author).to.be.deep.equal(author);
+          expect(event.detail.updated).to.be.not.undefined;
+          expect(event.detail.updated).to.be.not.null;
+          expect(event.detail['doc_id']).to.be.not.undefined;
+          expect(event.detail['doc_id']).to.be.not.null;
+          done();
+        }, {
+          once: true,
+        });
+        // Insert comment into Firestore
+        firebaseApp.firestore().collection('comments').add({
+            id: commentId,
+            author,
+            content: 'Lorem ipsum dolor sit amet,',
+            created: new Date(),
+          })
+          .then(function() {
+            element.addEventListener('comments-changed', function() {
+              // Switch to edit mode
+              flush(function() {
+                const comments = Array.from(element.flow.shadowRoot.querySelectorAll('hostabee-comment'));
+                const comment = comments.find((c) => c.item.id == commentId);
+                comment.edit();
+                // Edit existing comment
+                flush(function() {
+                  const textArea = comment.shadowRoot.querySelector('vaadin-text-area');
+                  textArea.value += ` [${commentId} edited]`;
+                  comment.confirmEdit();
+                });
+              });
+            }, {
+              once: true,
+            });
+            // Refresh comment list due to add in Firestore
+            element.fetchComments();
+          });
+      });
+
+      it('should remove comment from the Firestore', function(done) {
+        // Define author and init comment list
+        const commentId = Math.round(Math.random() * 100000);
+        const commentsCount = element.comments.length;
+        const comment = {
+          id: commentId,
+          author,
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+        };
+        // Assertions inside listeners
+        let spy = sinon.spy(element, 'deleteComment');
+        element.addEventListener('comment-deleted', function(event) {
+          expect(spy.calledOnce).to.be.true;
+          element.deleteComment.restore();
+          expect(element.comments.length).to.be.equal(commentsCount);
+          expect(event.detail.author).to.be.deep.equal(comment.author);
+          expect(event.detail.content).to.be.equal(comment.content);
+          expect(event.detail['doc_id']).to.be.not.undefined;
+          expect(event.detail['doc_id']).to.be.not.null;
+          done();
+        }, {
+          once: true,
+        });
+        // Insert comment into Firestore
+        firebaseApp.firestore().collection('comments').add(comment)
+          .then(function() {
+            element.addEventListener('comments-changed', function() {
+              expect(element.comments.length).to.be.equal(commentsCount + 1);
+              // Delete a comment
+              flush(function() {
+                const comments = Array.from(element.flow.shadowRoot.querySelectorAll('hostabee-comment'));
+                comments.find((c) => c.item.id == commentId).delete();
+              });
+            }, {
+              once: true,
+            });
+            // Refresh comment list due to add in Firestore
+            element.fetchComments();
+          });
+      });
+    });
+  </script>
+
+</body>
+
+</html>
