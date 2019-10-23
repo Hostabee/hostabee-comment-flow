@@ -7,16 +7,27 @@
 
   <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
   <script src="../../web-component-tester/browser.js"></script>
+  <script src="./firebase-config.js"></script>
 </head>
 
 <body>
   <script>
     // Load and run all tests (.html, .js):
-    WCT.loadSuites([
+    let suites = [
       'hostabee-comment_test.html',
       'hostabee-comment-create-form_test.html',
       'hostabee-comment-flow_test.html',
-    ]);
+    ];
+    // Run integration test suites only when Firebase config is provided.
+    if (HCF.firebaseConfig) {
+      console.log('Integration test suites added to the list.');
+      suites = [
+        ...suites,
+        'hostabee-comment-flow-firebase-connector_test.html',
+        'hostabee-comment-flow-firebase-connector_integration-test.html',
+      ];
+    }
+    WCT.loadSuites(suites);
   </script>
 
 </body>

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+  <title>hostabee-comment-flow-firebase-connector demo</title>
+
+  <script src="../../../webcomponentsjs/webcomponents-loader.js"></script>
+
+  <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
+  <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
+  <link rel="import" href="../../../polymer/lib/elements/dom-bind.html">
+  <link rel="import" href="../../hostabee-comment-flow.html">
+  <link rel="import" href="../../hostabee-comment-flow-firebase-connector.html">
+
+  <custom-style>
+    <style is="custom-style" include="demo-pages-shared-styles">
+    </style>
+  </custom-style>
+
+  <script src="https://www.gstatic.com/firebasejs/5.9.0/firebase.js"></script>
+  <script src="./../firebase-config.js"></script>
+  <script src="./../users.js"></script>
+  <script src="./../comments.js"></script>
+</head>
+
+<body>
+  <div class="vertical-section-container centered">
+    <h3>Basic hostabee-comment-flow-firebase-connector demo</h3>
+    <demo-snippet>
+      <template>
+        <dom-bind>
+          <template>
+            <div style="height:400px;">
+              <hostabee-comment-flow-firebase-connector id="connector">
+                <hostabee-comment-flow slot="flow"></hostabee-comment-flow>
+              </hostabee-comment-flow-firebase-connector>
+            </div>
+            <script>
+              firebase.initializeApp(HCF.firebaseConfig);
+              const connector = document.querySelector('#connector');
+              connector.app = firebase;
+              connector.addEventListener('users-changed', function(event) {
+                let users = event.detail.value;
+                if (users.length > 0) {
+                  connector.flow.author = users[0];
+                }
+              });
+              connector.usersCollection = 'users';
+            </script>
+          </template>
+        </dom-bind>
+      </template>
+    </demo-snippet>
+  </div>
+</body>
+
+</html>

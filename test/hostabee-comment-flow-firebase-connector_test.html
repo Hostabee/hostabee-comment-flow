@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+  <title>hostabee-comment-flow-firebase-connector test</title>
+
+  <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="./firebase-config.js"></script>
+
+  <link rel="import" href="../hostabee-comment-flow-firebase-connector.html">
+  <link rel="import" href="../hostabee-comment-flow.html">
+  <script src="https://www.gstatic.com/firebasejs/5.9.0/firebase.js"></script>
+</head>
+
+<body>
+
+  <test-fixture id="BasicTestFixture">
+    <template>
+      <hostabee-comment-flow-firebase-connector></hostabee-comment-flow-firebase-connector>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="WithInputTestFixture">
+    <template>
+      <hostabee-comment-flow-firebase-connector app="firebase-flow">
+        <hostabee-comment-flow slot="input"></hostabee-comment-flow>
+      </hostabee-comment-flow-firebase-connector>
+    </template>
+  </test-fixture>
+
+  <script>
+    describe('Basic', function() {
+      let element;
+      let firebaseApp;
+
+      before(function() {
+        firebaseApp = firebase.initializeApp(HCF.firebaseConfig, 'my-firebase-app');
+      });
+
+      beforeEach(function() {
+        element = fixture('BasicTestFixture');
+      });
+
+      it('should be instantiable with default properties', function() {
+        expect(element.app).to.be.undefined;
+        expect(element.comments).to.be.empty;
+        expect(element.users).to.be.empty;
+        expect(element.commentsCollection).to.be.equal('comments');
+        expect(element.usersCollection).to.be.undefined;
+        expect(element.limit).to.be.equal(0);
+        expect(element.orderBy).to.be.undefined;
+      });
+
+      it('should get comments from Firestore with default config', function(done) {
+        element.addEventListener('comments-changed', function() {
+          expect(element.comments).to.be.not.empty;
+          done();
+        });
+        element.app = firebaseApp;
+      });
+
+      it('should accept Firebase application name instead the app instance', function(done) {
+        element.addEventListener('comments-changed', function() {
+          expect(element.comments).to.be.not.empty;
+          done();
+        });
+        element.app = 'my-firebase-app';
+      });
+
+      it('should get users when collection name is provided', function(done) {
+        element.addEventListener('users-changed', function() {
+          expect(element.users).to.be.not.empty;
+          done();
+        });
+        element.app = firebaseApp;
+        expect(element.users).to.be.empty;
+        element.usersCollection = 'users';
+      });
+    });
+
+    describe('With input', function() {
+      let element;
+      let firebaseApp;
+
+      before(function(done) {
+        firebaseApp = firebase.initializeApp(HCF.firebaseConfig, 'firebase-flow');
+        element = fixture('WithInputTestFixture');
+        element.app = firebaseApp;
+        flush(function() {
+          done();
+        });
+      });
+
+      it('should be instantiable with default properties', function() {
+        expect(element.comments).to.be.empty;
+        expect(element.users).to.be.empty;
+        expect(element.commentsCollection).to.be.equal('comments');
+        expect(element.usersCollection).to.be.undefined;
+        expect(element.limit).to.be.equal(0);
+        expect(element.orderBy).to.be.undefined;
+      });
+
+      it('should add comment into the Firestore', function(done) {
+        let spy = sinon.stub(element, 'addComment');
+        // Submit a comment
+        flush(function() {
+          const form = element.flow.form;
+          form.value = 'New comment my friends!';
+          form.confirm();
+          expect(spy.calledOnce).to.be.true;
+          element.addComment.restore();
+          done();
+        });
+      });
+
+      it('should update comment in the Firestore', function(done) {
+        // Define author and init comment list
+        const john = {
+          name: 'John Doe'
+        };
+        element.flow.author = john;
+        element.flow.comments = [{
+          author: john,
+          content: 'Lorem ipsum dolor sit amet,',
+          created: new Date(),
+        }];
+        let spy = sinon.stub(element, 'updateComment');
+        flush(function() {
+          // Switch to edit mode
+          const comment = element.flow.shadowRoot.querySelector('hostabee-comment');
+          comment.edit();
+          flush(function() {
+            // Edit existing comment
+            comment.shadowRoot.querySelector('vaadin-text-area').value += ' [updated]';
+            comment.confirmEdit();
+            expect(spy.calledOnce).to.be.true;
+            element.updateComment.restore();
+            done();
+          });
+        });
+      });
+
+      it('should remove comment from the Firestore', function(done) {
+        // Define author and init comment list
+        const author = {
+          name: 'John Doe'
+        };
+        element.flow.author = author;
+        element.flow.comments = [{
+          author: author,
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+        }];
+        // Delete a comment
+        let spy = sinon.stub(element, 'deleteComment');
+        flush(function() {
+          element.flow.shadowRoot.querySelector('hostabee-comment').delete();
+          expect(spy.calledOnce).to.be.true;
+          element.deleteComment.restore();
+          done();
+        });
+      });
+    });
+  </script>
+
+</body>
+
+</html>

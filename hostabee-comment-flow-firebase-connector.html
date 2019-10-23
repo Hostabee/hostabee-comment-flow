@@ -1,0 +1,473 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../polymer/lib/utils/debounce.html">
+<link rel="import" href="../polymer/lib/utils/flattened-nodes-observer.html">
+
+<dom-module id="hostabee-comment-flow-firebase-connector">
+  <template>
+    <slot name="flow"></slot>
+  </template>
+  <script>
+    /**
+     * `hostabee-comment-flow-firebase-connector`
+     * 
+     * A connector to Firebase. It allows to easily connect the comment flow to
+     * a Firebase app and interact with it.
+     *
+     * @summary A Firebase connector.
+     * @customElement
+     * @polymer
+     * @extends {Polymer.Element}
+     * @demo demo/hostabee-comment-flow-firebase-connector/basic.html Basic
+     */
+    class HostabeeCommentFlowFirebaseConnector extends Polymer.Element {
+
+      static get is() {
+        return 'hostabee-comment-flow-firebase-connector';
+      }
+
+      /**
+       * Object describing property-related metadata used by Polymer features
+       */
+      static get properties() {
+        return {
+          /**
+           * Firebase app. It can be a Firebase app instance or simply it's name.
+           * In the 2nd case, the app must be initialized in the app before using
+           * the connector.
+           * 
+           * @type {Object|String}
+           */
+          app: {
+            type: Object,
+          },
+          /**
+           * Query filter limit.
+           * 
+           * @type {Number}
+           */
+          limit: {
+            type: Number,
+            value: 0,
+          },
+          /**
+           * Query filter orderBy. You can specify the order direction simply by
+           * adding "asc" or "desc" after the property name. For example, you can
+           * set the `orderBy` property to "name asc" or "created desc". By
+           * default the order is ascending.
+           * 
+           * @type {String}
+           */
+          orderBy: {
+            type: String,
+          },
+          /**
+           * Comment collection name.
+           * 
+           * @type {String}
+           */
+          commentsCollection: {
+            type: String,
+            value: 'comments',
+          },
+          /**
+           * User collection name.
+           * 
+           * @type {String}
+           */
+          usersCollection: {
+            type: String,
+          },
+          /**
+           * Result of the query that fetches the comments.
+           * 
+           * @type {Array}
+           */
+          comments: {
+            type: Array,
+            value: [],
+            readOnly: true,
+            notify: true,
+          },
+          /**
+           * Result of the query that fetches the users.
+           * 
+           * @type {Array}
+           */
+          users: {
+            type: Array,
+            value: [],
+            readOnly: true,
+            notify: true,
+          },
+          /**
+           * Reference to the `hostabee-comment-flow` instance provided to the
+           * connector.
+           * 
+           * @type {Object}
+           */
+          flow: {
+            type: Object,
+            readOnly: true,
+            observer: '_flowChanged',
+          },
+          /**
+           * Reference to the Firebase app to be used by the connector.
+           */
+          _firebase: {
+            type: Object,
+            value: null,
+            computed: '_computeFirebase(app)',
+          },
+          _jobs: {
+            type: Object,
+            value: {},
+          },
+          _nodesObserver: Object,
+        };
+      }
+
+      /**
+       * Array of strings describing multi-property observer methods and their
+       * dependant properties
+       */
+      static get observers() {
+        return [
+          'fetchComments(_firebase, commentsCollection, limit, orderBy)',
+          'fetchUsers(_firebase, usersCollection)',
+          '__commentsChanged(comments.splices)',
+          '__usersChanged(users.splices)',
+        ];
+      }
+
+      /**
+       * Called every time the element is inserted into the DOM. Useful for 
+       * running setup code, such as fetching resources or rendering.
+       * Generally, you should try to delay work until this time.
+       */
+      connectedCallback() {
+        super.connectedCallback();
+        this._nodesObserver = new Polymer.FlattenedNodesObserver(this, (info) => {
+          var nodes = info.addedNodes.filter((n) => n.nodeType === Node.ELEMENT_NODE);
+          if (nodes.length > 0) {
+            this._setFlow(nodes[0]);
+          }
+        });
+      }
+
+      /**
+       * Called every time the element is removed from the DOM. Useful for 
+       * running clean up code (removing event listeners, etc.).
+       */
+      disconnectedCallback() {
+        super.disconnectedCallback();
+        this._nodesObserver.disconnect();
+      }
+
+      /**
+       * Fetches comments from Firebase. A Firebase app instance must have been
+       * provided and a `commentsCollection` name too.
+       */
+      fetchComments() {
+        if (!this._firebase) {
+          console.debug('No Firebase app provided.');
+          return;
+        }
+        if (!this.commentsCollection) {
+          console.debug('No comments collection name provided.');
+          return;
+        }
+        this.__debounce(() => {
+          let ref = this._firebase.firestore().collection(this.commentsCollection);
+          ref = this.__applyFilters(ref);
+          ref.get().then((querySnapshot) => {
+              this._setComments(querySnapshot.docs.map(this.__docToObject));
+              if (this.flow) {
+                this.flow.comments = Array.from(this.comments);
+              }
+            })
+            .catch(function(error) {
+              console.error(error);
+            });
+        }, 'fetch-comments');
+      }
+
+      /**
+       * Fetches users from Firebase. A Firebase app instance must have been
+       * provided and a `usersCollection` name too.
+       */
+      fetchUsers() {
+        if (!this._firebase) {
+          console.debug('No Firebase app provided.');
+          return;
+        }
+        if (!this.usersCollection) {
+          console.debug('No users collection name provided.');
+          return;
+        }
+        this.__debounce(() => {
+          this._firebase.firestore().collection(this.usersCollection).get()
+            .then((querySnapshot) => {
+              this._setUsers(querySnapshot.docs.map(this.__docToObject));
+              if (this.flow) {
+                this.flow.users = Array.from(this.users);
+              }
+            })
+            .catch(function(error) {
+              console.error(error);
+            });
+        }, 'fetch-users');
+      }
+
+      /**
+       * Sync Firebase connector and comment-flow list of comment.
+       */
+      __commentsChanged(changeRecord) {
+        if (changeRecord && this.flow) {
+          changeRecord.indexSplices.forEach((cr) => {
+            let updatedIds = [];
+            for (var i = 0; i < cr.addedCount; i++) {
+              const comment = cr.object[cr.index + i];
+              var index = this.flow.comments.findIndex((c) => c.doc_id == comment.doc_id);
+              if (index > -1) {
+                this.flow.splice('comments', index, 1, comment);
+                updatedIds.push(comment.doc_id);
+              } else {
+                this.flow.push('comments', comment);
+              }
+            }
+            cr.removed.forEach((comment) => {
+              if (!updatedIds.includes(comment.doc_id)) {
+                var index = this.flow.comments.findIndex((c) => c.doc_id == comment.doc_id);
+                this.flow.splice('comments', index, 1);
+              }
+            });
+          });
+        }
+      }
+
+      /**
+       * Sync Firebase connector and comment-flow list of user.
+       */
+      __usersChanged(changeRecord) {
+        if (changeRecord && this.flow) {
+          changeRecord.indexSplices.forEach((cr) => {
+            cr.removed.forEach((user) => {
+              var index = this.flow.users.findIndex((u) => u.doc_id == user.doc_id);
+              this.flow.splice('users', index, 1);
+            });
+            for (var i = 0; i < cr.addedCount; i++) {
+              this.flow.push('users', cr.object[cr.index + i]);
+            }
+          });
+        }
+      }
+
+      /**
+       * Adds listeners on hostabee-comment-flow events (add, update, delete).
+       * Default events are overwritten by the connector ones.
+       */
+      _flowChanged() {
+        if (!this.flow) {
+          return;
+        }
+        if (!this._firebase) {
+          console.debug('Firebase not initialized.');
+          return;
+        }
+        // Add a comment to the Firebase collection then update local list.
+        this.flow.addEventListener('comment-added', (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          delete event.detail.doc_id;
+          this.addComment(event.detail);
+        });
+        // Remove a comment to the Firebase collection then update local list.
+        this.flow.addEventListener('comment-deleted', (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          this.deleteComment(event.detail);
+        });
+        // Update a comment to the Firebase collection then update local list.
+        this.flow.addEventListener('comment-modified', (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          this.updateComment(event.detail);
+        });
+      }
+
+      /**
+       * Adds a comment into the designated collection in Firestore. Then
+       * dispatches an event the detail is a representation of the comment
+       * added. It's basically the document content plus a `doc_id` property
+       * which is the ID of the document created.
+       * 
+       * @param {Object} doc The comment to be inserted into the Firestore.
+       * The document is created into the `commentsCollection`.
+       */
+      addComment(doc) {
+        const comment = Object.assign({}, doc);
+        if (comment.author && typeof comment.author == 'object') {
+          delete comment.author.doc_id;
+        }
+        this._firebase.firestore().collection(this.commentsCollection)
+          .add(comment)
+          .then((docRef) => {
+            comment.doc_id = docRef.id;
+            this.push('comments', comment);
+            this.dispatchEvent(new CustomEvent('comment-added', {
+              bubbles: true,
+              composed: true,
+              detail: comment,
+            }));
+          })
+          .catch(function(error) {
+            console.error("Error adding document: ", error);
+          });
+      }
+
+      /**
+       * Deletes a comment from the designated collection in Firestore. Then
+       * dispatches an event the detail is a representation of the comment
+       * removed. It's basically the document content plus a `doc_id` property
+       * which is the ID of the document deleted.
+       * 
+       * @param {Object} doc The comment to be removed from the
+       * `commentsCollection` in Firestore.
+       */
+      deleteComment(doc) {
+        this._firebase.firestore().collection(this.commentsCollection)
+          .doc(doc.doc_id).delete()
+          .then(() => {
+            var index = this.comments.findIndex((c) => c.doc_id == doc.doc_id);
+            if (index > -1) {
+              this.splice('comments', index, 1);
+              this.dispatchEvent(new CustomEvent('comment-deleted', {
+                bubbles: true,
+                composed: true,
+                detail: doc,
+              }));
+            }
+          })
+          .catch(function(error) {
+            console.error("Error removing document: ", error);
+          });
+      }
+
+      /**
+       * Updates a comment of the designated collection in Firestore. Then
+       * dispatches an event the detail is a representation of the comment
+       * updated. It's basically the document content plus a `doc_id` property
+       * which is the ID of the document updated.
+       * 
+       * @param {Object} doc The comment to be updated in the
+       * `commentsCollection` in Firestore.
+       */
+      updateComment(doc) {
+        const comment = Object.assign({}, doc);
+        delete comment.doc_id;
+        this._firebase.firestore().collection(this.commentsCollection)
+          .doc(doc.doc_id).update(comment)
+          .then(() => {
+            var index = this.comments.findIndex((c) => c.doc_id == doc.doc_id);
+            if (index > -1) {
+              this.splice('comments', index, 1, doc);
+              this.dispatchEvent(new CustomEvent('comment-modified', {
+                bubbles: true,
+                composed: true,
+                detail: doc,
+              }));
+            }
+          })
+          .catch(function(error) {
+            console.error("Error editing document: ", error);
+          });
+      }
+
+      /**
+       * @private
+       */
+      _computeFirebase(app) {
+        return typeof app == 'string' ? firebase.app(app) : app;
+      }
+
+      /**
+       * @private
+       */
+      __docToObject(doc) {
+        return Object.assign({}, doc.data(), {
+          doc_id: doc.id
+        });
+      }
+
+      /**
+       * @private
+       */
+      __debounce(fn, name) {
+        this._jobs[name] = Polymer.Debouncer.debounce(this._jobs[name],
+          Polymer.Async.microTask, () => fn());
+      }
+
+      /**
+       * @private
+       */
+      __applyFilters(ref) {
+        var req = this.__addFilterOrderBy(ref);
+        if (this.limit) {
+          req = req.limit(this.limit);
+        }
+        return req;
+      }
+
+      /**
+       * @private
+       */
+      __addFilterOrderBy(ref) {
+        var filter = (this.orderBy || '').split(' ');
+        return !filter[0] ? ref :
+          ref.orderBy(filter[0], filter.length > 1 ? filter[1] : 'asc');
+      }
+
+      /**
+       * Fired when a `comment` is added into the Firestore.
+       * _(bubbles: true, composed: true)_
+       * 
+       * The detail of this event is the same as defined in the `hostabee-comment`
+       * element. Excepted it has a property `doc_id` which is the ID of the
+       * document created in the Firestore.
+       * 
+       * @event comment-added
+       * @param {Object} detail The content of the document created in Firestore
+       * plus its ID (as `doc_id` property).
+       */
+
+      /**
+       * Fired when a `comment` is modified in the Firestore.
+       * _(bubbles: true, composed: true)_
+       * 
+       * The detail of this event is the same as defined in the `hostabee-comment`
+       * element. Excepted it has a property `doc_id` which is the ID of the
+       * document updated in the Firestore.
+       * 
+       * @event comment-modified
+       * @param {Object} detail The content of the document updated in Firestore
+       * plus its ID (as `doc_id` property).
+       */
+
+      /**
+       * Fired when a `comment` is removed from the Firestore.
+       * _(bubbles: true, composed: true)_
+       * 
+       * The detail of this event is the same as defined in the `hostabee-comment`
+       * element. Excepted it has a property `doc_id` which is the ID of the
+       * document removed from the Firestore.
+       * 
+       * @event comment-deleted
+       * @param {Object} detail The content of the document removed from the
+       * Firestore plus its ID (as `doc_id` property).
+       */
+
+    }
+
+    window.customElements.define(HostabeeCommentFlowFirebaseConnector.is, HostabeeCommentFlowFirebaseConnector);
+  </script>
+</dom-module>
