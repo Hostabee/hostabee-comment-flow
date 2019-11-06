@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+  <title>hostabee-thumbnail-list demo</title>
+
+  <script src="../../../webcomponentsjs/webcomponents-loader.js"></script>
+
+  <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
+  <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
+  <link rel="import" href="../../hostabee-thumbnail-list.html">
+
+  <custom-style>
+    <style is="custom-style" include="demo-pages-shared-styles">
+    </style>
+  </custom-style>
+</head>
+
+<body>
+  <div class="vertical-section-container centered">
+    <h3>Basic hostabee-thumbnail-list demo</h3>
+    <demo-snippet>
+      <template>
+        <h4>Default</h4>
+        <input type="file" name="file-picker" id="filePicker" accept="image/*" onchange="picker1FilesChanged(this.files)" multiple>
+        <hostabee-thumbnail-list id="thumbnails-1"></hostabee-thumbnail-list>
+        <script>
+          function picker1FilesChanged(files) {
+            const thumbnails = document.querySelector('#thumbnails-1');
+            thumbnails.files = [...thumbnails.files, ...files];
+          }
+        </script>
+      </template>
+    </demo-snippet>
+
+    <demo-snippet>
+      <template>
+        <h4>Thumbnails height 80px and editable</h4>
+        <input type="file" name="file-picker" id="filePicker" accept="image/*" onchange="picker2FilesChanged(this.files)" multiple>
+        <hostabee-thumbnail-list id="thumbnails-2" height-thumbnails="80" editable></hostabee-thumbnail-list>
+        <script>
+          function picker2FilesChanged(files) {
+            const thumbnails = document.querySelector('#thumbnails-2');
+            thumbnails.files = [...thumbnails.files, ...files];
+          }
+        </script>
+      </template>
+    </demo-snippet>
+  </div>
+</body>
+
+</html>
