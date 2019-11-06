@@ -1,0 +1,261 @@
+<!--
+@license
+Copyright (c) 2019 Hostabee SAS.
+This program is available under Apache License Version 2.0.
+-->
+
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../iron-image/iron-image.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="./hostabee-icons.html">
+
+<dom-module id="hostabee-thumbnail-list">
+  <template>
+    <style>
+      :host {
+        border: 1px solid var(--divider-color, #dbdbdb);
+        border-radius: 10px;
+        background-color: var(--primary-background-color, #ffffff);
+        @apply --layout-horizontal;
+        @apply --layout-wrap;
+        @apply --layout-flex;
+      }
+
+      :host([hidden]) {
+        visibility: hidden;
+        border: 0;
+        width: 0;
+      }
+
+      .flex {
+        @apply --layout-flex;
+      }
+
+      .thumbnail {
+        overflow: hidden;
+      }
+
+      .thumbnail__title {
+        padding: 5px;
+        font-weight: 500;
+        background: white;
+        border-bottom: 1px solid var(--divider-color, #dbdbdb);
+        color: var(--secondary-text-color, #737373);
+        @apply --layout-horizontal;
+      }
+
+      .thumbnail__title>span {
+        line-height: 24px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .thumbnail__picture {
+        display: block;
+        width: 100%;
+        height: 100%;
+        background-color: var(--primary-background-color, #ffffff);
+      }
+
+      .thumbnail__button--remove {
+        min-width: 24px;
+        color: var(--secondary-text-color, #737373);
+        cursor: pointer;
+      }
+    </style>
+
+    <template is="dom-repeat" items="{{files}}" as="file" on-rendered-item-count-changed="_renderedItemsChanged">
+      <div class="thumbnail">
+        <div class="thumbnail__title">
+          <span>[[file.name]]</span>
+          <span class="flex"></span>
+          <iron-icon id="remove-thumbnail-[[index]]" class="thumbnail__button--remove" icon="hostabee-icons:cancel" on-click="_removePicture" hidden$="[[!editable]]"></iron-icon>
+        </div>
+        <iron-image class="thumbnail__picture" src="[[_getFileURL(file)]]" alt="[[file.name]]" height="[[heightThumbnails]]px" sizing="cover" fade></iron-image>
+      </div>
+    </template>
+
+  </template>
+
+  <script>
+    /**
+     * `hostabee-thumbnail-list`
+     * 
+     * Displays pictures as thumbnails in a square container. Width of pictures
+     * are automatically adjusted.
+     *
+     * @summary Displays pictures as thumbnails in a square container.
+     * @customElement
+     * @polymer
+     * @extends {Polymer.Element}
+     * @memberof Hostabee
+     * @demo demo/hostabee-thumbnail-list/basic.html Basic
+     */
+    class HostabeeThumbnailList extends Polymer.Element {
+
+      static get is() {
+        return 'hostabee-thumbnail-list';
+      }
+
+      static get properties() {
+        return {
+          /**
+           * Is editable. If true the pictures can be removed from the list.
+           * 
+           * @type {Boolean}
+           * @default false
+           */
+          editable: {
+            type: Boolean,
+            value: false,
+          },
+          /**
+           * List of file to load.
+           * See: https://developer.mozilla.org/en-US/docs/Web/API/File
+           * 
+           * @type {Array<File>}
+           * @default []
+           */
+          files: {
+            type: Array,
+            value: [],
+            notify: true,
+            observer: '_filesChanged'
+          },
+          /**
+           * Limit of pictures in the list. Can't be set higher than 4.
+           * 
+           * @type {Number}
+           * @default 4
+           */
+          limit: {
+            type: Number,
+            value: 4,
+            observer: '_limitChanged'
+          },
+          /**
+           * Height of thumbnails in pixels.
+           * 
+           * @type {Number}
+           * @default 200
+           */
+          heightThumbnails: {
+            type: Number,
+            value: 200,
+          },
+        };
+      }
+
+      /**
+       * Ensures list of file does not exceed defined limit.
+       */
+      _filesChanged(files) {
+        if (files.length > this.limit) {
+          this.set('files', files.slice(0, this.limit));
+        }
+      }
+
+      /**
+       * Resizes the pictures and changes corners rounded according to the number
+       * of pictures displayed. Also updates the margin between each pictures.
+       */
+      _renderedItemsChanged(event) {
+        let thumbnails = event.target.parentNode.querySelectorAll('.thumbnail');
+        this.toggleAttribute('hidden', thumbnails.length == 0);
+        let style;
+        if (thumbnails.length == 1) {
+          // Round corners
+          style = thumbnails[0].style;
+          style.setProperty('width', '100%');
+          style.setProperty('margin', '0px');
+          style.setProperty('border-radius', '9px');
+        } else if (thumbnails.length == 2) {
+          // Split width in half
+          thumbnails.forEach((tn) => tn.style.setProperty('width', 'calc(50% - 5px)'));
+          // Round top and bottom left corners
+          style = thumbnails[0].style;
+          style.setProperty('margin', '0px 5px 0px 0px');
+          style.setProperty('border-radius', '9px 0px 0px 9px');
+          // Round top and bottom right corners
+          style = thumbnails[1].style;
+          style.setProperty('margin', '0px 0px 0px 5px');
+          style.setProperty('border-radius', '0px 9px 9px 0px');
+        } else if (thumbnails.length == 3) {
+          // Split width in half and round top left corner
+          style = thumbnails[0].style;
+          style.setProperty('width', 'calc(50% - 5px)');
+          style.setProperty('margin', '0px 5px 5px 0px');
+          style.setProperty('border-radius', '9px 0px 0px 0px');
+          // Split width in half and round top right corner
+          style = thumbnails[1].style;
+          style.setProperty('width', 'calc(50% - 5px)');
+          style.setProperty('margin', '0px 0px 5px 5px');
+          style.setProperty('border-radius', '0px 9px 0px 0px');
+          // Full width and round bottom right and left corners
+          style = thumbnails[2].style;
+          style.setProperty('width', '100%');
+          style.setProperty('margin', '5px 0px 0px 0px');
+          style.setProperty('border-radius', '0px 0px 9px 9px');
+        } else if (thumbnails.length == 4) {
+          // Split width in half
+          thumbnails.forEach((tn) => tn.style.setProperty('width', 'calc(50% - 5px)'));
+          // Round top left corner
+          style = thumbnails[0].style;
+          style.setProperty('margin', '0px 5px 5px 0px');
+          style.setProperty('border-radius', '9px 0px 0px 0px');
+          // Round top right corner
+          style = thumbnails[1].style;
+          style.setProperty('margin', '0px 0px 5px 5px');
+          style.setProperty('border-radius', '0px 9px 0px 0px');
+          // Round bottom left corner
+          style = thumbnails[2].style;
+          style.setProperty('margin', '5px 5px 0px 0px');
+          style.setProperty('border-radius', '0px 0px 0px 9px');
+          // Round bottom right corner
+          style = thumbnails[3].style;
+          style.setProperty('margin', '5px 0px 0px 5px');
+          style.setProperty('border-radius', '0px 0px 9px 0px');
+        }
+      }
+
+      /**
+       * Ensures the limit max of displayed thumbnails is not higher than 4.
+       * 
+       * @param {Number} count The limit max of pictures to be displayed
+       */
+      _limitChanged(count) {
+        if (count > 4) {
+          this.limit = 4;
+        }
+      }
+
+      /**
+       * Removes a picture from the list. The picture which the cross icon was
+       * clicked is removed.
+       * 
+       * @param {Event} event Click event.
+       */
+      _removePicture(event) {
+        let index = event.target.id.split('remove-thumbnail-')[1];
+        this.splice('files', index, 1);
+      }
+
+      /**
+       * Creates a DOMString containing a URL representing the object given in
+       * the parameter.
+       * 
+       * @param {File} file The file to create the URL
+       * @return {String} a DOMString containing a URL representing the object
+       * given in the parameter.
+       */
+      _getFileURL(file) {
+        return URL.createObjectURL(file);
+      }
+
+    }
+
+    window.customElements.define(HostabeeThumbnailList.is, HostabeeThumbnailList);
+  </script>
+</dom-module>
