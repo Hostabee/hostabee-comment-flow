@@ -9,6 +9,8 @@ This program is available under Apache License Version 2.0.
 <link rel="import" href="../vaadin-text-field/vaadin-text-area.html">
 <link rel="import" href="../vaadin-button/vaadin-button.html">
 <link rel="import" href="../hostabee-profile-picture/hostabee-profile-picture.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="./hostabee-thumbnail-list.html">
 
 <dom-module id="hostabee-comment-create-form" theme-for="vaadin-text-area">
   <template>
@@ -49,8 +51,21 @@ This program is available under Apache License Version 2.0.
         text-transform: capitalize;
       }
 
+      .actions__button--picture:not([disabled]) {
+        color: var(--lumo-primary-color);
+      }
+
+      .flex {
+        @apply --layout-flex;
+      }
+
       .horizontal {
         @apply --layout-horizontal;
+      }
+
+      hostabee-thumbnail-list {
+        border-color: var(--lumo-primary-color-50pct);
+        background-color: var(--lumo-primary-color-10pct);
       }
 
       hostabee-profile-picture {
@@ -65,8 +80,15 @@ This program is available under Apache License Version 2.0.
       <vaadin-text-area placeholder="[[localize('PLACEHOLDER_write_a_comment')]]" minlength="[[minlength]]" error-message="[[localize('ERROR_minlength', 'count', minlength)]]" onkeydown="[[_handleKeyDown()]]" value="{{value}}" required></vaadin-text-area>
     </div>
 
+    <hostabee-thumbnail-list files="{{files}}" limit="[[maxFiles]]" editable></hostabee-thumbnail-list>
+
     <template is="dom-if" if="[[actionButtonsVisible]]">
       <div class="actions">
+        <template is="dom-if" if="[[allowFiles]]">
+          <input type="file" id="file-picker" accept="[[accept]]" style="display:none" on-change="_filesSelected" multiple hidden>
+          <paper-icon-button class="actions__button--picture" icon="hostabee-icons:insert-photo" on-tap="openFilePicker" disabled$="[[maxFilesReached]]"></paper-icon-button>
+        </template>
+        <span class="flex"></span>
         <vaadin-button theme="small" on-click="cancel">[[localize('cancel')]]</vaadin-button>
         <vaadin-button theme="primary small" on-click="confirm">[[localize('save')]]</vaadin-button>
       </div>
@@ -163,6 +185,61 @@ This program is available under Apache License Version 2.0.
             type: String,
             value: 'locales',
           },
+          /**
+           * Is upload files allowed. If true, user can select files from
+           * local storage to attach them to the comment.
+           * 
+           * @type {Boolean}
+           * @default false
+           */
+          allowFiles: {
+            type: Boolean,
+            value: false,
+          },
+          /**
+           * File type accepted.
+           * 
+           * @type {String}
+           * @default 'image/*'
+           */
+          accept: {
+            type: String,
+            value: 'image/*',
+          },
+          /**
+           * Files to attach to the comment. Because comments can be directly
+           * sent to a remote storage solution the dispatched events do not
+           * contain the files. You can listen the `comment-added` event and
+           * read them from this property.
+           * 
+           * @type {Array}
+           * @default []
+           */
+          files: {
+            type: Array,
+            value: [],
+            notify: true,
+          },
+          /**
+           * Maximum number of files user can select. It can't be higher than 4.
+           * 
+           * @type {Number}
+           * @default 4
+           */
+          maxFiles: {
+            type: Number,
+            value: 4,
+          },
+          /**
+           * Specifies if the maximum number of files have been selected.
+           */
+          maxFilesReached: {
+            type: Boolean,
+            value: false,
+            readOnly: true,
+            notify: true,
+            computed: '_maxFilesAdded(maxFiles, files.length)'
+          },
         };
       }
 
@@ -185,6 +262,7 @@ This program is available under Apache License Version 2.0.
         textArea.blur();
         textArea.value = '';
         textArea.invalid = false;
+        this.set('files', []);
       }
 
       /**
@@ -207,6 +285,27 @@ This program is available under Apache License Version 2.0.
           }));
           this.cancel();
         }
+      }
+
+      /**
+       * Opens a picker to select files.
+       */
+      openFilePicker() {
+        this.shadowRoot.querySelector('#file-picker').click();
+      }
+
+      /**
+       * New files selected using the picker.
+       */
+      _filesSelected(event) {
+        this.set('files', this.files.concat(...event.target.files));
+      }
+
+      /**
+       * Defines if user can select more file or not.
+       */
+      _maxFilesAdded(maxFiles, numFiles) {
+        return maxFiles >= 0 && numFiles >= maxFiles;
       }
 
       /**
@@ -260,6 +359,8 @@ This program is available under Apache License Version 2.0.
        * 
        * - the `author` property can be not present if no author was provided to
        * this element.
+       * - the attached `files` are not included. They must be read from the
+       * element property.
        * 
        * @event comment-added
        * @param {Object} detail The comment to add.
