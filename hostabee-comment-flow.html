@@ -340,7 +340,9 @@ This program is available under Apache License Version 2.0.
           this.dispatchEvent(new CustomEvent(event.type, {
             bubbles: true,
             composed: true,
-            detail: this.mapper.toComment(event.detail),
+            detail: Object.assign({}, event.detail, {
+              comment: this.mapper.toComment(event.detail.comment),
+            }),
           }));
         }
       }

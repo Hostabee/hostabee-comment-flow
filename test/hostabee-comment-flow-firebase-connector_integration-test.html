@@ -59,10 +59,10 @@
         element.addEventListener('comment-added', function(event) {
           expect(spy.calledOnce).to.be.true;
           element.addComment.restore();
-          expect(event.detail.content).to.be
+          expect(event.detail.comment.content).to.be
             .equal('Lorem ipsum dolor sit amet, consectetur adipiscing elit.');
-          expect(event.detail['doc_id']).to.be.not.undefined;
-          expect(event.detail['doc_id']).to.be.not.null;
+          expect(event.detail.comment['doc_id']).to.be.not.undefined;
+          expect(event.detail.comment['doc_id']).to.be.not.null;
           done();
         }, {
           once: true,
@@ -82,12 +82,12 @@
         element.addEventListener('comment-modified', function(event) {
           expect(spy.calledOnce).to.be.true;
           element.updateComment.restore();
-          expect(event.detail.content).to.include(commentId + ' edited');
-          expect(event.detail.author).to.be.deep.equal(author);
-          expect(event.detail.updated).to.be.not.undefined;
-          expect(event.detail.updated).to.be.not.null;
-          expect(event.detail['doc_id']).to.be.not.undefined;
-          expect(event.detail['doc_id']).to.be.not.null;
+          expect(event.detail.comment.content).to.include(commentId + ' edited');
+          expect(event.detail.comment.author).to.be.deep.equal(author);
+          expect(event.detail.comment.updated).to.be.not.undefined;
+          expect(event.detail.comment.updated).to.be.not.null;
+          expect(event.detail.comment['doc_id']).to.be.not.undefined;
+          expect(event.detail.comment['doc_id']).to.be.not.null;
           done();
         }, {
           once: true,
@@ -136,10 +136,10 @@
           expect(spy.calledOnce).to.be.true;
           element.deleteComment.restore();
           expect(element.comments.length).to.be.equal(commentsCount);
-          expect(event.detail.author).to.be.deep.equal(comment.author);
-          expect(event.detail.content).to.be.equal(comment.content);
-          expect(event.detail['doc_id']).to.be.not.undefined;
-          expect(event.detail['doc_id']).to.be.not.null;
+          expect(event.detail.comment.author).to.be.deep.equal(comment.author);
+          expect(event.detail.comment.content).to.be.equal(comment.content);
+          expect(event.detail.comment['doc_id']).to.be.not.undefined;
+          expect(event.detail.comment['doc_id']).to.be.not.null;
           done();
         }, {
           once: true,
