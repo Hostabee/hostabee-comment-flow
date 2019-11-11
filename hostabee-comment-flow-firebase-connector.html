@@ -278,20 +278,20 @@
         this.flow.addEventListener('comment-added', (event) => {
           event.preventDefault();
           event.stopPropagation();
-          delete event.detail.doc_id;
-          this.addComment(event.detail);
+          delete event.detail.comment.doc_id;
+          this.addComment(event.detail.comment, event.detail.attachments);
         });
         // Remove a comment to the Firebase collection then update local list.
         this.flow.addEventListener('comment-deleted', (event) => {
           event.preventDefault();
           event.stopPropagation();
-          this.deleteComment(event.detail);
+          this.deleteComment(event.detail.comment, event.detail.attachments);
         });
         // Update a comment to the Firebase collection then update local list.
         this.flow.addEventListener('comment-modified', (event) => {
           event.preventDefault();
           event.stopPropagation();
-          this.updateComment(event.detail);
+          this.updateComment(event.detail.comment, event.detail.attachments);
         });
       }
 
@@ -303,8 +303,10 @@
        * 
        * @param {Object} doc The comment to be inserted into the Firestore.
        * The document is created into the `commentsCollection`.
+       * @param {Array<File>} attachments The attachments to the comment. They
+       * are not automatically stored into the Firestore.
        */
-      addComment(doc) {
+      addComment(doc, attachments = []) {
         const comment = Object.assign({}, doc);
         if (comment.author && typeof comment.author == 'object') {
           delete comment.author.doc_id;
@@ -317,7 +319,10 @@
             this.dispatchEvent(new CustomEvent('comment-added', {
               bubbles: true,
               composed: true,
-              detail: comment,
+              detail: {
+                comment,
+                attachments,
+              },
             }));
           })
           .catch(function(error) {
@@ -333,8 +338,10 @@
        * 
        * @param {Object} doc The comment to be removed from the
        * `commentsCollection` in Firestore.
+       * @param {Array<File>} attachments The attachments to the comment. They
+       * are not automatically stored into the Firestore.
        */
-      deleteComment(doc) {
+      deleteComment(doc, attachments = []) {
         this._firebase.firestore().collection(this.commentsCollection)
           .doc(doc.doc_id).delete()
           .then(() => {
@@ -344,7 +351,10 @@
               this.dispatchEvent(new CustomEvent('comment-deleted', {
                 bubbles: true,
                 composed: true,
-                detail: doc,
+                detail: {
+                  comment: doc,
+                  attachments,
+                },
               }));
             }
           })
@@ -361,8 +371,10 @@
        * 
        * @param {Object} doc The comment to be updated in the
        * `commentsCollection` in Firestore.
+       * @param {Array<File>} attachments The attachments to the comment. They
+       * are not automatically stored into the Firestore.
        */
-      updateComment(doc) {
+      updateComment(doc, attachments = []) {
         const comment = Object.assign({}, doc);
         delete comment.doc_id;
         this._firebase.firestore().collection(this.commentsCollection)
@@ -374,7 +386,10 @@
               this.dispatchEvent(new CustomEvent('comment-modified', {
                 bubbles: true,
                 composed: true,
-                detail: doc,
+                detail: {
+                  comment: doc,
+                  attachments,
+                },
               }));
             }
           })
@@ -431,7 +446,7 @@
        * Fired when a `comment` is added into the Firestore.
        * _(bubbles: true, composed: true)_
        * 
-       * The detail of this event is the same as defined in the `hostabee-comment`
+       * The detail of this event is the same as defined in the `hostabee-comment-create-form`
        * element. Excepted it has a property `doc_id` which is the ID of the
        * document created in the Firestore.
        * 

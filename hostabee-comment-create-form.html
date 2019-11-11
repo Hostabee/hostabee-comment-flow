@@ -207,10 +207,8 @@ This program is available under Apache License Version 2.0.
             value: 'image/*',
           },
           /**
-           * Files to attach to the comment. Because comments can be directly
-           * sent to a remote storage solution the dispatched events do not
-           * contain the files. You can listen the `comment-added` event and
-           * read them from this property.
+           * Files to attach to the comment. The `comment-added` event contains
+           * the file list as `attachments` property.
            * 
            * @type {Array}
            * @default []
@@ -276,12 +274,15 @@ This program is available under Apache License Version 2.0.
           this.dispatchEvent(new CustomEvent('comment-added', {
             bubbles: true,
             composed: true,
-            detail: Object.assign({}, {
-              content: textArea.value.trim(),
-              created: new Date(),
-            }, this.author ? {
-              author: this.author,
-            } : null)
+            detail: {
+              attachments: this.files,
+              comment: Object.assign({}, {
+                content: textArea.value.trim(),
+                created: new Date(),
+              }, this.author ? {
+                author: this.author,
+              } : null),
+            }
           }));
           this.cancel();
         }
@@ -343,24 +344,24 @@ This program is available under Apache License Version 2.0.
        * Fired when the form is confirmed.
        * _(bubbles: true, composed: true)_
        * 
-       * The detail of this event is the comment to add. Its structure looks
-       * like this:
-       * 
+       * The detail of this event is an object containing the comment to add and
+       * its attachment list. The structure looks like this:
        * ```javascript
        * {
-       *    author: {
-       *      fullname: 'John Doe',
-       *      profilePictureURL: 'https://doe-john.org/pp.png'
-       *    },
-       *    content: 'Cum sociis natoque penatibus et magnis.',
-       *    created: new Date()
+       *     attachments: [File, File],
+       *     comment: {
+       *        author: {
+       *          fullname: 'John Doe',
+       *          profilePictureURL: 'https://doe-john.org/pp.png'
+       *        },
+       *        content: 'Cum sociis natoque penatibus et magnis.',
+       *        created: 1548016737000
+       *    }
        * }
        * ```
        * 
        * - the `author` property can be not present if no author was provided to
        * this element.
-       * - the attached `files` are not included. They must be read from the
-       * element property.
        * 
        * @event comment-added
        * @param {Object} detail The comment to add.

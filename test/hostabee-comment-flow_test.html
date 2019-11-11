@@ -116,7 +116,7 @@
           fullname: 'John Doe',
         };
         const asyncAssert = function(event) {
-          expect(event.detail.author).to.be.equal(element.author);
+          expect(event.detail.comment.author).to.be.equal(element.author);
           element.removeEventListener('comment-added', asyncAssert);
           done();
         };
@@ -337,8 +337,8 @@
         const text = 'Cum sociis natoque penatibus et magnis.';
         const asyncAssert = function(event) {
           element.removeEventListener('comment-added', asyncAssert);
-          expect(event.detail.text).to.be.undefined;
-          expect(event.detail.content).to.be.equal(text);
+          expect(event.detail.comment.text).to.be.undefined;
+          expect(event.detail.comment.content).to.be.equal(text);
           done();
         };
         element.addEventListener('comment-added', asyncAssert);
@@ -352,8 +352,8 @@
         const text = 'Cum sociis natoque penatibus et magnis.';
         const asyncAssert = function(event) {
           element.removeEventListener('comment-added', asyncAssert);
-          expect(event.detail.content).to.be.undefined;
-          expect(event.detail.text).to.be.equal(text);
+          expect(event.detail.comment.content).to.be.undefined;
+          expect(event.detail.comment.text).to.be.equal(text);
           done();
         };
         element.addEventListener('comment-added', asyncAssert);

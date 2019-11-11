@@ -168,7 +168,7 @@
           created: Date.now(),
         };
         element.addEventListener('comment-modified', function(event) {
-          element.item = event.detail; // Update element with new version of the comment
+          element.item = event.detail.comment; // Update element with new version of the comment
           let span = element.shadowRoot.querySelector('.summary__date>span');
           expect(span.innerText.toLowerCase()).to.includes('modified:');
           span.click();
@@ -194,7 +194,7 @@
           created: Date.now(),
         };
         element.addEventListener('comment-modified', function(event) {
-          element.item = event.detail; // Update element with new version of the comment
+          element.item = event.detail.comment; // Update element with new version of the comment
           let span = element.shadowRoot.querySelector('.summary__date>span');
           expect(span.innerText.toLowerCase()).to.includes('modified:');
           done();
@@ -217,7 +217,7 @@
           updated: Date.now(),
         };
         element.addEventListener('comment-modified', function(event) {
-          element.item = event.detail; // Update element with new version of the comment
+          element.item = event.detail.comment; // Update element with new version of the comment
           let span = element.shadowRoot.querySelector('.summary__date>span');
           expect(span.innerText.toLowerCase()).to.includes('modified:');
           done();

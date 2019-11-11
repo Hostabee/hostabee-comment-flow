@@ -16,6 +16,7 @@ This program is available under Apache License Version 2.0.
 <link rel="import" href="../vaadin-text-field/vaadin-text-area.html">
 <link rel="import" href="../hostabee-profile-picture/hostabee-profile-picture.html">
 <link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="./hostabee-thumbnail-list.html">
 
 <dom-module id="hostabee-comment">
   <template>
@@ -103,6 +104,10 @@ This program is available under Apache License Version 2.0.
         margin-left: 8px;
         text-transform: capitalize;
       }
+
+      hostabee-thumbnail-list {
+        margin-top: 24px;
+      }
     </style>
 
     <div class="heading">
@@ -140,6 +145,9 @@ This program is available under Apache License Version 2.0.
       </template>
       <template is="dom-if" if="[[editing]]">
         <vaadin-text-area label="[[localize('LABEL_edit_your_comment')]]" minlength="[[minlength]]" error-message="[[localize('ERROR_minlength', 'count', minlength)]]" value="[[item.content]]" onkeydown="[[_handleKeyDown()]]" autofocus required></vaadin-text-area>
+      </template>
+      <hostabee-thumbnail-list files="{{attachments}}" disabled$="[[editing]]"></hostabee-thumbnail-list>
+      <template is="dom-if" if="[[editing]]">
         <div class="actions">
           <vaadin-button theme="small" on-tap="cancelEdit">[[localize('cancel')]]</vaadin-button>
           <vaadin-button theme="primary small" on-tap="confirmEdit">[[localize('save')]]</vaadin-button>
@@ -163,6 +171,7 @@ This program is available under Apache License Version 2.0.
      * @demo demo/hostabee-comment/basic.html Basic
      * @demo demo/hostabee-comment/read-only.html Read only
      * @demo demo/hostabee-comment/no-author.html Without author
+     * @demo demo/hostabee-comment/with-attachments.html With attachments
      * @demo demo/hostabee-comment/with-momentjs.html With MomentJs in your app
      */
     class HostabeeComment extends Hostabee.Element {
@@ -302,6 +311,16 @@ This program is available under Apache License Version 2.0.
             type: String,
             value: 'locales',
           },
+          /**
+           * Attachments to the comment.
+           *
+           * @type {Array}
+           * @default []
+           */
+          attachments: {
+            type: Array,
+            value: [],
+          },
           _toggleButtonText: {
             type: String,
             computed: '__computeToggleButtonText(opened, resources)',
@@ -352,7 +371,10 @@ This program is available under Apache License Version 2.0.
         if (!this.readOnly) {
           this._setEditing(false);
           this.dispatchEvent(new CustomEvent('comment-deleted', {
-            detail: this.item,
+            detail: {
+              comment: this.item,
+              attachments: this.attachments,
+            },
             bubbles: true,
             composed: true
           }));
@@ -394,7 +416,10 @@ This program is available under Apache License Version 2.0.
           return;
         }
         this.dispatchEvent(new CustomEvent('comment-modified', {
-          detail: comment,
+          detail: {
+            comment,
+            attachments: this.attachments,
+          },
           bubbles: true,
           composed: true
         }));
@@ -584,17 +609,20 @@ This program is available under Apache License Version 2.0.
        * Fired when the `comment` is modified.
        * _(bubbles: true, composed: true)_
        * 
-       * The detail of this event is the comment to update. Its structure looks
-       * like this:
+       * The detail of this event is an object containing the comment to update
+       * and its attachment list. The structure looks like this:
        * ```javascript
        * {
-       *    author: {
-       *      fullname: 'John Doe',
-       *      profilePictureURL: 'https://doe-john.org/pp.png'
-       *    },
-       *    content: 'Cum sociis natoque penatibus et magnis.',
-       *    created: 1548016737000,
-       *    upated: 1548016748000
+       *     attachments: [File, File],
+       *     comment: {
+       *        author: {
+       *          fullname: 'John Doe',
+       *          profilePictureURL: 'https://doe-john.org/pp.png'
+       *        },
+       *        content: 'Cum sociis natoque penatibus et magnis.',
+       *        created: 1548016737000,
+       *        upated: 1548016748000
+       *    }
        * }
        * ```
        * 
@@ -615,16 +643,19 @@ This program is available under Apache License Version 2.0.
        * Fired when the `comment` deletion is requested.
        * _(bubbles: true, composed: true)_
        * 
-       * The detail of this event is the comment to update. Its structure looks
-       * like this:
+       * The detail of this event is an object containing the comment to delete
+       * and its attachment list. The structure looks like this:
        * ```javascript
        * {
-       *    author: {
-       *      fullname: 'John Doe',
-       *      profilePictureURL: 'https://doe-john.org/pp.png'
-       *    },
-       *    content: 'Cum sociis natoque penatibus et magnis.',
-       *    created: 1548016737000
+       *     attachments: [File, File],
+       *     comment: {
+       *        author: {
+       *          fullname: 'John Doe',
+       *          profilePictureURL: 'https://doe-john.org/pp.png'
+       *        },
+       *        content: 'Cum sociis natoque penatibus et magnis.',
+       *        created: 1548016737000
+       *    }
        * }
        * ```
        * 

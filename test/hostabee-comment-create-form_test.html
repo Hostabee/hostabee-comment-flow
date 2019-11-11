@@ -110,9 +110,9 @@
             let textArea = element.shadowRoot.querySelector('vaadin-text-area');
             expect(textArea.placeholder).to.be.equal('Write a comment...');
             expect(textArea.errorMessage).to.be.equal('At least 20 chars');
-            let actions = element.shadowRoot.querySelector('.actions');
-            expect(actions.children[0].innerText.trim()).to.be.equal('Cancel');
-            expect(actions.children[1].innerText.trim()).to.be.equal('Save');
+            let buttons = element.shadowRoot.querySelectorAll('.actions vaadin-button');
+            expect(buttons[0].innerText.trim()).to.be.equal('Cancel');
+            expect(buttons[1].innerText.trim()).to.be.equal('Save');
             done();
           }, 150);
         });
@@ -127,9 +127,9 @@
             let textArea = element.shadowRoot.querySelector('vaadin-text-area');
             expect(textArea.placeholder).to.be.equal('Écrire un commentaire...');
             expect(textArea.errorMessage).to.be.equal('Minimum de 20 caractères');
-            let actions = element.shadowRoot.querySelector('.actions');
-            expect(actions.children[0].innerText.trim()).to.be.equal('Annuler');
-            expect(actions.children[1].innerText.trim()).to.be.equal('Enregistrer');
+            let buttons = element.shadowRoot.querySelectorAll('.actions vaadin-button');
+            expect(buttons[0].innerText.trim()).to.be.equal('Annuler');
+            expect(buttons[1].innerText.trim()).to.be.equal('Enregistrer');
             done();
           }, 150);
         });
@@ -144,9 +144,9 @@
           setTimeout(() => {
             let textArea = element.shadowRoot.querySelector('vaadin-text-area');
             expect(textArea.errorMessage).to.be.equal('20 chars min.');
-            let actions = element.shadowRoot.querySelector('.actions');
-            expect(actions.children[0].innerText.trim()).to.be.equal('Cancel');
-            expect(actions.children[1].innerText.trim()).to.be.equal('Confirm');
+            let buttons = element.shadowRoot.querySelectorAll('.actions vaadin-button');
+            expect(buttons[0].innerText.trim()).to.be.equal('Cancel');
+            expect(buttons[1].innerText.trim()).to.be.equal('Confirm');
             done();
           }, 150);
         });
