@@ -157,7 +157,9 @@ This program is available under Apache License Version 2.0.
        * Ensures list of file does not exceed defined limit.
        */
       _filesChanged(files) {
-        if (files.length > this.limit) {
+        if (!files) {
+          this.set('files', []);
+        } else if (files.length > this.limit) {
           this.set('files', files.slice(0, this.limit));
         }
       }
