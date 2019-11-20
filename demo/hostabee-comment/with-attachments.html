@@ -45,7 +45,7 @@
             // Add attachments to the comment.
             ['car.jpeg', 'dog.jpeg', 'sun.jpeg'].forEach((fileName) => {
               let xhr = new XMLHttpRequest();
-              xhr.open('GET', fileName, true);
+              xhr.open('GET', `../images/${fileName}`, true);
               xhr.responseType = 'arraybuffer';
               xhr.addEventListener('load', function() {
                 if (xhr.status === 200) {
