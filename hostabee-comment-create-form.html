@@ -265,9 +265,20 @@ This program is available under Apache License Version 2.0.
       }
 
       /**
-       * Cancels the form and cleans it.
+       * Resets the form and dispatch a "cancel" event.
        */
       cancel() {
+        this.reset();
+        this.dispatchEvent(new CustomEvent('cancel', {
+          bubbles: true,
+          composed: true,
+        }));
+      }
+
+      /**
+       * Discards changes.
+       */
+      reset() {
         let textArea = this.shadowRoot.querySelector('vaadin-text-area');
         textArea.blur();
         textArea.value = '';
@@ -296,7 +307,7 @@ This program is available under Apache License Version 2.0.
               } : null),
             }
           }));
-          this.cancel();
+          this.reset();
         }
       }
 
@@ -353,6 +364,13 @@ This program is available under Apache License Version 2.0.
         this._setFilePickerButtonVisible(this.allowFiles &&
           (this.buttonsShown || this.value.length > 0));
       }
+
+      /**
+       * Fired when the form is canceled.
+       * _(bubbles: true, composed: true)_
+       * 
+       * @event cancel
+       */
 
       /**
        * Fired when the form is confirmed.
