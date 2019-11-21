@@ -35,14 +35,24 @@
         element = fixture('BasicTestFixture');
       });
 
-      it('should not display buttons by default', function() {
+      it('should not display buttons by default', function(done) {
         expect(element.buttonsShown).to.be.false;
-        expect(element.shadowRoot.querySelector('.actions')).to.be.null;
+        flush(function() {
+          var actions = element.shadowRoot.querySelector('.actions');
+          expect(actions.querySelectorAll('vaadin-button')).to.be.an('NodeList').that.is.empty;
+          expect(actions.querySelectorAll('paper-icon-button')).to.be.an('NodeList').that.is.empty;
+          done();
+        });
       });
 
-      it('should display buttons when attribute "buttons-shown" is true', function() {
+      it('should display buttons when attribute "buttons-shown" is true', function(done) {
         element.buttonsShown = true;
-        expect(element.shadowRoot.querySelector('.actions')).to.be.null;
+        flush(function() {
+          var actions = element.shadowRoot.querySelector('.actions');
+          expect(actions.querySelectorAll('vaadin-button')).to.be.an('NodeList').that.have.lengthOf(2);
+          expect(actions.querySelectorAll('paper-icon-button')).to.be.an('NodeList').that.is.empty;
+          done();
+        });
       });
 
       it('should not dispatch event if form is not valid', function(done) {
