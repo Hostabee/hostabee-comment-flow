@@ -38,13 +38,13 @@
 
           // Press ENTER to confirm the form or ESCAPE to clean it.
           forms[0].addEventListener('comment-added', function(event) {
-            window.alert('Comment to add: ' + JSON.stringify(event.detail));
+            window.alert('Comment to add: ' + JSON.stringify(event.detail.comment));
             // TODO: Update your database.
           });
 
           // You can still use keyboard but there is also buttons.
           forms[1].addEventListener('comment-added', function(event) {
-            window.alert('Comment to add: ' + JSON.stringify(event.detail));
+            window.alert('Comment to add: ' + JSON.stringify(event.detail.comment));
             // TODO: Update your database.
           });
         </script>

@@ -39,21 +39,21 @@
           elem.addEventListener('comment-deleted', function(event) {
             console.info('Comment deleted:', event.detail);
             // TODO: Update you database.
-            var index = this.comments.findIndex((c) => c.id == event.detail.id);
+            var index = this.comments.findIndex((c) => c.id == event.detail.comment.id);
             this.splice('comments', index, 1);
           });
 
           elem.addEventListener('comment-modified', function(event) {
             console.info('Comment modified:', event.detail);
             // TODO: Update you database.
-            var index = this.comments.findIndex((c) => c.id == event.detail.id);
-            this.splice('comments', index, 1, event.detail);
+            var index = this.comments.findIndex((c) => c.id == event.detail.comment.id);
+            this.splice('comments', index, 1, event.detail.comment);
           });
 
           elem.addEventListener('comment-added', function(event) {
             console.info('Comment added:', event.detail);
             // TODO: Update you database.
-            this.push('comments', Object.assign({}, event.detail, {
+            this.push('comments', Object.assign({}, event.detail.comment, {
               // Be sure the comment added to the list has a unique ID.
               id: Math.round(Math.random() * 1000),
             }));

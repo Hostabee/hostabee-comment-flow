@@ -37,7 +37,7 @@
             fullname: 'John Doe',
           };
           form1.addEventListener('comment-added', function(event) {
-            console.info('Comment to add:', event.detail);
+            console.info('Comment to add:', event.detail.comment);
           })
 
           // User with profile picture URL.
@@ -46,7 +46,7 @@
             profilePictureURL: 'https://image.flaticon.com/icons/svg/219/219988.svg',
           };
           form2.addEventListener('comment-added', function(event) {
-            console.info('Comment to add:', event.detail);
+            console.info('Comment to add:', event.detail.comment);
           })
         </script>
       </template>
