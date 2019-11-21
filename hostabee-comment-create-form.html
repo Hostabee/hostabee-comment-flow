@@ -17,6 +17,7 @@ This program is available under Apache License Version 2.0.
     <style>
       :host {
         @apply --layout-flex;
+        @apply --layout-horizontal;
       }
 
       vaadin-text-area {
@@ -59,8 +60,9 @@ This program is available under Apache License Version 2.0.
         @apply --layout-flex;
       }
 
-      .horizontal {
-        @apply --layout-horizontal;
+      .form {
+        width: 100%;
+        @apply --layout-vertical;
       }
 
       hostabee-thumbnail-list {
@@ -73,26 +75,25 @@ This program is available under Apache License Version 2.0.
       }
     </style>
 
-    <div class="horizontal">
-      <template is="dom-if" if="[[author]]">
-        <hostabee-profile-picture src="[[author]]" size="38"></hostabee-profile-picture>
-      </template>
+    <template is="dom-if" if="[[author]]">
+      <hostabee-profile-picture src="[[author]]" size="38"></hostabee-profile-picture>
+    </template>
+
+    <div class="form">
       <vaadin-text-area placeholder="[[localize('PLACEHOLDER_write_a_comment')]]" minlength="[[minlength]]" error-message="[[localize('ERROR_minlength', 'count', minlength)]]" onkeydown="[[_handleKeyDown()]]" value="{{value}}" required></vaadin-text-area>
-    </div>
-
-    <hostabee-thumbnail-list files="{{files}}" limit="[[maxFiles]]" editable></hostabee-thumbnail-list>
-
-    <template is="dom-if" if="[[actionButtonsVisible]]">
+      <hostabee-thumbnail-list files="{{files}}" limit="[[maxFiles]]" editable></hostabee-thumbnail-list>
       <div class="actions">
-        <template is="dom-if" if="[[allowFiles]]">
+        <template is="dom-if" if="[[filePickerButtonVisible]]">
           <input type="file" id="file-picker" accept="[[accept]]" style="display:none" on-change="_filesSelected" multiple hidden>
           <paper-icon-button class="actions__button--picture" icon="hostabee-icons:insert-photo" on-tap="openFilePicker" disabled$="[[maxFilesReached]]"></paper-icon-button>
         </template>
         <span class="flex"></span>
-        <vaadin-button theme="small" on-click="cancel">[[localize('cancel')]]</vaadin-button>
-        <vaadin-button theme="primary small" on-click="confirm">[[localize('save')]]</vaadin-button>
+        <template is="dom-if" if="[[actionButtonsVisible]]">
+          <vaadin-button theme="small" on-click="cancel">[[localize('cancel')]]</vaadin-button>
+          <vaadin-button theme="primary small" on-click="confirm">[[localize('save')]]</vaadin-button>
+        </template>
       </div>
-    </template>
+    </div>
 
   </template>
 
@@ -238,6 +239,17 @@ This program is available under Apache License Version 2.0.
             notify: true,
             computed: '_maxFilesAdded(maxFiles, files.length)'
           },
+          /**
+           * Is the file picker button visible.
+           *
+           * @type {Boolean}
+           * @default false
+           */
+          filePickerButtonVisible: {
+            type: Boolean,
+            value: false,
+            readOnly: true,
+          }
         };
       }
 
@@ -338,6 +350,8 @@ This program is available under Apache License Version 2.0.
       _actionButtonsVisibilityChanged() {
         this._setActionButtonsVisible(this.buttonsShown ||
           this.buttonsShownIfValue && this.value.length > 0);
+        this._setFilePickerButtonVisible(this.allowFiles &&
+          (this.buttonsShown || this.value.length > 0));
       }
 
       /**

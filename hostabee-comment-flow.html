@@ -31,7 +31,7 @@ This program is available under Apache License Version 2.0.
     </div>
     <template is="dom-if" if="[[!readOnly]]" restamp>
       <slot id="form" name="form">
-        <hostabee-comment-create-form author="[[author]]" language="[[language]]" locales-folder="[[localesFolder]]" locales-file="[[localesFile]]" minlength="[[minlength]]" on-comment-added="_retargetEvent"></hostabee-comment-create-form>
+        <hostabee-comment-create-form author="[[author]]" language="[[language]]" locales-folder="[[localesFolder]]" locales-file="[[localesFile]]" minlength="[[minlength]]" on-comment-added="_retargetEvent" allow-files$="[[allowFiles]]"></hostabee-comment-create-form>
       </slot>
     </template>
     <slot id="mapper" name="mapper"></slot>
@@ -188,6 +188,17 @@ This program is available under Apache License Version 2.0.
           localesFolder: {
             type: String,
             value: 'locales',
+          },
+          /**
+           * Is upload files allowed. If true, user can select files from
+           * local storage to attach them to the comment.
+           * 
+           * @type {Boolean}
+           * @default false
+           */
+           allowFiles: {
+            type: Boolean,
+            value: false,
           },
           /**
            * Computed list of comment. The data transformtion ensures the good
