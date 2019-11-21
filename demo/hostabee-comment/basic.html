@@ -40,14 +40,14 @@
           };
 
           comment.addEventListener('comment-deleted', function(event) {
-            window.alert('Comment to delete: ' + JSON.stringify(event.detail));
+            window.alert('Comment to delete: ' + JSON.stringify(event.detail.comment));
             // TODO: Update you database.
           });
 
           comment.addEventListener('comment-modified', function(event) {
-            window.alert('Comment to update: ' + JSON.stringify(event.detail));
+            window.alert('Comment to update: ' + JSON.stringify(event.detail.comment));
             // TODO: Update you database.
-            comment.item = event.detail;
+            comment.item = event.detail.comment;
           });
         </script>
       </template>
