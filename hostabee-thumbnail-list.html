@@ -258,7 +258,11 @@ This program is available under Apache License Version 2.0.
        * given in the parameter.
        */
       _getFileURL(file) {
-        return URL.createObjectURL(file);
+        try {
+          return URL.createObjectURL(file);
+        } catch (error) {
+          console.warn("Can't get URL. Provided files must be instances of File class.", error);
+        }
       }
 
     }
