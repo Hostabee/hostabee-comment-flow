@@ -55,6 +55,26 @@
         });
       });
 
+      it('should display file picker button when attribute "allow-files" is true and value not empty', function(done) {
+        element.allowFiles = true;
+        element.value = 'Lorem Ipsum.';
+        flush(function() {
+          expect(element.shadowRoot.querySelector('.actions__button--picture')).to.be.not.null;
+          element.value = '';
+          done();
+        });
+      });
+
+      it('should display file picker button when attribute "allow-files" and "buttons-shown" are true', function(done) {
+        element.allowFiles = true;
+        element.buttonsShown = true;
+        flush(function() {
+          expect(element.shadowRoot.querySelector('.actions__button--picture')).to.be.not.null;
+          element.value = '';
+          done();
+        });
+      });
+
       it('should not dispatch event if form is not valid', function(done) {
         const asyncAssert = function() {
           expect.fail('event should not have been dispatched');
