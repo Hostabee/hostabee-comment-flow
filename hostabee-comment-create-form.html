@@ -16,8 +16,8 @@ This program is available under Apache License Version 2.0.
   <template>
     <style>
       :host {
-        @apply --layout-flex;
         @apply --layout-horizontal;
+        min-height: 38px;
       }
 
       vaadin-text-area {
@@ -32,6 +32,10 @@ This program is available under Apache License Version 2.0.
 
       vaadin-text-area[focused][has-value] {
         min-height: 76px;
+      }
+
+      vaadin-text-area:not([has-value])[invalid] {
+        padding-bottom: 26px;
       }
 
       [part="input-field"] {
@@ -107,6 +111,8 @@ This program is available under Apache License Version 2.0.
      * @customElement
      * @polymer
      * @extends {Polymer.Element}
+
+
      * @memberof Hostabee
      * @demo demo/hostabee-comment-create-form/basic.html Basic
      */
