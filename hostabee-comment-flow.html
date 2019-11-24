@@ -23,6 +23,10 @@ This program is available under Apache License Version 2.0.
         overflow-y: scroll;
         padding-bottom: 10px;
       }
+
+      .form {
+        @apply --layout-flex;
+      }
     </style>
     <div class="comments-container">
       <template is="dom-repeat" items="[[_comments]]" as="comment" restamp>
@@ -30,9 +34,11 @@ This program is available under Apache License Version 2.0.
       </template>
     </div>
     <template is="dom-if" if="[[!readOnly]]" restamp>
-      <slot id="form" name="form">
-        <hostabee-comment-create-form author="[[author]]" language="[[language]]" locales-folder="[[localesFolder]]" locales-file="[[localesFile]]" minlength="[[minlength]]" on-comment-added="_retargetEvent" allow-files$="[[allowFiles]]"></hostabee-comment-create-form>
-      </slot>
+      <div class="form">
+        <slot id="form" name="form">
+          <hostabee-comment-create-form author="[[author]]" language="[[language]]" locales-folder="[[localesFolder]]" locales-file="[[localesFile]]" minlength="[[minlength]]" on-comment-added="_retargetEvent" allow-files$="[[allowFiles]]"></hostabee-comment-create-form>
+        </slot>
+      </div>
     </template>
     <slot id="mapper" name="mapper"></slot>
   </template>
@@ -196,7 +202,7 @@ This program is available under Apache License Version 2.0.
            * @type {Boolean}
            * @default false
            */
-           allowFiles: {
+          allowFiles: {
             type: Boolean,
             value: false,
           },
