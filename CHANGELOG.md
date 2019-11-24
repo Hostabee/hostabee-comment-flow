@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.8.0](https://github.com/Hostabee/hostabee-comment-flow/compare/v0.7.0...v0.8.0) (2019-11-24)
+
+
+### Bug Fixes
+
+* **comment:** fix read only ([e9340df](https://github.com/Hostabee/hostabee-comment-flow/commit/e9340df))
+* **form:** display of error message ([b30860c](https://github.com/Hostabee/hostabee-comment-flow/commit/b30860c))
+* **form:** escape key down event ([189fbd6](https://github.com/Hostabee/hostabee-comment-flow/commit/189fbd6))
+* **thumbnail list:** handle cae when files is undefined ([5a1d212](https://github.com/Hostabee/hostabee-comment-flow/commit/5a1d212))
+
+
+### Features
+
+* **comment:** display attachments as thumbnails ([6fc1f7b](https://github.com/Hostabee/hostabee-comment-flow/commit/6fc1f7b))
+* **comment flow:** support comment attachments ([c007981](https://github.com/Hostabee/hostabee-comment-flow/commit/c007981))
+* **connector:** add Firebase connector ([213b6ca](https://github.com/Hostabee/hostabee-comment-flow/commit/213b6ca))
+* **form:** add cancel event ([020df71](https://github.com/Hostabee/hostabee-comment-flow/commit/020df71))
+* **form:** allow to attach files ([c9560a4](https://github.com/Hostabee/hostabee-comment-flow/commit/c9560a4))
+* **form:** display file picker button ([45687bf](https://github.com/Hostabee/hostabee-comment-flow/commit/45687bf))
+
 ## [0.7.0](https://github.com/Hostabee/hostabee-comment-flow/compare/v0.6.0...v0.7.0) (2019-09-14)
 
 
