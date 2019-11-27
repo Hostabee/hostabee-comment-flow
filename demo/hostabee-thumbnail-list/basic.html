@@ -29,9 +29,13 @@
         <input type="file" name="file-picker" id="filePicker" accept="image/*" onchange="picker1FilesChanged(this.files)" multiple>
         <hostabee-thumbnail-list id="thumbnails-1"></hostabee-thumbnail-list>
         <script>
+          const thumbnails1 = document.querySelector('#thumbnails-1');
+          thumbnails1.addEventListener('thumbnail-click', function(event) {
+            console.log('event :', event);
+          });
+
           function picker1FilesChanged(files) {
-            const thumbnails = document.querySelector('#thumbnails-1');
-            thumbnails.files = [...thumbnails.files, ...files];
+            thumbnails1.files = [...thumbnails1.files, ...files];
           }
         </script>
       </template>
@@ -43,9 +47,13 @@
         <input type="file" name="file-picker" id="filePicker" accept="image/*" onchange="picker2FilesChanged(this.files)" multiple>
         <hostabee-thumbnail-list id="thumbnails-2" height-thumbnails="80" editable></hostabee-thumbnail-list>
         <script>
+          const thumbnails2 = document.querySelector('#thumbnails-2');
+          thumbnails2.addEventListener('thumbnail-click', function(event) {
+            console.log('event :', event);
+          });
+
           function picker2FilesChanged(files) {
-            const thumbnails = document.querySelector('#thumbnails-2');
-            thumbnails.files = [...thumbnails.files, ...files];
+            thumbnails2.files = [...thumbnails2.files, ...files];
           }
         </script>
       </template>

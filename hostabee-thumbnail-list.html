@@ -72,7 +72,7 @@ This program is available under Apache License Version 2.0.
     </style>
 
     <template is="dom-repeat" items="{{files}}" as="file" on-rendered-item-count-changed="_renderedItemsChanged">
-      <div class="thumbnail">
+      <div class="thumbnail" on-click="_dispatchClickEvent">
         <div class="thumbnail__title">
           <span>[[file.name]]</span>
           <span class="flex"></span>
@@ -165,6 +165,17 @@ This program is available under Apache License Version 2.0.
       }
 
       /**
+       * Dispatches event with the file clicked.
+       */
+      _dispatchClickEvent(event) {
+        this.dispatchEvent(new CustomEvent('thumbnail-click', {
+          bubbles: true,
+          composed: true,
+          detail: event.model.file,
+        }));
+      }
+
+      /**
        * Resizes the pictures and changes corners rounded according to the number
        * of pictures displayed. Also updates the margin between each pictures.
        */
@@ -245,6 +256,9 @@ This program is available under Apache License Version 2.0.
        * @param {Event} event Click event.
        */
       _removePicture(event) {
+        // Stop click event propagation on the thuhmbail
+        event.stopPropagation();
+        event.preventDefault();
         let index = event.target.id.split('remove-thumbnail-')[1];
         this.splice('files', index, 1);
       }
@@ -264,6 +278,14 @@ This program is available under Apache License Version 2.0.
           console.warn("Can't get URL. Provided files must be instances of File class.", error);
         }
       }
+
+      /**
+       * Dispatched when a thumbnail is clicked. The detail of the event if the
+       * thumbnail as `File`.
+       * _(bubbles: true, composed: true)_
+       * 
+       * @event thumbnail-click
+       */
 
     }
 
