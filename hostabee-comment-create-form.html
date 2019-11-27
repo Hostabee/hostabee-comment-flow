@@ -84,7 +84,7 @@ This program is available under Apache License Version 2.0.
     </template>
 
     <div class="form">
-      <vaadin-text-area placeholder="[[localize('PLACEHOLDER_write_a_comment')]]" minlength="[[minlength]]" error-message="[[localize('ERROR_minlength', 'count', minlength)]]" onkeydown="[[_handleKeyDown()]]" value="{{value}}" required></vaadin-text-area>
+      <vaadin-text-area placeholder="[[localize('PLACEHOLDER_write_a_comment')]]" minlength="[[minlength]]" error-message="[[localize('ERROR_minlength', 'count', minlength)]]" onkeydown="[[_handleKeyDown()]]" value="{{value}}" required$="[[_hasMinLength(minlength)]]"></vaadin-text-area>
       <hostabee-thumbnail-list files="{{files}}" limit="[[maxFiles]]" editable></hostabee-thumbnail-list>
       <div class="actions">
         <template is="dom-if" if="[[filePickerButtonVisible]]">
@@ -329,6 +329,13 @@ This program is available under Apache License Version 2.0.
        */
       _filesSelected(event) {
         this.set('files', this.files.concat(...event.target.files));
+      }
+
+      /**
+       * Has the form a minlength set.
+       */
+      _hasMinLength() {
+        return this.minlength > 0;
       }
 
       /**

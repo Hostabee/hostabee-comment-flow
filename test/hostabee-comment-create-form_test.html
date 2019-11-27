@@ -109,17 +109,25 @@
         });
       });
 
-      it('should propagate minimum length required to inner text area', function(done) {
+      it('should be required if minlength is higher than 0', function() {
+        element.minlength = 2;
+        const textArea = element.shadowRoot.querySelector('vaadin-text-area');
+        expect(textArea.required).to.be.true;
+      })
+
+      it('should not be required if minlength is equal or lower than 0', function() {
+        element.minlength = 0;
+        const textArea = element.shadowRoot.querySelector('vaadin-text-area');
+        expect(textArea.required).to.be.false;
+      })
+
+      it('should propagate minimum length required to inner text area', function() {
         // Unfortunately, considering the issue https://github.com/vaadin/vaadin-text-field/issues/182
         // we can't programmatically test validation based on minlength requirement.
-        expect(element.minlength).to.be.equal(20);
-        flush(function() {
-          const textArea = element.shadowRoot.querySelector('vaadin-text-area');
-          expect(textArea.minlength).to.be.equal(20);
-          element.minlength = 10;
-          expect(textArea.minlength).to.be.equal(10);
-          done();
-        });
+        const textArea = element.shadowRoot.querySelector('vaadin-text-area');
+        expect(textArea.minlength).to.be.equal(element.minlength);
+        element.minlength = 10;
+        expect(textArea.minlength).to.be.equal(10);
       });
     });
 
