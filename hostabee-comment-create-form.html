@@ -84,8 +84,8 @@ This program is available under Apache License Version 2.0.
     </template>
 
     <div class="form">
-      <vaadin-text-area placeholder="[[localize('PLACEHOLDER_write_a_comment')]]" minlength="[[minlength]]" error-message="[[localize('ERROR_minlength', 'count', minlength)]]" onkeydown="[[_handleKeyDown()]]" value="{{value}}" required$="[[_hasMinLength(minlength)]]"></vaadin-text-area>
-      <hostabee-thumbnail-list files="{{files}}" limit="[[maxFiles]]" editable></hostabee-thumbnail-list>
+      <vaadin-text-area placeholder="[[localize('PLACEHOLDER_write_a_comment')]]" minlength="[[minlength]]" error-message="[[localize('ERROR_minlength', 'count', minlength)]]" onkeydown="[[_handleKeyDown()]]" value="{{value}}" required$="[[_hasMinLength(minlength)]]" disabled$="[[disabled]]"></vaadin-text-area>
+      <hostabee-thumbnail-list files="{{files}}" limit="[[maxFiles]]" editable$="[[!disabled]]"></hostabee-thumbnail-list>
       <div class="actions">
         <template is="dom-if" if="[[filePickerButtonVisible]]">
           <input type="file" id="file-picker" accept="[[accept]]" style="display:none" on-change="_filesSelected" multiple hidden>
@@ -93,8 +93,8 @@ This program is available under Apache License Version 2.0.
         </template>
         <span class="flex"></span>
         <template is="dom-if" if="[[actionButtonsVisible]]">
-          <vaadin-button theme="small" on-click="cancel">[[localize('cancel')]]</vaadin-button>
-          <vaadin-button theme="primary small" on-click="confirm">[[localize('save')]]</vaadin-button>
+          <vaadin-button theme="small" on-click="cancel" disabled$="[[disabled]]">[[localize('cancel')]]</vaadin-button>
+          <vaadin-button theme="primary small" on-click="confirm" disabled$="[[disabled]]">[[localize('save')]]</vaadin-button>
         </template>
       </div>
     </div>
@@ -243,7 +243,7 @@ This program is available under Apache License Version 2.0.
             value: false,
             readOnly: true,
             notify: true,
-            computed: '_maxFilesAdded(maxFiles, files.length)'
+            computed: '_maxFilesAdded(maxFiles, files.length, disabled)'
           },
           /**
            * Is the file picker button visible.
@@ -255,7 +255,17 @@ This program is available under Apache License Version 2.0.
             type: Boolean,
             value: false,
             readOnly: true,
-          }
+          },
+          /**
+           * Is the form disabled.
+           *
+           * @type {Boolean}
+           * @default false
+           */
+          disabled: {
+            type: Boolean,
+            value: false,
+          },
         };
       }
 
@@ -342,7 +352,7 @@ This program is available under Apache License Version 2.0.
        * Defines if user can select more file or not.
        */
       _maxFilesAdded(maxFiles, numFiles) {
-        return maxFiles >= 0 && numFiles >= maxFiles;
+        return this.disabled || (maxFiles >= 0 && numFiles >= maxFiles);
       }
 
       /**
