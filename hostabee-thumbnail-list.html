@@ -171,7 +171,10 @@ This program is available under Apache License Version 2.0.
         this.dispatchEvent(new CustomEvent('thumbnail-click', {
           bubbles: true,
           composed: true,
-          detail: event.model.file,
+          detail: {
+            index: event.model.index,
+            file: event.model.file,
+          },
         }));
       }
 
@@ -280,8 +283,8 @@ This program is available under Apache License Version 2.0.
       }
 
       /**
-       * Dispatched when a thumbnail is clicked. The detail of the event if the
-       * thumbnail as `File`.
+       * Dispatched when a thumbnail is clicked. The detail of the event
+       * contains the `thumbnail` (a File) and its index in the list.
        * _(bubbles: true, composed: true)_
        * 
        * @event thumbnail-click
