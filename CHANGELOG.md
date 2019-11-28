@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.9.0](https://github.com/Hostabee/hostabee-comment-flow/compare/v0.8.0...v0.9.0) (2019-11-28)
+
+
+### Features
+
+* **form:** input text area required only when minlegth set ([da7d016](https://github.com/Hostabee/hostabee-comment-flow/commit/da7d016))
+* **thumbnail:** add index whitin click event ([da61b12](https://github.com/Hostabee/hostabee-comment-flow/commit/da61b12))
+* **thumbnail:** dispatch event on click ([a2da6db](https://github.com/Hostabee/hostabee-comment-flow/commit/a2da6db))
+
 ## [0.8.0](https://github.com/Hostabee/hostabee-comment-flow/compare/v0.7.0...v0.8.0) (2019-11-24)
 
 
