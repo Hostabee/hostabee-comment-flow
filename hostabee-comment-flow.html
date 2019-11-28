@@ -30,13 +30,13 @@ This program is available under Apache License Version 2.0.
     </style>
     <div class="comments-container">
       <template is="dom-repeat" items="[[_comments]]" as="comment" restamp>
-        <hostabee-comment item="[[comment]]" attachments="[[comment.attachments]]" read-only="[[!_isCommentEditable(comment, author)]]" language="[[language]]" locales-folder="[[localesFolder]]" locales-file="[[localesFile]]" minlength="[[minlength]]" on-comment-deleted="_retargetEvent" on-comment-modified="_retargetEvent" no-relative-time="[[noRelativeTime]]"></hostabee-comment>
+        <hostabee-comment item="[[comment]]" attachments="[[comment.attachments]]" read-only="[[!_isCommentEditable(comment, author)]]" language="[[language]]" locales-folder="[[localesFolder]]" locales-file="[[localesFile]]" minlength="[[minlength]]" on-comment-deleted="_retargetCommentEvent" on-comment-modified="_retargetCommentEvent" on-thumbnail-click="_retargetThumbnailEvent" no-relative-time="[[noRelativeTime]]"></hostabee-comment>
       </template>
     </div>
     <template is="dom-if" if="[[!readOnly]]" restamp>
       <div class="form">
         <slot id="form" name="form">
-          <hostabee-comment-create-form author="[[author]]" language="[[language]]" locales-folder="[[localesFolder]]" locales-file="[[localesFile]]" minlength="[[minlength]]" on-comment-added="_retargetEvent" allow-files$="[[allowFiles]]"></hostabee-comment-create-form>
+          <hostabee-comment-create-form author="[[author]]" language="[[language]]" locales-folder="[[localesFolder]]" locales-file="[[localesFile]]" minlength="[[minlength]]" on-comment-added="_retargetCommentEvent" allow-files$="[[allowFiles]]"></hostabee-comment-create-form>
         </slot>
       </div>
     </template>
@@ -351,7 +351,7 @@ This program is available under Apache License Version 2.0.
        * @private
        * @param {Object} event The event to be retargeted.
        */
-      _retargetEvent(event) {
+      _retargetCommentEvent(event) {
         if (this.mapper) {
           event.preventDefault();
           event.stopPropagation();
@@ -363,6 +363,26 @@ This program is available under Apache License Version 2.0.
             }),
           }));
         }
+      }
+
+      /**
+       * Completes event dispatched by thumbnail with comment data.
+       *
+       * @private
+       * @param {Object} event The event to be completed.
+       */
+      _retargetThumbnailEvent(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        let comment = !this.mapper ? event.model.comment :
+          this.mapper.toComment(event.model.comment);
+        this.dispatchEvent(new CustomEvent(event.type, {
+          bubbles: true,
+          composed: true,
+          detail: Object.assign({}, event.detail, {
+            comment,
+          }),
+        }));
       }
 
     }
