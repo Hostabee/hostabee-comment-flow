@@ -30,13 +30,13 @@ This program is available under Apache License Version 2.0.
     </style>
     <div class="comments-container">
       <template is="dom-repeat" items="[[_comments]]" as="comment" restamp>
-        <hostabee-comment item="[[comment]]" attachments="[[comment.attachments]]" read-only="[[!_isCommentEditable(comment, author)]]" language="[[language]]" locales-folder="[[localesFolder]]" locales-file="[[localesFile]]" minlength="[[minlength]]" on-comment-deleted="_retargetCommentEvent" on-comment-modified="_retargetCommentEvent" on-thumbnail-click="_retargetThumbnailEvent" no-relative-time="[[noRelativeTime]]"></hostabee-comment>
+        <hostabee-comment item="[[comment]]" attachments="[[comment.attachments]]" read-only="[[!_isCommentEditable(comment, author)]]" language="[[language]]" locales-folder="[[localesFolder]]" locales-file="[[localesFile]]" minlength="[[minlength]]" on-comment-deleted="_retargetCommentEvent" on-comment-modified="_retargetCommentEvent" on-thumbnail-click="_retargetThumbnailEvent" no-relative-time="[[noRelativeTime]]" disabled$="[[disabled]]"></hostabee-comment>
       </template>
     </div>
     <template is="dom-if" if="[[!readOnly]]" restamp>
       <div class="form">
         <slot id="form" name="form">
-          <hostabee-comment-create-form author="[[author]]" language="[[language]]" locales-folder="[[localesFolder]]" locales-file="[[localesFile]]" minlength="[[minlength]]" on-comment-added="_retargetCommentEvent" allow-files$="[[allowFiles]]"></hostabee-comment-create-form>
+          <hostabee-comment-create-form author="[[author]]" language="[[language]]" locales-folder="[[localesFolder]]" locales-file="[[localesFile]]" minlength="[[minlength]]" on-comment-added="_retargetCommentEvent" allow-files$="[[allowFiles]]" disabled$="[[disabled]]"></hostabee-comment-create-form>
         </slot>
       </div>
     </template>
@@ -205,6 +205,17 @@ This program is available under Apache License Version 2.0.
           allowFiles: {
             type: Boolean,
             value: false,
+          },
+          /**
+           * Is the element disabled.
+           *
+           * @type {Boolean}
+           * @default false
+           */
+           disabled: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true,
           },
           /**
            * Computed list of comment. The data transformtion ensures the good
