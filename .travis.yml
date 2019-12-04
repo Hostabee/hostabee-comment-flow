@@ -1,14 +1,19 @@
 language: node_js
-sudo: false
-before_script:
-  - npm install -g polymer-cli
-  - polymer install
 node_js: node
+sudo: false
+dist: trusty
+env:
+  global:
+    secure: YQ2aaflKU6ucTpmi6fE8tKgsK7vmC4a1rEqMT1tYStg8Y4F+qwyQEWND4tyKTcjWA8Z1HzGiKK9DxOf0m4QkqFV7k1ae0o4pabHhnXx8G5QIS0eHxRE5ef2KdTAQpVR6iNbqIho7UMacCAae1UNQk12SLID1uanWqX9pMyI+bEszgBlP76gQ7RIzzlI5Ijm1KelOtK+mxNE7JUe+mRcI2nKB8/nJ4BSZ8ZA4xWRzAP/Ts4yfuXvcQ6Cah2E8MIksm9AFiC+D0vK3N3jmMpbgxuFaQxwckk30H+33f4eLfqJ40L/Nbg+yw3LjcnLCD8k6FRPkl3VsSlrtfu1De88XaZO7/Lof9WbJl45Ap2biwSu5egi9t6GXX2W1EtIuGCgaxR86w7K9pGcZ6PXC3y4d0aiNOnF6xRv0gFMOqDFS4n/IZPXricv96zJX+S3rBK6p5jmpqbVs7xu2N0mpxhox0GdX0CJ75f/1WQGb3zHXTAoQJq+R3NsSytUDOrAGdNsjRlcdsY9kWyHY9wSaXkV8ZVx64OC676EbxDi0U3oD9Hpjl9Xxtq5L2RgmEQo5lKLSRWgZYV/uxlRNRXXgL1nR8aZ33DT7UdGuRQODpJFE/GmzRHCKvuzZDZmLzDIlf6OSaI/hA+RZnquS+pl8PXlrsrdQJtYxPz08wESF6OD5YsI=
 addons:
   firefox: latest
   chrome: stable
-script:
-  - xvfb-run polymer test
 cache:
   directories:
     - node_modules
+before_script:
+  - npm install -g polymer-cli
+  - polymer install
+script:
+  - xvfb-run polymer test
+  - if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then polymer test -s 'default'; fi
