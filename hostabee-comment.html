@@ -26,6 +26,11 @@ This program is available under Apache License Version 2.0.
         padding: 8px 16px;
       }
 
+      :host([disabled]) {
+        opacity: 0.4;
+        pointer-events: none;
+      }
+
       .flex {
         @apply --layout-flex;
       }
@@ -321,6 +326,18 @@ This program is available under Apache License Version 2.0.
             type: Array,
             value: [],
           },
+          /**
+           * Is the element disabled.
+           *
+           * @type {Boolean}
+           * @default false
+           */
+          disabled: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true,
+            observer: '_disabledChanged'
+          },
           _toggleButtonText: {
             type: String,
             computed: '__computeToggleButtonText(opened, resources)',
@@ -497,6 +514,15 @@ This program is available under Apache License Version 2.0.
        */
       displayCreationDate() {
         this._displayCreationDate(this.shadowRoot.querySelector('.summary__date>span'));
+      }
+
+      _disabledChanged() {
+        if (this.disabled) {
+          // Prevent to tab into the disabled element.
+          this.setAttribute('tabindex', -1);
+        } else {
+          this.removeAttribute('tabindex');
+        }
       }
 
       _itemChanged(newItem, oldItem) {
