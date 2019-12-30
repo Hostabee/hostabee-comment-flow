@@ -71,14 +71,14 @@ This program is available under Apache License Version 2.0.
       }
     </style>
 
-    <template is="dom-repeat" items="{{files}}" as="file" on-rendered-item-count-changed="_renderedItemsChanged">
+    <template is="dom-repeat" items="{{thumbs}}" as="thumb" on-rendered-item-count-changed="_renderedItemsChanged">
       <div class="thumbnail" on-click="_dispatchClickEvent">
         <div class="thumbnail__title">
-          <span>[[file.name]]</span>
+          <span>[[thumb.name]]</span>
           <span class="flex"></span>
           <iron-icon id="remove-thumbnail-[[index]]" class="thumbnail__button--remove" icon="hostabee-icons:cancel" on-click="_removePicture" hidden$="[[!editable]]"></iron-icon>
         </div>
-        <iron-image class="thumbnail__picture" src="[[_getFileURL(file)]]" alt="[[file.name]]" height="[[heightThumbnails]]px" sizing="cover" fade></iron-image>
+        <iron-image class="thumbnail__picture" src="[[thumb.url]]" alt="[[thumb.name]]" height="[[heightThumbnails]]px" sizing="cover" fade></iron-image>
       </div>
     </template>
 
@@ -150,7 +150,44 @@ This program is available under Apache License Version 2.0.
             type: Number,
             value: 200,
           },
+          /**
+           * Thumbnails name and data URL.
+           * 
+           * @type {Array}
+           * @default []
+           */
+          thumbs: {
+            type: Array,
+            value: [],
+            readOnly: true,
+            notify: true,
+          },
+          /**
+           * EXIF data orientation must be fixed or not. Is `True` if the device
+           * loading the file is using a camera and if required libraries to
+           * fix the orientation are available in the app using this element.
+           *
+           * @type {Boolean}
+           */
+          _mustFixPictureOrientation: {
+            type: Boolean,
+            value() {
+              return window.orientation != undefined &&
+                'loadImage' in window &&
+                'EXIF' in window;
+            },
+          }
         };
+      }
+
+      /**
+       * Array of strings describing multi-property observer methods and their
+       * dependant properties
+       */
+      static get observers() {
+        return [
+          '_computeThumbnails(files.*)',
+        ];
       }
 
       /**
@@ -267,19 +304,105 @@ This program is available under Apache License Version 2.0.
       }
 
       /**
-       * Creates a DOMString containing a URL representing the object given in
-       * the parameter.
-       * 
-       * @param {File} file The file to create the URL
-       * @return {String} a DOMString containing a URL representing the object
-       * given in the parameter.
+       * Computes list of thumbnails to be displayed from the provided files.
        */
-      _getFileURL(file) {
+      async _computeThumbnails(changeRecord) {
+        // Stop if no change
+        if (!changeRecord) {
+          return;
+        }
+
+        // Remove thumbnail accroding to the file removed from the list
+        if (changeRecord.path == 'files.splices') {
+          changeRecord.value.indexSplices
+            .forEach((s) => this.splice('thumbs', s.index, 1));
+          return;
+        }
+
+        // Get new list of files to convert into thumbnails
+        let files = [];
+        if (changeRecord.path == 'files') {
+          files = changeRecord.value.slice(0, this.limit);
+        } else if (changeRecord.path == 'files.length') {
+          files = changeRecord.base.slice(0, this.limit);
+        }
+        if (!this._checkIsTypeFile(files)) {
+          return;
+        }
+
+        let thumbs = await this._filesToThumbnails(files);
+        this._setThumbs(thumbs);
+      }
+
+      /**
+       * Converts a File into a Thumbnail.
+       *
+       * @param {Array<File>} files The file list to be converted into thumbnails
+       * @return {Array<Object>} list of thumbnails
+       */
+      async _filesToThumbnails(files) {
         try {
-          return URL.createObjectURL(file);
+          if (!this._mustFixPictureOrientation) {
+            return files.map((file) => Object.assign({}, {
+              name: file.name,
+              url: URL.createObjectURL(file)
+            }));
+          }
+          let thumbs = await Promise.all(files.map((file) => this._fixOrientation(file)));
+          return thumbs;
         } catch (error) {
           console.warn("Can't get URL. Provided files must be instances of File class.", error);
         }
+      }
+
+      /**
+       * Checks if the given files are instacnes of class File.
+       * 
+       * @param {Array} files The files to check the type of.
+       * @return {Boolean} True if all files are instances of File, false otherwise.
+       */
+      _checkIsTypeFile(files) {
+        return files.reduce((valid, obj) => valid && obj.constructor.name == 'File', true);
+      }
+
+      /**
+       * Ensures the orientation of the EXIF (Exchangeable image file format) is
+       * properly defined on mobile device when the photo is took with a camera.
+       *
+       * For more information see this issue:
+       * https://stackoverflow.com/questions/20600800
+       *
+       * @param {File} file The file to fix the orientation of.
+       * @return {Promise<String>} a Promise which resolve the data URL of the
+       * image after have fixed the orientation.
+       */
+      _fixOrientation(file) {
+        return new Promise((resolve, reject) => {
+          window.loadImage(file, async function(img) {
+            if (img.type === 'error') {
+              console.info('Could not fix image orientation.');
+              resolve({
+                name: file.name,
+                url: URL.createObjectURL(file),
+              });
+            }
+            // Fix image orientation
+            await window.EXIF.getData(img, async function() {
+              var orientation = EXIF.getTag(this, 'Orientation');
+              var canvas = await window.loadImage.scale(img, {
+                orientation: orientation || 0,
+                canvas: true,
+                noRevoke: true,
+              });
+              resolve({
+                name: file.name,
+                url: canvas.toDataURL(),
+              });
+            });
+          }, {
+            noRevoke: true,
+          });
+        });
       }
 
       /**
