@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.10.0](https://github.com/Hostabee/hostabee-comment-flow/compare/v0.9.1...v0.10.0) (2019-12-30)
+
+
+### Bug Fixes
+
+* **form:** display of thumbnails on iPhone ([bf5e321](https://github.com/Hostabee/hostabee-comment-flow/commit/bf5e321))
+
+
+### Features
+
+* **thumbnails:** automatically fix EXIF orientation ([cdecf0f](https://github.com/Hostabee/hostabee-comment-flow/commit/cdecf0f))
+
 ### [0.9.1](https://github.com/Hostabee/hostabee-comment-flow/compare/v0.9.0...v0.9.1) (2019-12-04)
 
 ## [0.9.0](https://github.com/Hostabee/hostabee-comment-flow/compare/v0.8.0...v0.9.0) (2019-11-28)
