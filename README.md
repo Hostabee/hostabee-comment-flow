@@ -50,12 +50,12 @@ You can also install [exif-js](https://github.com/exif-js/exif-js) and [JavaScri
 
 5. You can also open demo or in-browser tests by adding **demo** or **test** to the URL, for example:
 
-- http://127.0.0.1:3000/components/hostabee-comment-flow/demo/hostabee-comment-flow/basic.html
-- http://127.0.0.1:3000/components/hostabee-comment-flow/test
+* http://127.0.0.1:3000/components/hostabee-comment-flow/demo/hostabee-comment-flow/basic.html
+* http://127.0.0.1:3000/components/hostabee-comment-flow/test
 
 ## Running Tests
 
-- When in the `hostabee-comment-flow` directory, run `polymer test`
+* When in the `hostabee-comment-flow` directory, run `polymer test`
 
 ## Contributing
 
