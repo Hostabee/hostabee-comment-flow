@@ -32,6 +32,10 @@ Once installed, import it in your application:
 <link rel="import" href="bower_components/hostabee-comment-flow/hostabee-comment-flow.html">
 ```
 
+### OPTIONAL
+
+You can also install [exif-js](https://github.com/exif-js/exif-js) and [JavaScript-Load-Image](https://github.com/blueimp/JavaScript-Load-Image) to automatically fix [EXIF orientation on client-side](https://stackoverflow.com/questions/20600800). Be sure those 2 libraries are imported into your app before the `hostabee-comment-flow` element.
+
 ## Running demos and tests in a browser
 
 1. Fork the `hostabee-comment-flow` repository and clone it locally.
