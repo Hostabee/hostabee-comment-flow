@@ -236,6 +236,16 @@ This program is available under Apache License Version 2.0.
             value: 4,
           },
           /**
+           * Maximum total size of the files. In megabyte.
+           * 
+           * @type {Number}
+           * @default 10
+           */
+          maxTotalSize: {
+            type: Number,
+            value: 10,
+          },
+          /**
            * Specifies if the maximum number of files have been selected.
            */
           maxFilesReached: {
@@ -338,7 +348,23 @@ This program is available under Apache License Version 2.0.
        * New files selected using the picker.
        */
       _filesSelected(event) {
-        this.set('files', this.files.concat(...event.target.files));
+        let files = this.files.concat(...event.target.files);
+        // Check total size not exceed
+        var totalSize = files.reduce((total, file) => total += file.size, 0);
+        var totalSizeMB = Math.round(totalSize / (1024 ** 2));
+        if (totalSizeMB > this.maxTotalSize) {
+          this.dispatchEvent(new CustomEvent('max-total-size-reached', {
+            bubbles: true,
+            composed: true,
+            detail: {
+              limit: this.maxTotalSize,
+              totalSize,
+              totalSizeMB,
+            }
+          }));
+          return;
+        }
+        this.set('files', files);
       }
 
       /**
@@ -420,6 +446,13 @@ This program is available under Apache License Version 2.0.
        * 
        * @event comment-added
        * @param {Object} detail The comment to add.
+       */
+
+      /**
+       * Fired when the total size of files exceeds the limit defined.
+       * _(bubbles: true, composed: true)_
+       * 
+       * @event max-total-size-reached
        */
 
     }
