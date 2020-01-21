@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.11.0](https://github.com/Hostabee/hostabee-comment-flow/compare/v0.10.0...v0.11.0) (2020-01-21)
+
+
+### Features
+
+* **form:** set max total size of files ([0109d2e](https://github.com/Hostabee/hostabee-comment-flow/commit/0109d2e))
+
 ## [0.10.0](https://github.com/Hostabee/hostabee-comment-flow/compare/v0.9.1...v0.10.0) (2019-12-30)
 
 
