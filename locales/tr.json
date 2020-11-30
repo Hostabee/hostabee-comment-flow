@@ -1,0 +1,14 @@
+{
+  "ERROR_minlength": "En az {count} karakter",
+  "LABEL_edit_your_comment": "Yorumunuzu düzenleyin",
+  "PLACEHOLDER_write_a_comment": "Bir yorum Yaz...",
+  "anonymous": "{capitalize, select, yes {A} other {a}}nonim",
+  "cancel": "iptal etmek",
+  "created": "tarihinde yaratılmıştır ",
+  "delete": "Silmek",
+  "edit": "Düzenle",
+  "modified": "tarihinde değiştirilmiştir ",
+  "read_more": "Daha fazla oku",
+  "save": "kayıt etmek",
+  "show_less": "Daha az göster"
+}

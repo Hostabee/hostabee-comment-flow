@@ -1,0 +1,14 @@
+{
+  "ERROR_minlength": "Mindestens {count} Zeichen",
+  "LABEL_edit_your_comment": "Bearbeiten Sie Ihren Kommentar",
+  "PLACEHOLDER_write_a_comment": "Schreibe einen Kommentar...",
+  "anonymous": "{capitalize, select, yes {A} other {a}}nonym",
+  "cancel": "stornieren",
+  "created": "erstellt am ",
+  "delete": "Löschen",
+  "edit": "Bearbeiten",
+  "modified": "geändert am ",
+  "read_more": "Mehr lesen",
+  "save": "sparen",
+  "show_less": "Weniger anzeigen"
+}
